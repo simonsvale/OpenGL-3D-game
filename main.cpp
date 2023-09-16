@@ -13,7 +13,7 @@
 // Window width and height
 const int WIDTH = 800, HEIGHT = 600;
 
-// Vertecies to be rendered by OpenGL
+// Vertecies to be rendered by OpenGL.
 float Square[] = {
      0.5f,  0.5f, 0.0f,  // top right
      0.5f, -0.5f, 0.0f,  // bottom right
