@@ -27,7 +27,7 @@ float line[] =
     100, 300, 0
 };
 
-// Indices creating a square from two tringale vertecies
+// Indices creating a square from two tringale vertecies.
 unsigned int indices[] = {
     0, 1, 3,   // first triangle
     1, 2, 3    // second triangle.
