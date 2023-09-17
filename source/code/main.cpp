@@ -1,15 +1,15 @@
-// Compiler settings
-// g++ -I ../../src/include -I ../../glad/include -L ../../src/lib -o ../../main main.cpp options.cpp ..\..\glad\src\glad.c -lmingw32 -lSDL2main -lSDL2 -mwindows
 // ../../main
 
+// Include build-in libraries
 #include <iostream>
 #include <cmath>
 
-// Include SDL2 headers
+// Include SDL2 and OpenGL headers
 #include <SDL2/SDL.h>
-
-// Include Opengl headers
 #include <glad/glad.h>
+
+// Include own headers
+#include "options.h"
 
 using namespace std;
 
@@ -59,10 +59,11 @@ const char *myFragmentShader =
 
 int main(int argc, char **argv) 
 {
-    // Graphical variables:
-    bool WireframeMode = false;
+    int Mode = 0 ;
 
 
+    // !!!
+    Options OptionsObj;
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -183,20 +184,8 @@ int main(int argc, char **argv)
                 Running = false;
             }
 
-            if((windowEvent.key.keysym.sym == SDLK_p) && (SDL_KEYUP == windowEvent.type))
-            {
-                if(WireframeMode == false)
-                {
-                    // Enable wireframe mode
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                    WireframeMode = true;
-                }
-                else
-                {
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                    WireframeMode = false;
-                }
-            }
+            Mode = OptionsObj.ToggleRenderMode(Mode, windowEvent);
+
         }
         // background color
         glClearColor(1.0f, 0.4f, 0.2f, 1.0f);
