@@ -1,14 +1,18 @@
-// Compilation settings
-// g++ -I src/include -I glad/include -L src/lib -o main main.cpp glad\src\glad.c -lmingw32 -lSDL2main -lSDL2 -mwindows
+// ../../main
 
+// Include build-in libraries
 #include <iostream>
 #include <cmath>
 
-// Include SDL2 headers
+// Include SDL2 and OpenGL headers
 #include <SDL2/SDL.h>
-
-// Include Opengl headers
 #include <glad/glad.h>
+
+// Include own headers
+#include "options.h"
+
+using namespace std;
+
 
 // Window width and height
 const int WIDTH = 800, HEIGHT = 600;
@@ -55,6 +59,12 @@ const char *myFragmentShader =
 
 int main(int argc, char **argv) 
 {
+    int Mode = 0 ;
+
+
+    // !!!
+    Options OptionsObj;
+
     SDL_Init(SDL_INIT_EVERYTHING);
 
     // Set OpenGL window
@@ -139,33 +149,43 @@ int main(int argc, char **argv)
     glAttachShader(shader_program, basic_vertex_shader);
     glLinkProgram(shader_program);
 
-    // Enable wireframe mode
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 
     SDL_Event windowEvent;
 
     float greenValue;
 
+    // Setup variables for maintaining 60 fps
+    int FrameTimeTotal;
+    Uint64 FrameTimeStart;
+    Uint64 FrameTimeEnd;
+
+    const int FrameDelay = 1000 / 60;
+
+    bool Running = true;
+
     // Window loop
-    while (true)
+    while(Running == true)
     {
         glViewport(0, 0, WIDTH, HEIGHT);
 
-        float time = float(SDL_GetTicks64())/1000;
-
-        float greenValue = (sin(time) / 2.0f) + 0.5f;
+        float greenValue = 0.5f;
         int vertexColorLocation = glGetUniformLocation(shader_program, "ourColor");
 
         // DEBUG
         // std::cout << "time: " << time << " \n";
 
+        while(SDL_PollEvent(&windowEvent) != 0)
+        {   
+            FrameTimeStart = SDL_GetTicks64();
 
-        if (SDL_PollEvent(&windowEvent))
-        {
             if (SDL_QUIT == windowEvent.type)
             {
-                break;
+                Running = false;
             }
+
+            Mode = OptionsObj.ToggleRenderMode(Mode, windowEvent);
+
         }
         // background color
         glClearColor(1.0f, 0.4f, 0.2f, 1.0f);
@@ -183,6 +203,19 @@ int main(int argc, char **argv)
 
         // Update the SDL OpenGL window.
         SDL_GL_SwapWindow(window);
+
+
+        // Get the end time of the frame
+        FrameTimeEnd = SDL_GetTicks();
+
+        // Calculate the amount of time it took to run through 1 frame.
+        FrameTimeTotal = FrameTimeEnd- FrameTimeStart;
+
+        // Set the delay accordingly
+        if(FrameDelay > FrameTimeTotal)
+        {
+            SDL_Delay(FrameDelay - FrameTimeTotal);
+        }
     }
 
     SDL_DestroyWindow(window);
