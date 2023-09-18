@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// DEBUG function
 int Options::ToggleRenderMode(int Mode, SDL_Event windowEvent)
 {
     if((windowEvent.key.keysym.sym == SDLK_p) && (SDL_KEYUP == windowEvent.type))
