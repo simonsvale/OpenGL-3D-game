@@ -1,5 +1,3 @@
-// ../../main
-
 // Include build-in libraries
 #include <iostream>
 #include <cmath>
@@ -10,6 +8,7 @@
 
 // Include own headers
 #include "options.h"
+#include "structures.h"
 
 using namespace std;
 
@@ -60,7 +59,6 @@ const char *myFragmentShader =
 int main(int argc, char **argv) 
 {
     int Mode = 0 ;
-
 
     // !!!
     Options OptionsObj;
@@ -166,7 +164,10 @@ int main(int argc, char **argv)
 
     // Window loop
     while(Running == true)
-    {
+    {   
+        // Set frame start
+        FrameTimeStart = SDL_GetTicks64();
+
         glViewport(0, 0, WIDTH, HEIGHT);
 
         float greenValue = 0.5f;
@@ -174,10 +175,10 @@ int main(int argc, char **argv)
 
         // DEBUG
         // std::cout << "time: " << time << " \n";
+        
 
         while(SDL_PollEvent(&windowEvent) != 0)
         {   
-            FrameTimeStart = SDL_GetTicks64();
 
             if (SDL_QUIT == windowEvent.type)
             {
