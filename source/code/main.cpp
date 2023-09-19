@@ -1,3 +1,6 @@
+// terminal command for running program: ../../main
+
+
 // Include build-in libraries
 #include <iostream>
 #include <cmath>
@@ -35,7 +38,6 @@ unsigned int indices[] = {
     0, 1, 3,   // first triangle
     1, 2, 3    // second triangle.
 }; 
-
 
 // Vertex shader
 const char *myVertexShader = 
