@@ -8,6 +8,28 @@
 void Renderer::RenderEverything()
 {
 
+// Pseudo code
+
+/*
+    Parameter: Array of sprites to be rendered
+
+
+    for all elements in array
+        
+
+
+
+
+
+
+
+
+*/ 
+
+
+
+
+
 }
 
 

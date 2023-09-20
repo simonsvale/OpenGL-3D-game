@@ -1,7 +1,99 @@
+#include <vector>
+
 // Does everything related to the graphics
 class Renderer
 {
-public:
-    void RenderEverything();
+    public:
+        void RenderEverything();
+
+};
+
+class SpriteSheet
+{
+
+    private:
+
+        // The relative path of the sprite sheet
+        char SpriteSheetPath;
+
+        // Function for determining the light source dropoff rate. (should maybe return a vector instead?)
+        int CalcLightSourceDropoffRate();
+
+    public:
+// Collision
+        // Determines if the sprite has collision
+        bool Collision;
+        
+        // @NOTE: Perhaps not necesary, since the entire source texture size could be used as the collision box.
+        //uint16_t CollisionBox; 
+
+// Animation
+        // Determines if the sprite has an animation
+        bool HasAnimation;
+
+        // The amount of frames the sprite animation has, max 256, (0 - 255).
+        uint8_t AnimationFrameAmount;
+
+
+// Light
+        // 8bit Ambient light value of the sprite, 0 - 255, where 0 is black and 255 is white.
+        // @NOTE: Based on the time of day, applies effect onto sprite. (perhaps takes moonlight into count?)
+        uint8_t AmbientLightValue;
+
+        // Is sprite lit up by artificial light
+        uint8_t ArtificalLightValue = 0;
+
+        // The total light value of the sprite
+        uint16_t TotalLightValue;
+
+// Light Source (prob. should have its own class)
+        // Determines if the sprite is luminous.
+        bool IsLightSource;
+        uint8_t LightSourceColour;
+
+        // The radius of the light source
+        uint8_t LightSourceRadius;
+        
+        // The strength of the light source, 
+        // @NOTE: 0 = no light / off, determines the rate of the dropoff.
+        uint8_t LightSourceStrength;
+
+        // The position of the light source relative to the sprite, where (0, 0) is the top right corner.
+        // @NOTE: The last corner is either relative e.i. (1, 1) or determined by the sprite dimensions.
+        uint16_t LightSourcePos; // perhaps could be 8bits
+
+        // The type of light source, ex. cone shaped = 1, circular = 0, etc.
+        // @NOTE: Multiple could be added, adds the Artifical light Value to nearby sprites, 
+        // @NOTE: if two light sources overlap to each other, the strongest should be rendered ontop of the weak.
+        uint8_t LightSourceShape;
+
+        // Determines if the light source has an light animation, besides its own animation.
+        bool HasLightAnimation;
+
+        // The light cycle animation, based on the light values.
+        // @NOTE: if LightAnimationCycle.size() = 0, throw error.
+        std::vector<uint8_t> LightAnimationCycle;
+
+
+// Submersion
+        // Determines if the submerged effect should be applied to the base sprite.              
+        // @NOTE: The submerged effect should move the pixels horizontally back and forth.
+        bool IsSubmerged = false;
+
+        // Primarily determines the 
+        // @NOTE: The Submerged depth, based on the depth multiplies 
+        uint8_t SubmergedDepth;
+
+// Wind
+        // Determines if the sprite is affected by wind.
+        bool IsWindswept;
+
+
+
+
+// functions
+        // Applies the submerged effect to sprite.
+        void ApplySubmergedEffect();
+        void ApplyWindEffect();
 
 };
