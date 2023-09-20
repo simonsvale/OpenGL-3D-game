@@ -27,12 +27,17 @@ class SpriteSheet
         // @NOTE: Perhaps not necesary, since the entire source texture size could be used as the collision box.
         //uint16_t CollisionBox; 
 
+
 // Animation
         // Determines if the sprite has an animation
         bool HasAnimation;
 
         // The amount of frames the sprite animation has, max 256, (0 - 255).
         uint8_t AnimationFrameAmount;
+
+        // Start and end position of the animation in the spritesheet texture.
+        // @NOTE: (x, y)
+        std::vector<uint8_t> AnimationFramesRange;
 
 
 // Light
@@ -45,6 +50,7 @@ class SpriteSheet
 
         // The total light value of the sprite
         uint16_t TotalLightValue;
+
 
 // Light Source (prob. should have its own class)
         // Determines if the sprite is luminous.
@@ -75,18 +81,21 @@ class SpriteSheet
         std::vector<uint8_t> LightAnimationCycle;
 
 
-// Submersion
+// Submerged effect
         // Determines if the submerged effect should be applied to the base sprite.              
         // @NOTE: The submerged effect should move the pixels horizontally back and forth.
-        bool IsSubmerged = false;
+        // @NOTE: The submerged effect is found in another spritesheet.
+        bool HasSubmergedEffect = false;
 
         // Primarily determines the 
         // @NOTE: The Submerged depth, based on the depth multiplies 
         uint8_t SubmergedDepth;
 
-// Wind
+
+// Wind (Should perhaps be removed and replaced with a sprite on sprite basis? (Difficult to make standard for all sprites, since some objects move more in the wind))
         // Determines if the sprite is affected by wind.
         bool IsWindswept;
+        uint8_t WindStrength;
 
 
 
