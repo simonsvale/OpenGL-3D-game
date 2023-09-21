@@ -8,7 +8,8 @@ class Renderer
 
 };
 
-class SpriteSheet
+
+class Sprite
 {
 
     private:
@@ -16,8 +17,8 @@ class SpriteSheet
         // The relative path of the sprite sheet
         char SpriteSheetPath;
 
-        // Function for determining the light source dropoff rate. (should maybe return a vector instead?)
-        int CalcLightSourceDropoffRate();
+        unsigned char LoadImageTexture();
+        
 
     public:
 // Collision
@@ -36,7 +37,7 @@ class SpriteSheet
         uint8_t AnimationFrameAmount;
 
         // Start and end position of the animation in the spritesheet texture.
-        // @NOTE: (x, y)
+        // @NOTE: (x, y), may need to be defined as a uint16_t.
         std::vector<uint8_t> AnimationFramesRange;
 
 
@@ -52,7 +53,35 @@ class SpriteSheet
         uint16_t TotalLightValue;
 
 
-// Light Source (prob. should have its own class)
+// Submerged effect
+        // Determines if the submerged effect should be applied to the base sprite.              
+        // @NOTE: The submerged effect should move the pixels horizontally back and forth.
+        // @NOTE: The submerged effect is found in another spritesheet.
+        bool HasSubmergedEffect = false;
+
+        // Primarily determines the 
+        // @NOTE: The Submerged depth, based on the depth multiplies 
+        uint8_t SubmergedDepth;
+
+
+// Wind (Should perhaps be removed and replaced with a sprite on sprite basis? (Difficult to make standard for all sprites, since some objects move more in the wind))
+        // Determines if the sprite is affected by wind.
+        bool IsWindswept;
+        uint8_t WindStrength;
+
+
+// functions
+        // Applies the submerged effect to sprite.
+        void ApplySubmergedEffect();
+        void ApplyWindEffect();
+
+};
+
+
+// Lightsource, inheritens if sprite
+class LightSource: public Sprite
+{
+    public:
         // Determines if the sprite is luminous.
         bool IsLightSource;
         uint8_t LightSourceColour;
@@ -80,29 +109,7 @@ class SpriteSheet
         // @NOTE: if LightAnimationCycle.size() = 0, throw error.
         std::vector<uint8_t> LightAnimationCycle;
 
-
-// Submerged effect
-        // Determines if the submerged effect should be applied to the base sprite.              
-        // @NOTE: The submerged effect should move the pixels horizontally back and forth.
-        // @NOTE: The submerged effect is found in another spritesheet.
-        bool HasSubmergedEffect = false;
-
-        // Primarily determines the 
-        // @NOTE: The Submerged depth, based on the depth multiplies 
-        uint8_t SubmergedDepth;
-
-
-// Wind (Should perhaps be removed and replaced with a sprite on sprite basis? (Difficult to make standard for all sprites, since some objects move more in the wind))
-        // Determines if the sprite is affected by wind.
-        bool IsWindswept;
-        uint8_t WindStrength;
-
-
-
-
-// functions
-        // Applies the submerged effect to sprite.
-        void ApplySubmergedEffect();
-        void ApplyWindEffect();
+        // Function for determining the light source dropoff rate. (should maybe return a vector instead?)
+        int CalcLightSourceDropoffRate();
 
 };

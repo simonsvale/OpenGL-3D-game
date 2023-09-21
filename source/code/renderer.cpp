@@ -25,11 +25,6 @@ void Renderer::RenderEverything()
 
 
 */ 
-
-
-
-
-
 }
 
 
