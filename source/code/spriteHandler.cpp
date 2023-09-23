@@ -9,10 +9,16 @@
 
 #include "renderer.h"
 #include "spriteHandler.h"
+#include "helperFunctions.h"
 
 using namespace std;
 
 
+// Create helper object
+HelperFunctions HelperObj;
+
+
+// Class Functions
 unsigned char Sprite::LoadImageTexture()
 {
     unsigned char TEST;
@@ -21,20 +27,24 @@ unsigned char Sprite::LoadImageTexture()
     return TEST;
 }
 
-// Open the sprite file.
-void Sprite::LoadSpriteFile(std::string FilePath)
+
+// Function for reading .atris files.
+void Sprite::LoadSpriteFile(string FilePath)
 {
-    string AtrisFileContent;
+    string AtrisFileLine;
+    string NoSpacesLine;
 
     // Open File
     ifstream ReadSpriteFile(FilePath);
 
     // extract file content
-    while(getline(ReadSpriteFile, AtrisFileContent))
+    while(getline(ReadSpriteFile, AtrisFileLine))
     {   
-        cout << AtrisFileContent;
+        NoSpacesLine = HelperObj.RemoveSpaces(AtrisFileLine);
+
+        // Do checks
     }
-    
+
     // Close file again
     ReadSpriteFile.close();
 
