@@ -12,6 +12,7 @@
 // Include own headers
 #include "options.h"
 #include "structures.h"
+#include "spriteHandler.h"
 
 using namespace std;
 
@@ -71,6 +72,16 @@ int main(int argc, char **argv)
 
     // !!!
     Options OptionsObj;
+
+    // !!!
+    Sprite SpriteObj;
+
+    // Run method
+    SpriteObj.LoadSpriteFile("source/textures/dummy.atris");
+
+
+
+
 
     SDL_Init(SDL_INIT_EVERYTHING);
 

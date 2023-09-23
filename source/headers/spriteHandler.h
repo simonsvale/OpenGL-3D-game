@@ -1,17 +1,27 @@
 #include <vector>
+#include <string>
+
+using namespace std;
 
 class Sprite
 {
-
     private:
 
         // The relative path of the sprite sheet
         char SpriteSheetPath;
-
-        unsigned char LoadImageTexture();
         
 
+
+        unsigned char LoadImageTexture();
+
     public:
+        
+// Sprite loading        
+        // Load the attribute file for the corrsponding texture, and set the attributes.
+        void LoadSpriteFile(string FilePath);
+
+
+
 // Collision
         // Determines if the sprite has collision
         bool Collision;
@@ -59,6 +69,10 @@ class Sprite
         // Determines if the sprite is affected by wind.
         bool IsWindswept;
         uint8_t WindStrength;
+
+
+// Render layer, the layer that the sprite should be rendered on.
+        uint8_t RenderLayer;
 
 
 // functions
