@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 // File reading and writing library
 #include <fstream>
@@ -32,7 +33,10 @@ unsigned char Sprite::LoadImageTexture()
 void Sprite::LoadSpriteFile(string FilePath)
 {
     string AtrisFileLine;
-    string NoSpacesLine;
+    string NoSpacesInfo;
+
+    vector<string> AtrisInfoVector;
+
 
     // Open File
     ifstream ReadSpriteFile(FilePath);
@@ -40,17 +44,25 @@ void Sprite::LoadSpriteFile(string FilePath)
     // extract file content
     while(getline(ReadSpriteFile, AtrisFileLine))
     {   
-        NoSpacesLine = HelperObj.RemoveSpaces(AtrisFileLine);
-
-        // Do checks
+        // Add line to variable
+        NoSpacesInfo += HelperObj.RemoveSpaces(AtrisFileLine);
     }
 
-    // Close file again
+    // Close file
     ReadSpriteFile.close();
+
+    // Split file by delimiters 
+    AtrisInfoVector = HelperObj.SplitByDelimiter(NoSpacesInfo, ';');
+
+
+    // DEBUG !!!
+    for(int test = 0; test < AtrisInfoVector.size();)
+    {
+        cout << AtrisInfoVector[test] << endl;
+        test++;
+    }
 
     // Set values
     HasAnimation = 1; // test
-
-
 
 }
