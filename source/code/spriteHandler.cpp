@@ -51,18 +51,23 @@ void Sprite::LoadSpriteFile(string FilePath)
     // Close file
     ReadSpriteFile.close();
 
-    // Split file by delimiters 
+    // Split file by delimiter ';' 
     AtrisInfoVector = HelperObj.SplitByDelimiter(NoSpacesInfo, ';');
 
 
+    // Set AnimationFrameAmount
+    AnimationFrameAmount = HelperObj.GetAtrisKeyValue("AnimationFrameAmount", AtrisInfoVector);
+
+    // !!!
+    cout << "New Val: " << +AnimationFrameAmount << endl;
+
+    /*
     // DEBUG !!!
     for(int test = 0; test < AtrisInfoVector.size();)
     {
         cout << AtrisInfoVector[test] << endl;
         test++;
     }
-
-    // Set values
-    HasAnimation = 1; // test
-
+    */
+    
 }

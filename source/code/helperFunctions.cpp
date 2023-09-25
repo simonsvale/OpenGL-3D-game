@@ -1,6 +1,8 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+
 #include "helperFunctions.h"
 
 using namespace std;
@@ -53,4 +55,31 @@ vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
     }
     
     return SplitStringVector;
+}
+
+// Given a key of type string and a vector containing string, will return the value of the key. If the key is not found, returns -1.
+int HelperFunctions::GetAtrisKeyValue(string Key, vector<string> StringVector)
+{   
+    // Return variable
+    int KeyValue;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                // Get value from key
+                KeyValue = stoi(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
+                
+                return KeyValue;
+            }
+        }
+        StrNum++;
+    }
+
+    // Because a key was not found return -1.
+    return -1;
 }

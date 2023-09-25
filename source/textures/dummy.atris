@@ -1,5 +1,5 @@
-TEST1 TEST1;
+Collision = true;
 
-TEST2 TE  ST2  ;
+HasAnimation = true;
 
-T  EST3 TE  ST3;
+AnimationFrameAmount = 241;
