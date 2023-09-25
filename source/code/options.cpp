@@ -35,6 +35,6 @@ int Options::ToggleRenderMode(int Mode, SDL_Event windowEvent)
             } 
         }
     }
-
+    
     return Mode;
 }

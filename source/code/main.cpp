@@ -12,6 +12,7 @@
 // Include own headers
 #include "options.h"
 #include "structures.h"
+#include "spriteHandler.h"
 
 using namespace std;
 
@@ -25,6 +26,13 @@ float Square[] = {
      0.5f, -0.5f, 0.0f,  // bottom right
     -0.5f, -0.5f, 0.0f,  // bottom left
     -0.5f,  0.5f, 0.0f   // top left 
+};
+
+float TexSquare[] = {
+     0.0f, 0.0f, 0.0f,  // top right
+     1.0f, 0.0f, 0.0f,  // bottom right
+     0.0f, 1.0f, 0.0f,  // bottom left
+     1.0f, 1.0f, 0.0f   // top left 
 };
 
 float line[] =
@@ -64,6 +72,16 @@ int main(int argc, char **argv)
 
     // !!!
     Options OptionsObj;
+
+    // !!!
+    Sprite SpriteObj;
+
+    // Run method
+    SpriteObj.LoadSpriteFile("source/textures/dummy.atris");
+
+
+
+
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
