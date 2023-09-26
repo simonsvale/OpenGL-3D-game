@@ -2,4 +2,4 @@ Collision = true;
 
 HasAnimation = true;
 
-AnimationFrameAmount = 241;
+AnimationFrameAmount = 251;

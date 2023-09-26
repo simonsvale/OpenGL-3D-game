@@ -12,7 +12,11 @@ class HelperFunctions
         // Function for splitting a string by a delimiter.
         vector<string> SplitByDelimiter(string String, char Delimiter);
 
-        // A function for getting a value from a given key string from an .atris file.
-        int GetAtrisKeyValue(string Key, vector<string> StringVector);
+        // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
+        int GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector);
+        int GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector);
+
+        // A function for getting a value from a given key string from an .atris file for bool.
+        bool GetAtrisKeyValue_bool(string Key, vector<string> StringVector);
 
 };
