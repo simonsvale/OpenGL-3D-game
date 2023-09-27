@@ -57,8 +57,9 @@ vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
     return SplitStringVector;
 }
 
-// Given a key of type string and a vector containing string, will return the value of the key. If the key is not found, returns -1.
-int HelperFunctions::GetAtrisKeyValue(string Key, vector<string> StringVector)
+/* Given a key of type string and a vector containing the string, the function will return the value of the key. 
+If the key is not found, returns -1, if out of range of uint8_t throw exception. */
+int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector)
 {   
     // Return variable
     int KeyValue;
@@ -71,8 +72,21 @@ int HelperFunctions::GetAtrisKeyValue(string Key, vector<string> StringVector)
             // Check for key in string
             if((StringVector[StrNum].find(Key) != string::npos) == true)
             {   
-                // Get value from key
-                KeyValue = stoi(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
+                try
+                {   
+                    // Get value from key
+                    KeyValue = stoi(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
+                }
+                catch(invalid_argument)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint8_t.");
+                }
+
+                // Throw exception if out of range.
+                if((KeyValue < 0) || (KeyValue > 255))
+                {
+                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint8_t (0 - 255).");
+                }
                 
                 return KeyValue;
             }
@@ -80,6 +94,102 @@ int HelperFunctions::GetAtrisKeyValue(string Key, vector<string> StringVector)
         StrNum++;
     }
 
-    // Because a key was not found return -1.
+    // Because a key was not found throw exception.
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string.");
+    return -1;
+}
+
+/* Given a key of type string and a vector containing the string, the function will return the value of the key. 
+If the key is not found, returns -1, if out of range of uint16_t throw exception. */
+int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector)
+{   
+    // Return variable
+    int KeyValue;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                try
+                {   
+                    // Get value from key
+                    KeyValue = stoi(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
+                }
+                catch(invalid_argument)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint16_t.");
+                }
+
+                // Throw exception if out of range.
+                if((KeyValue < 0) || (KeyValue > 65535))
+                {
+                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint16_t (0 - 65535).");
+                }
+                
+                return KeyValue;
+            }
+        }
+        StrNum++;
+    }
+
+    // Because a key was not found throw exception.
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector.");
+    return -1;
+}
+
+/* Given a key of type string and a vector containing the string, the function will return the boolean of the key. 
+If the key is not found, returns -1. */
+bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVector)
+{   
+    // Return variable
+    bool KeyValue;
+    string KeyString;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                // get key value as string
+                KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
+
+                // Check for true, True, 1, false, False, 0.
+                if((KeyString == "false") || (KeyString == "False"))
+                {
+                    return false;
+                }
+
+                if((KeyString == "true") || (KeyString == "True"))
+                {
+                    return true;
+                }
+                
+                if(KeyString == "1")
+                {
+                    return true;
+                }
+
+                if(KeyString == "0")
+                {
+                    return false;
+                }
+                else
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type boolean (bool).");
+                }
+            }
+        }
+        StrNum++;
+    }
+
+    // Because a key was not found throw exception.
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector.");
     return -1;
 }

@@ -55,11 +55,13 @@ void Sprite::LoadSpriteFile(string FilePath)
     AtrisInfoVector = HelperObj.SplitByDelimiter(NoSpacesInfo, ';');
 
 
-    // Set AnimationFrameAmount
-    AnimationFrameAmount = HelperObj.GetAtrisKeyValue("AnimationFrameAmount", AtrisInfoVector);
-
+    // Set Sprite attributes for created object.
+    AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector);
+    Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector);
+    
     // !!!
     cout << "New Val: " << +AnimationFrameAmount << endl;
+    cout << "New Col: " << Collision << endl;
 
     /*
     // DEBUG !!!
