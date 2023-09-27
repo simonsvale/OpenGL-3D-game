@@ -1,4 +1,4 @@
-Collision = true;
+Collision = false;
 
 HasAnimation = true;
 

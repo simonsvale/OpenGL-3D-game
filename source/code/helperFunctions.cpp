@@ -79,13 +79,13 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
                 }
                 catch(invalid_argument)
                 {
-                    throw invalid_argument(string(Key)+"'s value is not of type uint8_t.");
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint8_t.");
                 }
 
                 // Throw exception if out of range.
                 if((KeyValue < 0) || (KeyValue > 255))
                 {
-                    throw out_of_range(string(Key)+"'s value is out of range of type uint8_t (0 - 255).");
+                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint8_t (0 - 255).");
                 }
                 
                 return KeyValue;
@@ -95,7 +95,7 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
     }
 
     // Because a key was not found throw exception.
-    throw invalid_argument("key: "+string(Key)+", does not exist in input string.");
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string.");
     return -1;
 }
 
@@ -121,13 +121,13 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
                 }
                 catch(invalid_argument)
                 {
-                    throw invalid_argument(string(Key)+"'s value is not of type uint16_t.");
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint16_t.");
                 }
 
                 // Throw exception if out of range.
                 if((KeyValue < 0) || (KeyValue > 65535))
                 {
-                    throw out_of_range(string(Key)+"'s value is out of range of type uint16_t (0 - 65535).");
+                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint16_t (0 - 65535).");
                 }
                 
                 return KeyValue;
@@ -137,7 +137,7 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
     }
 
     // Because a key was not found throw exception.
-    throw invalid_argument("Key: "+string(Key)+", does not exist in input string.");
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector.");
     return -1;
 }
 
@@ -157,44 +157,39 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
             // Check for key in string
             if((StringVector[StrNum].find(Key) != string::npos) == true)
             {   
-                try
-                {   
-                    // get key value as string
-                    KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
+                // get key value as string
+                KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
 
-                    // Check for true, True, 1, false, False, 0.
-                    if((KeyString == "false") || (KeyString == "False"))
-                    {
-                        return false;
-                    }
-                    else if((KeyString == "true") || (KeyString == "True"))
-                    {
-                        return true;
-                    }
-                    else
-                    {                  
-                    // if value is int (0 or 1)
-                    KeyValue = stoi(KeyString);
-                    }
-                }
-                catch(...)
+                // Check for true, True, 1, false, False, 0.
+                if((KeyString == "false") || (KeyString == "False"))
                 {
-                    throw invalid_argument(string(Key)+"'s value is not of type boolean (bool).");
+                    return false;
+                }
+
+                if((KeyString == "true") || (KeyString == "True"))
+                {
+                    return true;
                 }
                 
-                // Throw exception if out of range.
-                if((KeyValue < 0) || (KeyValue > 1))
+                if(KeyString == "1")
                 {
-                    throw out_of_range(string(Key)+"'s value is out of range of type bool (0 or 1)");
+                    return true;
                 }
-                
-                return KeyValue;
+
+                if(KeyString == "0")
+                {
+                    return false;
+                }
+                else
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type boolean (bool).");
+                }
             }
         }
         StrNum++;
     }
 
     // Because a key was not found throw exception.
-    throw invalid_argument("Key: "+string(Key)+", does not exist in input string.");
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector.");
     return -1;
 }
