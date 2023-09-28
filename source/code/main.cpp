@@ -74,12 +74,13 @@ int main(int argc, char **argv)
     Options OptionsObj;
 
     // !!!
-    Sprite SpriteObj;
+    Sprite SpriteObj_1;
+    Sprite SpriteObj_2;
 
     // Run method
-    SpriteObj.LoadSpriteFile("source/textures/dummy.atris");
+    SpriteObj_1.LoadSpriteFile("source/textures/dummy.atris");
 
-
+    SpriteObj_2.LoadSpriteFile("source/textures/dummy2.atris");
 
 
 
