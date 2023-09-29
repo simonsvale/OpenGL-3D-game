@@ -8,7 +8,7 @@ class Sprite
     private:
 
         // The relative path of the sprite sheet
-        char SpriteSheetPath;
+        char SpriteTexturePath;
         
 
 
@@ -36,6 +36,9 @@ class Sprite
 // Animation
         // Determines if the sprite has an animation
         bool HasAnimation;
+        
+        // The path of the sprite sheet containing the animation frames
+        char AnimationSpriteSheetPath;
 
         // The amount of frames the sprite animation has, max 256, (0 - 255).
         uint8_t AnimationFrameAmount;
@@ -61,11 +64,9 @@ class Sprite
         // The amount of submerged animation frames.
         uint8_t SubmergedAnimationFrameAmount;
 
-
         // Primarily determines the 
         // @NOTE: The Submerged depth, based on the depth multiplies 
         uint8_t SubmergedDepth;
-
 
 // Wind (Should perhaps be removed and replaced with a sprite on sprite basis? (Difficult to make standard for all sprites, since some objects move more in the wind))
         // Determines if the sprite is affected by wind.
