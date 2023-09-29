@@ -20,6 +20,9 @@ class Sprite
         // Load the attribute file for the corrsponding texture, and set the attributes.
         void LoadSpriteFile(string FilePath);
 
+        // The (width, height) of the sprite.
+        vector<uint16_t> SpriteSize;
+
 
 
 // Collision
@@ -36,11 +39,6 @@ class Sprite
 
         // The amount of frames the sprite animation has, max 256, (0 - 255).
         uint8_t AnimationFrameAmount;
-
-        // Start and end position of the animation in the spritesheet texture.
-        // @NOTE: (x, y), may need to be defined as a uint16_t.
-        std::vector<uint8_t> AnimationFramesRange;
-
 
 // Light
         // 8bit Ambient light value of the sprite, 0 - 255, where 0 is black and 255 is white.
@@ -59,6 +57,10 @@ class Sprite
         // @NOTE: The submerged effect should move the pixels horizontally back and forth.
         // @NOTE: The submerged effect is found in another spritesheet.
         bool HasSubmergedEffect = false;
+
+        // The amount of submerged animation frames.
+        uint8_t SubmergedAnimationFrameAmount;
+
 
         // Primarily determines the 
         // @NOTE: The Submerged depth, based on the depth multiplies 
