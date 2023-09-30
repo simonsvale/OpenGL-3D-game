@@ -1,7 +1,7 @@
 #include <vector>
 #include <string>
 
-#include <SDL2/SDL_image.h>
+#include <STB/stb_image.h>
 
 using namespace std;
 

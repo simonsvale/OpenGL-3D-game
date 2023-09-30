@@ -12,6 +12,8 @@
 #include "spriteHandler.h"
 #include "helperFunctions.h"
 
+#include <STB/stb_image.h>
+
 using namespace std;
 
 
@@ -63,6 +65,8 @@ void Sprite::LoadSpriteFile(string FilePath)
     // !!!
     cout << "New Val: " << +AnimationFrameAmount << endl;
     cout << "New Col: " << Collision << endl;
+
+
 
     /*
     // DEBUG !!!
