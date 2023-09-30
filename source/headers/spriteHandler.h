@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
-#include <STB/stb_image.h>
+
+#include <SDL2/SDL_image.h>
 
 using namespace std;
 

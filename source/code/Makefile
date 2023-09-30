@@ -1,2 +1,2 @@
 all:
-	g++ -I ../headers -I ../../src/include -I ../../glad/include -L ../../src/lib -o ../../main main.cpp options.cpp renderer.cpp gameLogic.cpp spriteHandler.cpp helperFunctions.cpp ..\..\glad\src\glad.c -lmingw32 -lSDL2main -lSDL2 -mwindows -mconsole
+	g++ -I ../headers -I ../../src/include -I ../../glad/include -L ../../src/lib -o ../../main main.cpp options.cpp renderer.cpp gameLogic.cpp spriteHandler.cpp helperFunctions.cpp ..\..\glad\src\glad.c -lmingw32 -lSDL2main -lSDL2_image -lSDL2 -mwindows -mconsole
