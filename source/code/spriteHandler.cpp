@@ -12,7 +12,9 @@
 #include "spriteHandler.h"
 #include "helperFunctions.h"
 
-#include <STB/stb_image.h>
+// Library for loading images from files
+#define STB_IMAGE_IMPLEMENTATION
+#include "STB/stb_image.h"
 
 using namespace std;
 
@@ -25,6 +27,9 @@ HelperFunctions HelperObj;
 unsigned char Sprite::LoadImageTexture()
 {
     unsigned char TEST;
+
+    int width, height, nrChannels;
+    unsigned char *data = stbi_load("../../source/textures/dummy.png", &width, &height, &nrChannels, 0);
 
 
     return TEST;
