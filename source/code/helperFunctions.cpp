@@ -59,7 +59,7 @@ vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
-int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector)
+int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, string AtrisFilePath)
 {   
     // Return variable
     int KeyValue;
@@ -79,13 +79,13 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
                 }
                 catch(invalid_argument)
                 {
-                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint8_t.");
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint8_t, at: "+AtrisFilePath);
                 }
 
                 // Throw exception if out of range.
                 if((KeyValue < 0) || (KeyValue > 255))
                 {
-                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint8_t (0 - 255).");
+                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint8_t (0 - 255), at: "+AtrisFilePath);
                 }
                 
                 return KeyValue;
@@ -95,13 +95,13 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
     }
 
     // Because a key was not found throw exception.
-    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string.");
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string, at: "+AtrisFilePath);
     return -1;
 }
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint16_t throw exception. */
-int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector)
+int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, string AtrisFilePath)
 {   
     // Return variable
     int KeyValue;
@@ -121,13 +121,13 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
                 }
                 catch(invalid_argument)
                 {
-                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint16_t.");
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type uint16_t, at: "+AtrisFilePath);
                 }
 
                 // Throw exception if out of range.
                 if((KeyValue < 0) || (KeyValue > 65535))
                 {
-                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint16_t (0 - 65535).");
+                    throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint16_t (0 - 65535), at: "+AtrisFilePath);
                 }
                 
                 return KeyValue;
@@ -137,13 +137,13 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
     }
 
     // Because a key was not found throw exception.
-    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector.");
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector, at: "+AtrisFilePath);
     return -1;
 }
 
 /* Given a key of type string and a vector containing the string, the function will return the boolean of the key. 
 If the key is not found, returns -1. */
-bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVector)
+bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVector, string AtrisFilePath)
 {   
     // Return variable
     bool KeyValue;
@@ -182,7 +182,7 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
                 }
                 else
                 {
-                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type boolean (bool).");
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type boolean (bool), at: "+AtrisFilePath);
                 }
             }
         }
@@ -190,6 +190,6 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
     }
 
     // Because a key was not found throw exception.
-    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector.");
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector, at: "+AtrisFilePath);
     return -1;
 }

@@ -1,0 +1,5 @@
+Collision = true;
+
+HasAnimation = true;
+
+AnimationFrameAmount = 251;

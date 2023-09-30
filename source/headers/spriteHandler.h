@@ -1,24 +1,32 @@
 #include <vector>
 #include <string>
 
+#include <STB/stb_image.h>
+
 using namespace std;
 
 class Sprite
 {
     private:
-
-        // The relative path of the sprite sheet
-        char SpriteSheetPath;
-        
-
-
         unsigned char LoadImageTexture();
 
     public:
+
+// Constructor
+        Sprite(string FilePath)
+        {
+                // Load .atris file, and set the variables.
+                LoadSpriteFile(FilePath);
+        }
+
+
         
 // Sprite loading        
         // Load the attribute file for the corrsponding texture, and set the attributes.
         void LoadSpriteFile(string FilePath);
+
+        // The (width, height) of the sprite.
+        vector<uint16_t> SpriteSize;
 
 
 
@@ -33,14 +41,12 @@ class Sprite
 // Animation
         // Determines if the sprite has an animation
         bool HasAnimation;
+        
+        // The path of the sprite sheet containing the animation frames
+        string AnimationSpriteSheetPath;
 
         // The amount of frames the sprite animation has, max 256, (0 - 255).
         uint8_t AnimationFrameAmount;
-
-        // Start and end position of the animation in the spritesheet texture.
-        // @NOTE: (x, y), may need to be defined as a uint16_t.
-        std::vector<uint8_t> AnimationFramesRange;
-
 
 // Light
         // 8bit Ambient light value of the sprite, 0 - 255, where 0 is black and 255 is white.
@@ -60,10 +66,12 @@ class Sprite
         // @NOTE: The submerged effect is found in another spritesheet.
         bool HasSubmergedEffect = false;
 
+        // The amount of submerged animation frames.
+        uint8_t SubmergedAnimationFrameAmount;
+
         // Primarily determines the 
         // @NOTE: The Submerged depth, based on the depth multiplies 
         uint8_t SubmergedDepth;
-
 
 // Wind (Should perhaps be removed and replaced with a sprite on sprite basis? (Difficult to make standard for all sprites, since some objects move more in the wind))
         // Determines if the sprite is affected by wind.
