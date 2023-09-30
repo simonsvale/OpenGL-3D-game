@@ -74,14 +74,15 @@ int main(int argc, char **argv)
     Options OptionsObj;
 
     // !!!
-    Sprite SpriteObj_1;
-    Sprite SpriteObj_2;
+    Sprite SpriteObj_1("source/textures/dummy.atris");
+    Sprite SpriteObj_2("source/textures/dummy2.atris");
 
+    /*
     // Run method
     SpriteObj_1.LoadSpriteFile("source/textures/dummy.atris");
 
     SpriteObj_2.LoadSpriteFile("source/textures/dummy2.atris");
-
+    */
 
 
     SDL_Init(SDL_INIT_EVERYTHING);

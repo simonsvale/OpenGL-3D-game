@@ -1,20 +1,24 @@
 #include <vector>
 #include <string>
+#include <STB/stb_image.h>
 
 using namespace std;
 
 class Sprite
 {
     private:
-
-        // The relative path of the sprite sheet
-        char SpriteTexturePath;
-        
-
-
         unsigned char LoadImageTexture();
 
     public:
+
+// Constructor
+        Sprite(string FilePath)
+        {
+                // Load .atris file, and set the variables.
+                LoadSpriteFile(FilePath);
+        }
+
+
         
 // Sprite loading        
         // Load the attribute file for the corrsponding texture, and set the attributes.
@@ -38,7 +42,7 @@ class Sprite
         bool HasAnimation;
         
         // The path of the sprite sheet containing the animation frames
-        char AnimationSpriteSheetPath;
+        string AnimationSpriteSheetPath;
 
         // The amount of frames the sprite animation has, max 256, (0 - 255).
         uint8_t AnimationFrameAmount;

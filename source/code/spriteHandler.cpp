@@ -32,6 +32,7 @@ unsigned char Sprite::LoadImageTexture()
 // Function for reading .atris files.
 void Sprite::LoadSpriteFile(string FilePath)
 {
+    // Setup Variables
     string AtrisFileLine;
     string NoSpacesInfo;
 
@@ -55,9 +56,9 @@ void Sprite::LoadSpriteFile(string FilePath)
     AtrisInfoVector = HelperObj.SplitByDelimiter(NoSpacesInfo, ';');
 
 
-    // Set Sprite attributes for created object.
-    AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector);
-    Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector);
+    // Set Sprite attributes for created object, pass in FilePath for easier debugging, when during map/level construction.
+    AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, FilePath);
+    Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector, FilePath);
     
     // !!!
     cout << "New Val: " << +AnimationFrameAmount << endl;
