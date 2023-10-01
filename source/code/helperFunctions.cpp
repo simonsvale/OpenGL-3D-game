@@ -59,7 +59,7 @@ vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
-int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, string AtrisFilePath)
+int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
 {   
     // Return variable
     int KeyValue;
@@ -87,7 +87,10 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
                 {
                     throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint8_t (0 - 255), at: "+AtrisFilePath);
                 }
-                
+
+                // Erase the string element that the key value pair was a part of, since it only have to be found once, this is to make the searching more efficient.
+                StringPtr->erase(StringPtr->begin()+StrNum);
+
                 return KeyValue;
             }
         }
@@ -101,7 +104,7 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint16_t throw exception. */
-int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, string AtrisFilePath)
+int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
 {   
     // Return variable
     int KeyValue;
@@ -129,6 +132,9 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
                 {
                     throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint16_t (0 - 65535), at: "+AtrisFilePath);
                 }
+
+                // Erase the string element that the key value pair was a part of, since it only have to be found once, this is to make the searching more efficient.
+                StringPtr->erase(StringPtr->begin()+StrNum);
                 
                 return KeyValue;
             }
@@ -143,7 +149,7 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
 
 /* Given a key of type string and a vector containing the string, the function will return the boolean of the key. 
 If the key is not found, returns -1. */
-bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVector, string AtrisFilePath)
+bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
 {   
     // Return variable
     bool KeyValue;
@@ -154,6 +160,7 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
     {   
         if(StringVector[StrNum].length() >= Key.length())
         {
+            
             // Check for key in string
             if((StringVector[StrNum].find(Key) != string::npos) == true)
             {   
@@ -163,21 +170,26 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
                 // Check for true, True, 1, false, False, 0.
                 if((KeyString == "false") || (KeyString == "False"))
                 {
+                    // Erase string in ptr to AtrisInfoVector.
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return false;
                 }
 
                 if((KeyString == "true") || (KeyString == "True"))
                 {
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return true;
                 }
                 
                 if(KeyString == "1")
                 {
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return true;
                 }
 
                 if(KeyString == "0")
                 {
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return false;
                 }
                 else

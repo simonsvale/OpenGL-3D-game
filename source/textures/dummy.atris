@@ -1,5 +1,5 @@
 Collision = false;
 
-HasAnimation = true;
+HasAnimation = false;
 
 AnimationFrameAmount = 252;

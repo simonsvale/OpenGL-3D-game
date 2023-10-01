@@ -13,10 +13,10 @@ class HelperFunctions
         vector<string> SplitByDelimiter(string String, char Delimiter);
 
         // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
-        int GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, string AtrisFilePath);
-        int GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, string AtrisFilePath);
+        int GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
+        int GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
 
         // A function for getting a value from a given key string from an .atris file for bool.
-        bool GetAtrisKeyValue_bool(string Key, vector<string> StringVector, string AtrisFilePath);
+        bool GetAtrisKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
 
 };

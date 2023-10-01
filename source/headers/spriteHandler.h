@@ -8,7 +8,6 @@ using namespace std;
 class Sprite
 {
     private:
-        unsigned char LoadImageTexture();
 
     public:
 
@@ -19,6 +18,7 @@ class Sprite
                 LoadSpriteFile(FilePath);
         }
 
+        void LoadImageTexture(unsigned int *Texture);
 
         
 // Sprite loading        

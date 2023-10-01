@@ -24,15 +24,29 @@ HelperFunctions HelperObj;
 
 
 // Class Functions
-unsigned char Sprite::LoadImageTexture()
+void Sprite::LoadImageTexture(unsigned int *Texture)
 {
-    unsigned char TEST;
+    glGenTextures(1, &*Texture);
+    glBindTexture(GL_TEXTURE_2D, *Texture);
 
+    // set the texture wrapping/filtering options (on the currently bound texture object)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    // load and generate the texture
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("../../source/textures/dummy.png", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
 
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
 
-    return TEST;
+    stbi_image_free(data);
 }
 
 
@@ -62,15 +76,35 @@ void Sprite::LoadSpriteFile(string FilePath)
     // Split file by delimiter ';' 
     AtrisInfoVector = HelperObj.SplitByDelimiter(NoSpacesInfo, ';');
 
+    // Assign a pointer to the vector
+    vector<string> *AtrisPtr = &AtrisInfoVector;
+    
 
     // Set Sprite attributes for created object, pass in FilePath for easier debugging, when during map/level construction.
-    AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, FilePath);
-    Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector, FilePath);
+    AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, AtrisPtr, FilePath);
+
+
+    HasAnimation = HelperObj.GetAtrisKeyValue_bool("HasAnimation", AtrisInfoVector, AtrisPtr, FilePath);
+    /*
+    if(HasAnimation == true)
+    {
+        AnimationFrameAmount = HelperObj.GetAtrisKeyValue...
+    }
+    */
     
+
+    Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector, AtrisPtr, FilePath);
+    /*
+    if(Collision == true)
+    {
+        CollisionSize = HelperObj.GetAtrisKeyValue...
+    }
+    */
+
     // !!!
     cout << "New Val: " << +AnimationFrameAmount << endl;
     cout << "New Col: " << Collision << endl;
-
+    cout << "New HasAni: " << HasAnimation << "\n" << endl;
 
 
     /*
