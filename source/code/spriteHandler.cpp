@@ -24,19 +24,19 @@ HelperFunctions HelperObj;
 
 
 // Class Functions
-void Sprite::LoadImageTexture(unsigned int *Texture)
+void Sprite::LoadImageTexture(unsigned int Texture)
 {
-    glGenTextures(1, &*Texture);
-    glBindTexture(GL_TEXTURE_2D, *Texture);
+    glGenTextures(1, &Texture);
+    glBindTexture(GL_TEXTURE_2D, Texture);
 
     // set the texture wrapping/filtering options (on the currently bound texture object)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // load and generate the texture
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("source/textures/dummy.png", &width, &height, &nrChannels, 0);
 
-    if (data)
+    if(data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -58,7 +58,6 @@ void Sprite::LoadSpriteFile(string FilePath)
     string NoSpacesInfo;
 
     vector<string> AtrisInfoVector;
-
 
     // Open File
     ifstream ReadSpriteFile(FilePath);
@@ -94,16 +93,17 @@ void Sprite::LoadSpriteFile(string FilePath)
     
 
     Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector, AtrisPtr, FilePath);
-    /*
+
     if(Collision == true)
     {
-        CollisionSize = HelperObj.GetAtrisKeyValue...
+        CollisionBox = HelperObj.GetAtrisKeyValue_vector("CollisionBox", AtrisInfoVector, AtrisPtr, FilePath);
+        cout << "New Col: " << Collision << endl;
+        cout << "New ColBox: " << CollisionBox[0] << ", " << CollisionBox[1] << endl;
     }
-    */
+
 
     // !!!
     cout << "New Val: " << +AnimationFrameAmount << endl;
-    cout << "New Col: " << Collision << endl;
     cout << "New HasAni: " << HasAnimation << "\n" << endl;
 
 

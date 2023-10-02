@@ -36,16 +36,16 @@ vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
     // Run through all the content of the file, and check for delimiters.
     for(int Char = 0; Char < String.length();)
     {   
-        // Check if the character is the delimiter ';'.
+        // Check if the character is the delimiter.
         if(String[Char] == Delimiter)
         {
-            // Line until the delimiter into a vector.
+            // Push the line until the delimiter into a vector.
             SplitStringVector.push_back(String.substr(0, Char));
 
             // Erase that part of the string
             String.erase(0, Char+1);
             
-            // Reset the char counter, since all of the string up till this point have been erased.
+            // Reset the char counter, since all of the string up until this point have been erased.
             Char = 0;
         }
         else
@@ -204,4 +204,57 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
     // Because a key was not found throw exception.
     throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector, at: "+AtrisFilePath);
     return -1;
+}
+
+/* Given a key of type string and a vector containing the string, the function will return the value of the key as a vector. 
+If the key is not found, returns {0, 0}, if out of range of uint16_t throws exception. */
+vector<short> HelperFunctions::GetAtrisKeyValue_vector(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
+{   
+    // Return variable
+    vector<short> KeyValue;
+    vector<string> KeyValueString;
+
+    string KeyString;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
+
+                KeyValueString = SplitByDelimiter(KeyString, ',');
+
+                if(KeyValueString.size() != 2)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s values must be contained in a vector of size 2, at: "+AtrisFilePath);
+                }
+                
+                try
+                {   
+                    // Get values from key
+                    KeyValue.push_back(stoi(KeyValueString[0]));
+                    KeyValue.push_back(stoi(KeyValueString[1]));
+
+                }
+                catch(...)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s values are not of type uint16_t, at: "+AtrisFilePath);
+                }
+   
+                // Erase the string element that the key value pair was a part of, since it only have to be found once, this is to make the searching more efficient.
+                StringPtr->erase(StringPtr->begin()+StrNum);
+
+                return KeyValue;
+            }
+        }
+        StrNum++;
+    }
+
+    // Because a key was not found throw exception.
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector, at: "+AtrisFilePath);
+    return {0, 0};
 }

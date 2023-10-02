@@ -18,7 +18,8 @@ class Sprite
                 LoadSpriteFile(FilePath);
         }
 
-        void LoadImageTexture(unsigned int *Texture);
+// Texture loading
+        void LoadImageTexture(unsigned int Texture);
 
         
 // Sprite loading        
@@ -35,7 +36,7 @@ class Sprite
         bool Collision;
         
         // @NOTE: Perhaps not necesary, since the entire source texture size could be used as the collision box.
-        //uint16_t CollisionBox; 
+        vector<short> CollisionBox; 
 
 
 // Animation
