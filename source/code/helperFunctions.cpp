@@ -235,9 +235,6 @@ vector<short> HelperFunctions::GetAtrisKeyValue_vector(string Key, vector<string
 
                 SplitByDelimiter(KeyString, KeyValueStrPtr, ',');
 
-                cout << KeyValueString[0] << endl;
-                cout << KeyValueString[1] << endl;
-
                 if(KeyValueString.size() != 2)
                 {
                     throw invalid_argument("Key: "+string(Key)+"'s values must be contained in a vector of size 2, at: "+AtrisFilePath);
