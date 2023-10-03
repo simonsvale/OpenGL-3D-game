@@ -29,24 +29,28 @@ string HelperFunctions::RemoveSpaces(string String)
 }
 
 // Splits a string by a given character delimiter in ASCII, and returns the split string in a vector, without the delimiter.
-vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
+void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter)
 {
-    vector<string> SplitStringVector;
-
     // Run through all the content of the file, and check for delimiters.
     for(int Char = 0; Char < String.length();)
     {   
         // Check if the character is the delimiter.
         if(String[Char] == Delimiter)
         {
-            // Push the line until the delimiter into a vector.
-            SplitStringVector.push_back(String.substr(0, Char));
+            if(String[0] != Delimiter)
+            {
+                // Push the line until the delimiter into a vector.
+                SplitStrVecPtr->push_back(String.substr(0, Char));
+            }
 
-            // Erase that part of the string
-            String.erase(0, Char+1);
+            // Set the new string
+            String = String.substr(Char+1, String.size());
+
+            // Run the function recursivly until the divide step have been completed.
+            SplitByDelimiter(String, SplitStrVecPtr, Delimiter);
             
-            // Reset the char counter, since all of the string up until this point have been erased.
-            Char = 0;
+            // break the for loop.
+            return;
         }
         else
         {
@@ -54,7 +58,8 @@ vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
         }
     }
     
-    return SplitStringVector;
+    // Will only reach when base case
+    SplitStrVecPtr->push_back(String.substr(0, String.length()));
 }
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
@@ -212,7 +217,9 @@ vector<short> HelperFunctions::GetAtrisKeyValue_vector(string Key, vector<string
 {   
     // Return variable
     vector<short> KeyValue;
+
     vector<string> KeyValueString;
+    vector<string> *KeyValueStrPtr = &KeyValueString;
 
     string KeyString;
 
@@ -226,7 +233,10 @@ vector<short> HelperFunctions::GetAtrisKeyValue_vector(string Key, vector<string
             {   
                 KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
 
-                KeyValueString = SplitByDelimiter(KeyString, ',');
+                SplitByDelimiter(KeyString, KeyValueStrPtr, ',');
+
+                cout << KeyValueString[0] << endl;
+                cout << KeyValueString[1] << endl;
 
                 if(KeyValueString.size() != 2)
                 {

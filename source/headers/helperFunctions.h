@@ -10,7 +10,7 @@ class HelperFunctions
         string RemoveSpaces(string String);
 
         // Function for splitting a string by a delimiter.
-        vector<string> SplitByDelimiter(string String, char Delimiter);
+        void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter);
 
         // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
         int GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);

@@ -59,6 +59,10 @@ void Sprite::LoadSpriteFile(string FilePath)
 
     vector<string> AtrisInfoVector;
 
+    // Assign a pointer to the vector
+    vector<string> *AtrisPtr = &AtrisInfoVector;
+
+
     // Open File
     ifstream ReadSpriteFile(FilePath);
 
@@ -72,12 +76,14 @@ void Sprite::LoadSpriteFile(string FilePath)
     // Close file
     ReadSpriteFile.close();
 
-    // Split file by delimiter ';' 
-    AtrisInfoVector = HelperObj.SplitByDelimiter(NoSpacesInfo, ';');
+    // Split the string by delimiter ;
+    HelperObj.SplitByDelimiter(NoSpacesInfo, AtrisPtr, ';');
 
-    // Assign a pointer to the vector
-    vector<string> *AtrisPtr = &AtrisInfoVector;
-    
+    for(int test = 0; test < AtrisInfoVector.size();)
+    {
+        cout << AtrisInfoVector[test] << endl;
+        test++;
+    }
 
     // Set Sprite attributes for created object, pass in FilePath for easier debugging, when during map/level construction.
     AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, AtrisPtr, FilePath);
