@@ -28,28 +28,40 @@ string HelperFunctions::RemoveSpaces(string String)
     return ReturnString;
 }
 
-// Splits a string by a given character delimiter in ASCII, and returns the split string in a vector, without the delimiter.
+/** 
+  *  Splits a `string` by a given delimiter of type `char` in ASCII, and takes the substrings created by the split and pushes them into a `std::vector<std::string>`, without the delimiter, using a pointer.
+  * 
+  *  @param std::string `String`, any string with `String.length()` >= 0.
+  *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
+  *  @param char Delimiter, any cha
+  *
+  *  @return void
+*/
 void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter)
 {
-    // Run through all the content of the file, and check for delimiters.
+    // Run through the string, and check for the given delimiter.
     for(int Char = 0; Char < String.length();)
     {   
         // Check if the character is the delimiter.
         if(String[Char] == Delimiter)
         {
+            // Check if the first character is a delimiter
             if(String[0] != Delimiter)
             {
-                // Push the line until the delimiter into a vector.
+                // Push the substring until the delimiter, excluding the delimiter, into a vector using a pointer.
                 SplitStrVecPtr->push_back(String.substr(0, Char));
             }
 
-            // Set the new string
+            // Create a substring to the right of the delimiter, excluding the delimiter.
             String = String.substr(Char+1, String.size());
 
-            // Run the function recursivly until the divide step have been completed.
+            /* 
+                Run the function with this new substring, since this is recursive function, 
+                at some point, the case where no delimiters are found is reached. And the function terminates.
+            */
             SplitByDelimiter(String, SplitStrVecPtr, Delimiter);
             
-            // break the for loop.
+            // Terminate this recursive step of the function.
             return;
         }
         else
