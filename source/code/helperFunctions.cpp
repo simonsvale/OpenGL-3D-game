@@ -7,8 +7,15 @@
 
 using namespace std;
 
-// Function for removing spaces in strings
-string HelperFunctions::RemoveSpaces(string String)
+/** 
+  *  Removes all of a given ASCII character from the given `string`.
+  * 
+  *  @param std::string `String`, any string with `String.length()` >= 0.
+  *  @param char `Char`, any ASCII character. 
+  *
+  *  @return `std::string`, returns the input `String` without the given Char.
+*/
+string HelperFunctions::RemoveChar(string String, char Char)
 {
     string ReturnString;
 
@@ -16,7 +23,7 @@ string HelperFunctions::RemoveSpaces(string String)
     for(int CharNum = 0; CharNum < String.length();)
     {   
         // Check if the element is a string.
-        if(String[CharNum] != ' ')
+        if(String[CharNum] != Char)
         {   
             // If it is not, push it to the the return string.
             ReturnString.push_back(String[CharNum]);
@@ -25,6 +32,7 @@ string HelperFunctions::RemoveSpaces(string String)
         CharNum++;
     }
     
+    // Return string without the Char(s).
     return ReturnString;
 }
 
@@ -33,7 +41,7 @@ string HelperFunctions::RemoveSpaces(string String)
   * 
   *  @param std::string `String`, any string with `String.length()` >= 0.
   *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
-  *  @param char Delimiter, any cha
+  *  @param char Delimiter, any ASCII character.
   *
   *  @return void
 */

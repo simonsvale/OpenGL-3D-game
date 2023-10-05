@@ -70,7 +70,7 @@ void Sprite::LoadSpriteFile(string FilePath)
     while(getline(ReadSpriteFile, AtrisFileLine))
     {   
         // Add line to variable
-        NoSpacesInfo += HelperObj.RemoveSpaces(AtrisFileLine);
+        NoSpacesInfo += HelperObj.RemoveChar(AtrisFileLine, ' ');
     }
 
     // Close file
@@ -98,7 +98,7 @@ void Sprite::LoadSpriteFile(string FilePath)
     if(Collision == true)
     {
         CollisionBox = HelperObj.GetAtrisKeyValue_vector("CollisionBox", AtrisInfoVector, AtrisPtr, FilePath);
-        cout << "New ColBox: " << CollisionBox[0] << ", " << CollisionBox[1] << endl;
+        cout << "New ColBox: " << CollisionBox[0] << "," << CollisionBox[1] << endl;
     }
 
 

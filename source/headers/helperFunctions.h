@@ -7,7 +7,7 @@ class HelperFunctions
 {
     public:
         // A function for removing spaces in a string.
-        string RemoveSpaces(string String);
+        string RemoveChar(string String, char Char);
 
         // Function for splitting a string by a delimiter.
         void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter);
