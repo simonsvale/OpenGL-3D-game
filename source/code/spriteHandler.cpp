@@ -80,32 +80,34 @@ void Sprite::LoadSpriteFile(string FilePath)
     HelperObj.SplitByDelimiter(NoSpacesInfo, AtrisPtr, ';');
 
     // Set Sprite attributes for created object, pass in FilePath for easier debugging, when during map/level construction.
-    AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, AtrisPtr, FilePath);
-
-
     HasAnimation = HelperObj.GetAtrisKeyValue_bool("HasAnimation", AtrisInfoVector, AtrisPtr, FilePath);
-    /*
+
+    // DEBUG
+    cout << "HasAnimation: " << HasAnimation << endl;
     if(HasAnimation == true)
     {
-        AnimationFrameAmount = HelperObj.GetAtrisKeyValue...
+        AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, AtrisPtr, FilePath);
+
+        // DEBUG
+        cout << "AnimationFrameAmount: " << +AnimationFrameAmount << endl;
     }
-    */
-    
+   
 
     Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector, AtrisPtr, FilePath);
-    cout << "New Col: " << Collision << endl;
 
+    // DEBUG
+    cout << "Collision: " << Collision << endl;
     if(Collision == true)
     {
         CollisionBox = HelperObj.GetAtrisKeyValue_vector("CollisionBox", AtrisInfoVector, AtrisPtr, FilePath);
-        cout << "New ColBox: " << CollisionBox[0] << "," << CollisionBox[1] << endl;
+
+        // DEBUG
+        cout << "CollisionBox: " << CollisionBox[0] << "," << CollisionBox[1] << endl;
     }
 
 
-    // !!!
-    cout << "New Val: " << +AnimationFrameAmount << endl;
-    cout << "New HasAni: " << HasAnimation << "\n" << endl;
-
+    // DEBUG end info display
+    cout << "\n" << endl;
 
     /*
     // DEBUG !!!
