@@ -1,3 +1,6 @@
+#ifndef SPRITE_HANDLER_H
+#define SPRITE_HANDLER_H
+
 #include <vector>
 #include <string>
 
@@ -127,3 +130,5 @@ class LightSource: public Sprite
         int CalcLightSourceDropoffRate();
 
 };
+
+#endif
