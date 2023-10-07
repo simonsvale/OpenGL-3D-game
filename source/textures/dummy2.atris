@@ -1,5 +1,7 @@
-Collision = true;
+Collision = false;
 
 HasAnimation = true;
 
 AnimationFrameAmount = 251;
+
+CollisionBox = 1501, 12413;

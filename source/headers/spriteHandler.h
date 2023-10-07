@@ -8,7 +8,6 @@ using namespace std;
 class Sprite
 {
     private:
-        unsigned char LoadImageTexture();
 
     public:
 
@@ -19,6 +18,8 @@ class Sprite
                 LoadSpriteFile(FilePath);
         }
 
+// Texture loading
+        void LoadImageTexture(unsigned int Texture);
 
         
 // Sprite loading        
@@ -35,7 +36,7 @@ class Sprite
         bool Collision;
         
         // @NOTE: Perhaps not necesary, since the entire source texture size could be used as the collision box.
-        //uint16_t CollisionBox; 
+        vector<short> CollisionBox; 
 
 
 // Animation

@@ -7,8 +7,15 @@
 
 using namespace std;
 
-// Function for removing spaces in strings
-string HelperFunctions::RemoveSpaces(string String)
+/** 
+  *  Removes all of a given ASCII character from the given `string`.
+  * 
+  *  @param std::string `String`, any string with `String.length()` >= 0.
+  *  @param char `Char`, any ASCII character. 
+  *
+  *  @return `std::string`, returns the input `String` without the given Char.
+*/
+string HelperFunctions::RemoveChar(string String, char Char)
 {
     string ReturnString;
 
@@ -16,7 +23,7 @@ string HelperFunctions::RemoveSpaces(string String)
     for(int CharNum = 0; CharNum < String.length();)
     {   
         // Check if the element is a string.
-        if(String[CharNum] != ' ')
+        if(String[CharNum] != Char)
         {   
             // If it is not, push it to the the return string.
             ReturnString.push_back(String[CharNum]);
@@ -25,28 +32,45 @@ string HelperFunctions::RemoveSpaces(string String)
         CharNum++;
     }
     
+    // Return string without the Char(s).
     return ReturnString;
 }
 
-// Splits a string by a given character delimiter in ASCII, and returns the split string in a vector, without the delimiter.
-vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
+/** 
+  *  Splits a `string` by a given delimiter of type `char` in ASCII, and takes the substrings created by the split and pushes them into a `std::vector<std::string>`, without the delimiter, using a pointer.
+  * 
+  *  @param std::string `String`, any string with `String.length()` >= 0.
+  *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
+  *  @param char Delimiter, any ASCII character.
+  *
+  *  @return void
+*/
+void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter)
 {
-    vector<string> SplitStringVector;
-
-    // Run through all the content of the file, and check for delimiters.
+    // Run through the string, and check for the given delimiter.
     for(int Char = 0; Char < String.length();)
     {   
-        // Check if the character is the delimiter ';'.
+        // Check if the character is the delimiter.
         if(String[Char] == Delimiter)
         {
-            // Line until the delimiter into a vector.
-            SplitStringVector.push_back(String.substr(0, Char));
+            // Check if the first character is a delimiter
+            if(String[0] != Delimiter)
+            {
+                // Push the substring until the delimiter, excluding the delimiter, into a vector using a pointer.
+                SplitStrVecPtr->push_back(String.substr(0, Char));
+            }
 
-            // Erase that part of the string
-            String.erase(0, Char+1);
+            // Create a substring to the right of the delimiter, excluding the delimiter.
+            String = String.substr(Char+1, String.size());
+
+            /* 
+                Run the function with this new substring, since this is recursive function, 
+                at some point, the case where no delimiters are found is reached. And the function terminates.
+            */
+            SplitByDelimiter(String, SplitStrVecPtr, Delimiter);
             
-            // Reset the char counter, since all of the string up till this point have been erased.
-            Char = 0;
+            // Terminate this recursive step of the function.
+            return;
         }
         else
         {
@@ -54,12 +78,13 @@ vector<string> HelperFunctions::SplitByDelimiter(string String, char Delimiter)
         }
     }
     
-    return SplitStringVector;
+    // Will only reach when base case
+    SplitStrVecPtr->push_back(String.substr(0, String.length()));
 }
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
-int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, string AtrisFilePath)
+int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
 {   
     // Return variable
     int KeyValue;
@@ -87,7 +112,10 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
                 {
                     throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint8_t (0 - 255), at: "+AtrisFilePath);
                 }
-                
+
+                // Erase the string element that the key value pair was a part of, since it only have to be found once, this is to make the searching more efficient.
+                StringPtr->erase(StringPtr->begin()+StrNum);
+
                 return KeyValue;
             }
         }
@@ -101,7 +129,7 @@ int HelperFunctions::GetAtrisKeyValue_uint8_t(string Key, vector<string> StringV
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint16_t throw exception. */
-int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, string AtrisFilePath)
+int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
 {   
     // Return variable
     int KeyValue;
@@ -129,6 +157,9 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
                 {
                     throw out_of_range("Key: "+string(Key)+"'s value is out of range of type uint16_t (0 - 65535), at: "+AtrisFilePath);
                 }
+
+                // Erase the string element that the key value pair was a part of, since it only have to be found once, this is to make the searching more efficient.
+                StringPtr->erase(StringPtr->begin()+StrNum);
                 
                 return KeyValue;
             }
@@ -143,7 +174,7 @@ int HelperFunctions::GetAtrisKeyValue_uint16_t(string Key, vector<string> String
 
 /* Given a key of type string and a vector containing the string, the function will return the boolean of the key. 
 If the key is not found, returns -1. */
-bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVector, string AtrisFilePath)
+bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
 {   
     // Return variable
     bool KeyValue;
@@ -154,6 +185,7 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
     {   
         if(StringVector[StrNum].length() >= Key.length())
         {
+            
             // Check for key in string
             if((StringVector[StrNum].find(Key) != string::npos) == true)
             {   
@@ -163,21 +195,26 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
                 // Check for true, True, 1, false, False, 0.
                 if((KeyString == "false") || (KeyString == "False"))
                 {
+                    // Erase string in ptr to AtrisInfoVector.
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return false;
                 }
 
                 if((KeyString == "true") || (KeyString == "True"))
                 {
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return true;
                 }
                 
                 if(KeyString == "1")
                 {
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return true;
                 }
 
                 if(KeyString == "0")
                 {
+                    StringPtr->erase(StringPtr->begin()+StrNum);
                     return false;
                 }
                 else
@@ -192,4 +229,59 @@ bool HelperFunctions::GetAtrisKeyValue_bool(string Key, vector<string> StringVec
     // Because a key was not found throw exception.
     throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector, at: "+AtrisFilePath);
     return -1;
+}
+
+/* Given a key of type string and a vector containing the string, the function will return the value of the key as a vector. 
+If the key is not found, returns {0, 0}, if out of range of uint16_t throws exception. */
+vector<short> HelperFunctions::GetAtrisKeyValue_vector(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath)
+{   
+    // Return variable
+    vector<short> KeyValue;
+
+    vector<string> KeyValueString;
+    vector<string> *KeyValueStrPtr = &KeyValueString;
+
+    string KeyString;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
+
+                SplitByDelimiter(KeyString, KeyValueStrPtr, ',');
+
+                if(KeyValueString.size() != 2)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s values must be contained in a vector of size 2, at: "+AtrisFilePath);
+                }
+                
+                try
+                {   
+                    // Get values from key
+                    KeyValue.push_back(stoi(KeyValueString[0]));
+                    KeyValue.push_back(stoi(KeyValueString[1]));
+
+                }
+                catch(...)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s values are not of type uint16_t, at: "+AtrisFilePath);
+                }
+   
+                // Erase the string element that the key value pair was a part of, since it only have to be found once, this is to make the searching more efficient.
+                StringPtr->erase(StringPtr->begin()+StrNum);
+
+                return KeyValue;
+            }
+        }
+        StrNum++;
+    }
+
+    // Because a key was not found throw exception.
+    throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector, at: "+AtrisFilePath);
+    return {0, 0};
 }
