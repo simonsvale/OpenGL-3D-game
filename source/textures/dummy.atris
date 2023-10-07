@@ -1,6 +1,6 @@
 Collision = true;
 
-HasAnimation = false;
+HasAnimation = true;
 
 CollisionBox = 15, 16;
 

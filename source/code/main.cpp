@@ -16,25 +16,23 @@
 
 using namespace std;
 
-
 // Window width and height
-const int WIDTH = 800, HEIGHT = 600;
+const int WIDTH = 800, HEIGHT = 800;
 
 // Vertecies to be rendered by OpenGL.
 float Square[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
+    // Verticies                // Colors
+    0.5f,  0.5f, 0.0f,       1.0f,  0.0f, 0.0f,            
+    0.5f, -0.5f, 0.0f,       0.0f,  1.0f, 0.0f,        
+   -0.5f, -0.5f, 0.0f,       0.0f,  0.0f, 1.0f,   
+   -0.5f,  0.5f, 0.0f,       1.0f,  1.0f, 1.0f      
 };
 
-float TexSquare[] = 
-{
-    // positions          // colors           // texture coords
-     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+float TexSquare[] = {
+    0.0f, 0.0f, 0.0f,  // top right
+    1.0f, 0.0f, 0.0f,  // bottom right
+    0.0f, 1.0f, 0.0f,  // bottom left
+    1.0f, 1.0f, 0.0f   // top left 
 };
 
 float line[] =
@@ -45,36 +43,31 @@ float line[] =
 
 // Indices creating a square from two tringale vertecies.
 unsigned int indices[] = {
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle.
+    0, 2, 1,   // first triangle
+    0, 3, 2    // second triangle.
 }; 
 
 // Vertex shader
 const char *myVertexShader = 
-    "#version 410 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
+    "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"  
     "layout (location = 1) in vec3 aColor;\n"
-    "layout (location = 2) in vec2 aTexCoord;\n"
-    "out vec3 ourColor;\n"
-    "out vec2 TexCoord;\n"
+    "out vec3 ourColor;\n" 
     "void main()\n"
     "{\n"
         "gl_Position = vec4(aPos, 1.0);\n"
-        "ourColor = aColor;\n"
-        "TexCoord = aTexCoord;\n"
+        "ourColor = aColor;\n"     
     "}\0";
 
 // Fragment shader
 const char *myFragmentShader = 
-"#version 410 core\n"
-"out vec4 FragColor;\n"
-"in vec3 ourColor;\n"
-"in vec2 TexCoord;\n"
-"uniform sampler2D ourTexture;\n"
-"void main()\n"
-"{\n"
-    "FragColor = texture(ourTexture, TexCoord);\n"
-"}\0";
+    "#version 330 core\n"
+    "out vec4 FragColor;\n"  
+    "in vec3 ourColor;\n"
+    "void main()\n"
+    "{\n"
+        "FragColor = vec4(ourColor, 1.0);\n"
+    "}\0";
 
 int main(int argc, char **argv) 
 {
@@ -86,7 +79,13 @@ int main(int argc, char **argv)
     // !!!
     Sprite SpriteObj_1("source/textures/dummy.atris");
     Sprite SpriteObj_2("source/textures/dummy2.atris");
-    
+
+    /*
+    // Run method
+    SpriteObj_1.LoadSpriteFile("source/textures/dummy.atris");
+
+    SpriteObj_2.LoadSpriteFile("source/textures/dummy2.atris");
+    */
 
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -126,10 +125,6 @@ int main(int argc, char **argv)
         return 1; 
     }
 
-    unsigned int Texture;
-    SpriteObj_1.LoadImageTexture(Texture);
-
-
     // Initialize VBO (Vertex Buffer Object)
     GLuint VBO = 0;
     glGenBuffers(1, &VBO);
@@ -139,15 +134,20 @@ int main(int argc, char **argv)
 
     // Write the data that the VBO should contain
     glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(Square), Square, GL_STATIC_DRAW); // x * sizeof(Vertex_list), where x is the total amount of floats, and vertex_list is a list containing them.
-    
+
 
     // Initialize VAO (Vertex Array Object)
     GLuint VAO = 0;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);  
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
+
 
     // Initialize EBO (Element Buffer Objects)
     GLuint EBO;
@@ -170,11 +170,12 @@ int main(int argc, char **argv)
     glCompileShader(basic_fragment_shader);
 
 
-    // Start shader program with OpenGL, and attach the shaders and link the program
+    // Start shader programme with OpenGL, and attach the shaders and link the program
     GLuint shader_program = glCreateProgram();
     glAttachShader(shader_program, basic_fragment_shader);
     glAttachShader(shader_program, basic_vertex_shader);
     glLinkProgram(shader_program);
+
 
 
     SDL_Event windowEvent;
@@ -199,8 +200,6 @@ int main(int argc, char **argv)
         // Set viewport
         glViewport(0, 0, WIDTH, HEIGHT);
 
-
-        float greenValue = 0.5f;
         int vertexColorLocation = glGetUniformLocation(shader_program, "ourColor");
 
         while(SDL_PollEvent(&windowEvent) != 0)
@@ -214,18 +213,15 @@ int main(int argc, char **argv)
             Mode = OptionsObj.ToggleRenderMode(Mode, windowEvent);
 
         }
-        
+
         // background color
-        glClearColor(1.0f, 0.4f, 0.2f, 1.0f);
+        glClearColor(0.03f, 0.1f, 0.24f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // Use the previously specified shader program, bind the vertex array to VAO and bind the EBO to a OpenGL buffer.
         glUseProgram(shader_program);
-
-        glBindTexture(GL_TEXTURE_2D, Texture);
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
 
         glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
