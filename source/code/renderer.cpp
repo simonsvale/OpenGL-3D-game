@@ -2,29 +2,25 @@
 #include <glad/glad.h>
 
 #include <iostream>
+#include <string>
 
 #include "renderer.h"
+
+using namespace std;
+
+
+void LoadShader(const char *Shader, string FilePath)
+{
+
+}
+
+
+
+
 
 void Renderer::RenderEverything()
 {
 
-// Pseudo code
-
-/*
-    Parameter: Array of sprites to be rendered
-
-
-    for all elements in array
-        
-
-
-
-
-
-
-
-
-*/ 
 }
 
 
