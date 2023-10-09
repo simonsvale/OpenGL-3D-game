@@ -21,24 +21,11 @@ const int WIDTH = 800, HEIGHT = 800;
 
 // Vertecies to be rendered by OpenGL.
 float Square[] = {
-    // Verticies                // Colors
-    0.5f,  0.5f, 0.0f,       1.0f,  0.0f, 0.0f,            
-    0.5f, -0.5f, 0.0f,       0.0f,  1.0f, 0.0f,        
-   -0.5f, -0.5f, 0.0f,       0.0f,  0.0f, 1.0f,   
-   -0.5f,  0.5f, 0.0f,       1.0f,  1.0f, 1.0f      
-};
-
-float TexSquare[] = {
-    0.0f, 0.0f, 0.0f,  // top right
-    1.0f, 0.0f, 0.0f,  // bottom right
-    0.0f, 1.0f, 0.0f,  // bottom left
-    1.0f, 1.0f, 0.0f   // top left 
-};
-
-float line[] =
-{
-    200, 100, 0,
-    100, 300, 0
+    // Verticies                // Colors               // Texture
+  -0.5f,-0.5f, 0.0f,       1.0f,  0.0f, 0.0f,         0.0f, 0.0f,       
+  -0.5f, 0.5f, 0.0f,       0.0f,  1.0f, 0.0f,         0.0f, 1.0f,
+   0.5f, 0.5f, 0.0f,       0.0f,  0.0f, 1.0f,         1.0f, 1.0f,
+   0.5f,-0.5f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
 };
 
 // Indices creating a square from two tringale vertecies.
@@ -49,24 +36,29 @@ unsigned int indices[] = {
 
 // Vertex shader
 const char *myVertexShader = 
-    "#version 330 core\n"
+    "#version 410 core\n"
     "layout (location = 0) in vec3 aPos;\n"  
     "layout (location = 1) in vec3 aColor;\n"
+    "layout (location = 2) in vec2 aTex;\n"
     "out vec3 ourColor;\n" 
+    "out vec2 texCoord;\n"
     "void main()\n"
     "{\n"
         "gl_Position = vec4(aPos, 1.0);\n"
-        "ourColor = aColor;\n"     
+        "ourColor = aColor;\n"   
+        "texCoord = aTex;"  
     "}\0";
 
 // Fragment shader
 const char *myFragmentShader = 
-    "#version 330 core\n"
+    "#version 410 core\n"
     "out vec4 FragColor;\n"  
     "in vec3 ourColor;\n"
+    "in vec2 texCoord;\n"
+    "uniform sampler2D tex0;\n"
     "void main()\n"
     "{\n"
-        "FragColor = vec4(ourColor, 1.0);\n"
+        "FragColor = texture(tex0, texCoord);\n"
     "}\0";
 
 int main(int argc, char **argv) 
@@ -142,12 +134,14 @@ int main(int argc, char **argv)
     glBindVertexArray(VAO);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6* sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     // Initialize EBO (Element Buffer Objects)
     GLuint EBO;
@@ -174,13 +168,32 @@ int main(int argc, char **argv)
     GLuint shader_program = glCreateProgram();
     glAttachShader(shader_program, basic_fragment_shader);
     glAttachShader(shader_program, basic_vertex_shader);
-    glLinkProgram(shader_program);
-
-
 
     SDL_Event windowEvent;
 
-    float greenValue;
+    // Set textures:
+    int widthImg, heightImg, numColCh;
+
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* bytes = stbi_load("source/textures/debug.png", &widthImg, &heightImg, &numColCh, 0);
+
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+
+    stbi_image_free(bytes);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    GLuint tex0Uni = glGetUniformLocation(shader_program, "tex0");
+    glLinkProgram(shader_program);
+    
+    glUniform1i(tex0Uni, 0);
 
     // Setup variables for maintaining 60 fps
     int FrameTimeTotal;
@@ -220,10 +233,11 @@ int main(int argc, char **argv)
 
         // Use the previously specified shader program, bind the vertex array to VAO and bind the EBO to a OpenGL buffer.
         glUseProgram(shader_program);
+
+        glBindTexture(GL_TEXTURE_2D, texture);
+
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
         // Draw the 6 vertecies of the 2 triangles that makes up the square.
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
