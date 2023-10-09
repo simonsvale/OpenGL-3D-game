@@ -1,3 +1,6 @@
+#ifndef HELPER_FUNCTIONS_H
+#define HELPER_FUNCTIONS_H
+
 #include <string>
 #include <vector>
 
@@ -22,3 +25,5 @@ class HelperFunctions
         bool GetAtrisKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
 
 };
+
+#endif
