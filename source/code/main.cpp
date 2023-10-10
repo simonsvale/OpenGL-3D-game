@@ -13,6 +13,7 @@
 #include "options.h"
 #include "structures.h"
 #include "spriteHandler.h"
+#include "renderer.h"
 
 using namespace std;
 
@@ -28,7 +29,15 @@ float Square[] = {
    0.5f,-0.5f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
 };
 
-// Indices creating a square from two tringale vertecies.
+float Square2[] = {
+    // Verticies                // Colors               // Texture
+  -0.5f,-0.5f, 0.0f,       1.0f,  0.0f, 0.0f,         0.0f, 0.0f,       
+  -0.5f, 0.5f, 0.0f,       0.0f,  1.0f, 0.0f,         0.0f, 1.0f,
+   0.5f, 0.5f, 0.0f,       0.0f,  0.0f, 1.0f,         1.0f, 1.0f,
+   0.5f,-0.5f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
+};
+
+// Indices creating a square from two triangle vertecies.
 unsigned int indices[] = {
     0, 2, 1,   // first triangle
     0, 3, 2    // second triangle.
@@ -67,17 +76,11 @@ int main(int argc, char **argv)
 
     // !!!
     Options OptionsObj;
+    Renderer RenderObj;
 
     // !!!
     Sprite SpriteObj_1("source/textures/dummy.atris");
     Sprite SpriteObj_2("source/textures/dummy2.atris");
-
-    /*
-    // Run method
-    SpriteObj_1.LoadSpriteFile("source/textures/dummy.atris");
-
-    SpriteObj_2.LoadSpriteFile("source/textures/dummy2.atris");
-    */
 
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -166,34 +169,19 @@ int main(int argc, char **argv)
 
     // Start shader programme with OpenGL, and attach the shaders and link the program
     GLuint shader_program = glCreateProgram();
+    GLuint *ShaderProgramPtr = &shader_program;
+
     glAttachShader(shader_program, basic_fragment_shader);
     glAttachShader(shader_program, basic_vertex_shader);
 
     SDL_Event windowEvent;
 
-    // Set textures:
-    int widthImg, heightImg, numColCh;
 
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("source/textures/debug3.png", &widthImg, &heightImg, &numColCh, 0);
+    GLuint Texture;
+    GLuint *TexturePtr = &Texture;
 
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-
-    stbi_image_free(bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    GLuint tex0Uni = glGetUniformLocation(shader_program, "tex0");
-    glLinkProgram(shader_program);
-    
-    glUniform1i(tex0Uni, 0);
+    // Load texture (Working, but unfinished function).
+    RenderObj.LoadTexture(TexturePtr, ShaderProgramPtr, "source/textures/debug3.png");
 
     // Setup variables for maintaining 60 fps
     int FrameTimeTotal;
@@ -234,7 +222,7 @@ int main(int argc, char **argv)
         // Use the previously specified shader program, bind the vertex array to VAO and bind the EBO to a OpenGL buffer.
         glUseProgram(shader_program);
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindTexture(GL_TEXTURE_2D, Texture);
 
         glBindVertexArray(VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

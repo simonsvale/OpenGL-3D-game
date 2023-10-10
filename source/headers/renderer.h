@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <glad/glad.h>
 
 using namespace std;
 
@@ -14,6 +15,9 @@ class Renderer
 
         // Loads a shader from a seperate file.
         void LoadShader(const char *Shader, string FilePath);
+
+
+        void LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
 
 };
 
