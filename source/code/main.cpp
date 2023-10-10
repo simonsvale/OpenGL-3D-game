@@ -58,7 +58,7 @@ const char *myFragmentShader =
     "uniform sampler2D tex0;\n"
     "void main()\n"
     "{\n"
-        "FragColor = texture(tex0, texCoord);\n"
+        "FragColor = texture(tex0, texCoord) * vec4(ourColor, 1.0);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
     "}\0";
 
 int main(int argc, char **argv) 
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
     int widthImg, heightImg, numColCh;
 
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("source/textures/debug.png", &widthImg, &heightImg, &numColCh, 0);
+    unsigned char* bytes = stbi_load("source/textures/debug3.png", &widthImg, &heightImg, &numColCh, 0);
 
     GLuint texture;
     glGenTextures(1, &texture);
