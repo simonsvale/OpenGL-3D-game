@@ -146,7 +146,7 @@ int main(int argc, char **argv)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6* sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // Initialize EBO (Element Buffer Objects)
+    // Initialize EBO (Element Buffer Object)
     GLuint EBO;
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
@@ -167,21 +167,20 @@ int main(int argc, char **argv)
     glCompileShader(basic_fragment_shader);
 
 
-    // Start shader programme with OpenGL, and attach the shaders and link the program
-    GLuint shader_program = glCreateProgram();
-    GLuint *ShaderProgramPtr = &shader_program;
+    // Start shader program with OpenGL, attach the shaders and link the program
+    GLuint ShaderProgram = glCreateProgram();
+    GLuint *ShaderProgramPtr = &ShaderProgram;
 
-    glAttachShader(shader_program, basic_fragment_shader);
-    glAttachShader(shader_program, basic_vertex_shader);
+    glAttachShader(ShaderProgram, basic_fragment_shader);
+    glAttachShader(ShaderProgram, basic_vertex_shader);
 
     SDL_Event windowEvent;
-
 
     GLuint Texture;
     GLuint *TexturePtr = &Texture;
 
     // Load texture (Working, but unfinished function).
-    RenderObj.LoadTexture(TexturePtr, ShaderProgramPtr, "source/textures/debug3.png");
+    SpriteObj_1.LoadImageTexture(TexturePtr, ShaderProgramPtr, "source/textures/debug3.png");
 
     // Setup variables for maintaining 60 fps
     int FrameTimeTotal;
@@ -201,7 +200,7 @@ int main(int argc, char **argv)
         // Set viewport
         glViewport(0, 0, WIDTH, HEIGHT);
 
-        int vertexColorLocation = glGetUniformLocation(shader_program, "ourColor");
+        int vertexColorLocation = glGetUniformLocation(ShaderProgram, "ourColor");
 
         while(SDL_PollEvent(&windowEvent) != 0)
         {   
@@ -220,7 +219,7 @@ int main(int argc, char **argv)
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // Use the previously specified shader program, bind the vertex array to VAO and bind the EBO to a OpenGL buffer.
-        glUseProgram(shader_program);
+        glUseProgram(ShaderProgram);
 
         glBindTexture(GL_TEXTURE_2D, Texture);
 

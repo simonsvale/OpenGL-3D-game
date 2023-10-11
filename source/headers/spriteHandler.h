@@ -5,6 +5,7 @@
 #include <string>
 
 #include <STB/stb_image.h>
+#include <glad/glad.h>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ class Sprite
         }
 
 // Texture loading
-        void LoadImageTexture(unsigned int Texture);
+        void LoadImageTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
 
         
 // Sprite loading        
