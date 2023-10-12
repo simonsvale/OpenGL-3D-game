@@ -29,14 +29,6 @@ float Square[] = {
    0.5f,-0.5f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
 };
 
-float Square2[] = {
-    // Verticies                // Colors               // Texture
-  -0.5f,-0.5f, 0.0f,       1.0f,  0.0f, 0.0f,         0.0f, 0.0f,       
-  -0.5f, 0.5f, 0.0f,       0.0f,  1.0f, 0.0f,         0.0f, 1.0f,
-   0.5f, 0.5f, 0.0f,       0.0f,  0.0f, 1.0f,         1.0f, 1.0f,
-   0.5f,-0.5f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
-};
-
 // Indices creating a square from two triangle vertecies.
 unsigned int indices[] = {
     0, 2, 1,   // first triangle
@@ -121,7 +113,7 @@ int main(int argc, char **argv)
     }
 
     // Initialize VBO (Vertex Buffer Object)
-    GLuint VBO = 0;
+    GLuint VBO;
     glGenBuffers(1, &VBO);
 
     // Bind the VBO to an OpenGL array Buffer.
@@ -132,7 +124,7 @@ int main(int argc, char **argv)
 
 
     // Initialize VAO (Vertex Array Object)
-    GLuint VAO = 0;
+    GLuint VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 

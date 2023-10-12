@@ -13,8 +13,6 @@ class Renderer
     public:
         void RenderEverything();
 
-        // Loads a shader from a seperate file.
-        void LoadShader(const char *Shader, string FilePath);
 };
 
 #endif

@@ -24,7 +24,9 @@ void Sprite::LoadImageTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const c
     // Set textures:
     int widthImg, heightImg, numColCh;
 
+    // Should be placed in an init program function/method.
     stbi_set_flip_vertically_on_load(true);
+
     unsigned char* bytes = stbi_load(TexturePath, &widthImg, &heightImg, &numColCh, 0);
 
     glGenTextures(1, Texture);
