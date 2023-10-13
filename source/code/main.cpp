@@ -37,6 +37,20 @@ array<unsigned int, 6> indices = {
     0, 3, 2    // second triangle.
 }; 
 
+// !!!
+array<float, 32> Square2 = {
+    // Verticies                // Colors               // Texture
+  -1.0f,-1.0f, 0.0f,       1.0f,  0.0f, 0.0f,         0.0f, 0.0f,       
+  -0.5f, 0.5f, 0.0f,       0.0f,  1.0f, 0.0f,         0.0f, 1.0f,
+   1.0f, 1.0f, 0.0f,       0.0f,  0.0f, 1.0f,         1.0f, 1.0f,
+   0.2f,-0.2f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
+};
+
+array<unsigned int, 6> indices2 = {
+    0, 2, 1,   // first triangle
+    0, 3, 2    // second triangle.
+}; 
+
 // Vertex shader
 const char *myVertexShader = 
     "#version 410 core\n"
@@ -118,42 +132,7 @@ int main(int argc, char **argv)
 
     // Do graphics
     Graphics GraphicsObj_1(Square, indices);
-
-    /*
-    // Initialize VBO (Vertex Buffer Object)
-    GLuint VBO;
-    glGenBuffers(1, &VBO);
-
-    // Bind the VBO to an OpenGL array Buffer.
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    // Write the data that the VBO should contain
-    glBufferData(GL_ARRAY_BUFFER, 12 * sizeof(Square), Square, GL_STATIC_DRAW); // x * sizeof(Vertex_list), where x is the total amount of floats, and vertex_list is a list containing them.
-
-
-    // Initialize VAO (Vertex Array Object)
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6* sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    // Initialize EBO (Element Buffer Object)
-    GLuint EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-    // EBO's can be used to make complex structures from vertecies, here we use the indicies list to store a square, created from 2 triangles.
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
-    */
+    Graphics GraphicsObj_2(Square2, indices2);
 
     // Initialize vertex shader
     GLuint basic_vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -182,6 +161,10 @@ int main(int argc, char **argv)
     // Load texture (Working, but unfinished function).
     GraphicsObj_1.LoadTexture(TexturePtr, ShaderProgramPtr, "source/textures/debug3.png");
 
+    GLuint Texture2;
+    GLuint *TexturePtr2 = &Texture2;
+
+    GraphicsObj_2.LoadTexture(TexturePtr2, ShaderProgramPtr, "source/textures/debug2.png");
 
     // Setup variables for maintaining 60 fps
     int FrameTimeTotal;
@@ -221,14 +204,22 @@ int main(int argc, char **argv)
 
         // Use the previously specified shader program, bind the vertex array to VAO and bind the EBO to a OpenGL buffer.
         glUseProgram(ShaderProgram);
+       
 
+        //!!!
+        glBindTexture(GL_TEXTURE_2D, Texture2);
+        glBindVertexArray(GraphicsObj_2.VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_2.EBO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        // Draw elements for obj_1
         glBindTexture(GL_TEXTURE_2D, Texture);
 
         glBindVertexArray(GraphicsObj_1.VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_1.EBO);
 
-        // Draw the 6 vertecies of the 2 triangles that makes up the square.
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 
         // Update the SDL OpenGL window.
         SDL_GL_SwapWindow(window);
