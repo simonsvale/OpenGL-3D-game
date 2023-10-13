@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-#include <STB/stb_image.h>
 #include <glad/glad.h>
 
 using namespace std;
@@ -23,7 +22,7 @@ class Sprite
         }
 
 // Texture loading
-        void LoadImageTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
+        // Have been moved to the GraphicsHandler class.
 
         
 // Sprite loading        

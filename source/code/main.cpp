@@ -4,6 +4,7 @@
 // Include build-in libraries
 #include <iostream>
 #include <cmath>
+#include <array>
 
 // Include SDL2 and OpenGL headers
 #include <SDL2/SDL.h>
@@ -14,6 +15,7 @@
 #include "structures.h"
 #include "spriteHandler.h"
 #include "renderer.h"
+#include "graphicsHandler.h"
 
 using namespace std;
 
@@ -21,7 +23,7 @@ using namespace std;
 const int WIDTH = 800, HEIGHT = 800;
 
 // Vertecies to be rendered by OpenGL.
-float Square[] = {
+array<float, 32> Square = {
     // Verticies                // Colors               // Texture
   -0.5f,-0.5f, 0.0f,       1.0f,  0.0f, 0.0f,         0.0f, 0.0f,       
   -0.5f, 0.5f, 0.0f,       0.0f,  1.0f, 0.0f,         0.0f, 1.0f,
@@ -30,7 +32,7 @@ float Square[] = {
 };
 
 // Indices creating a square from two triangle vertecies.
-unsigned int indices[] = {
+array<unsigned int, 6> indices = {
     0, 2, 1,   // first triangle
     0, 3, 2    // second triangle.
 }; 
@@ -74,6 +76,8 @@ int main(int argc, char **argv)
     Sprite SpriteObj_1("source/textures/dummy.atris");
     Sprite SpriteObj_2("source/textures/dummy2.atris");
 
+    cout << "hello2" << endl;
+
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -112,6 +116,10 @@ int main(int argc, char **argv)
         return 1; 
     }
 
+    // Do graphics
+    Graphics GraphicsObj_1(Square, indices);
+
+    /*
     // Initialize VBO (Vertex Buffer Object)
     GLuint VBO;
     glGenBuffers(1, &VBO);
@@ -145,7 +153,7 @@ int main(int argc, char **argv)
 
     // EBO's can be used to make complex structures from vertecies, here we use the indicies list to store a square, created from 2 triangles.
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); 
-
+    */
 
     // Initialize vertex shader
     GLuint basic_vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -172,7 +180,8 @@ int main(int argc, char **argv)
     GLuint *TexturePtr = &Texture;
 
     // Load texture (Working, but unfinished function).
-    SpriteObj_1.LoadImageTexture(TexturePtr, ShaderProgramPtr, "source/textures/debug3.png");
+    GraphicsObj_1.LoadTexture(TexturePtr, ShaderProgramPtr, "source/textures/debug3.png");
+
 
     // Setup variables for maintaining 60 fps
     int FrameTimeTotal;
@@ -215,8 +224,8 @@ int main(int argc, char **argv)
 
         glBindTexture(GL_TEXTURE_2D, Texture);
 
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBindVertexArray(GraphicsObj_1.VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_1.EBO);
 
         // Draw the 6 vertecies of the 2 triangles that makes up the square.
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
