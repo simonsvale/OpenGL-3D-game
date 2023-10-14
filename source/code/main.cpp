@@ -79,7 +79,7 @@ const char *myFragmentShader =
         "FragColor = texture(tex0, texCoord) * vec4(ourColor, 1.0);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
     "}\0";
 
-// Fragment Shader 2
+// Fragment Shader 2 (test)
 const char *myFragmentShader2 = 
     "#version 410 core\n"
     "out vec4 FragColor;\n"  
@@ -88,7 +88,7 @@ const char *myFragmentShader2 =
     "uniform sampler2D tex0;\n"
     "void main()\n"
     "{\n"
-        "FragColor = texture(tex0, texCoord) * vec4(1.0,0.0,1.0,0.4);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
+        "FragColor = texture(tex0, texCoord) * vec4(1.0, 0.0, 0.3, 0.4);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
     "}\0";
 
 int main(int argc, char **argv) 
@@ -149,12 +149,12 @@ int main(int argc, char **argv)
     Shader Shader_1;
     Shader Shader_2;
 
-    Shader_1.LoadVertexShader(myVertexShader);
-    Shader_1.LoadFragmentShader(myFragmentShader);
+    Shader_1.CreateVertexShader(myVertexShader);
+    Shader_1.CreateFragmentShader(myFragmentShader);
     Shader_1.AttachShader();
 
-    Shader_2.LoadVertexShader(myVertexShader);
-    Shader_2.LoadFragmentShader(myFragmentShader2);
+    Shader_2.CreateVertexShader(myVertexShader);
+    Shader_2.CreateFragmentShader(myFragmentShader2);
     Shader_2.AttachShader();
 
 
@@ -217,7 +217,6 @@ int main(int argc, char **argv)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // !!!
-        vertexColorLocation = glGetUniformLocation(Shader_2.ShaderProgram, "ourColor");
         glUseProgram(Shader_2.ShaderProgram);
 
         // Draw elements for obj_1

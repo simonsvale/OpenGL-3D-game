@@ -8,8 +8,16 @@
 
 using namespace std;
 
-
-void Renderer::RenderEverything()
+/** 
+  *  Renders all elements in the scene
+  * 
+  *  @param vector<GLuint> ShaderProgramArray, a vector of all Shaderprogrammes
+  *  @param 
+  *  @param 
+  *
+  *  @return void
+*/
+void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 {
 
 }

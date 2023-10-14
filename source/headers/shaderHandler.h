@@ -19,10 +19,14 @@ class Shader
 
         GLuint VertexShader;    // Vertex shader
         GLuint FragmentShader;  // Fragment shader
+        
         GLuint ShaderProgram; // ShaderProgram
 
-        void LoadVertexShader(const char *ShaderCode);
-        void LoadFragmentShader(const char *ShaderCode);
+        // Methods:
+        void LoadShaderFile(const char *Shader, string FilePath);
+
+        void CreateVertexShader(const char *ShaderCode);
+        void CreateFragmentShader(const char *ShaderCode);
 
         void AttachShader();
 };

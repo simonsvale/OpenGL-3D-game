@@ -1,11 +1,29 @@
 #include <iostream>
+#include <fstream>
 
 #include <glad/glad.h>
 
 #include "shaderHandler.h"
 
+void Shader::LoadShaderFile(const char *Shader, string FilePath)
+{
+    string ShaderFileLine;
 
-void Shader::LoadFragmentShader(const char *ShaderCode)
+    // Open File
+    ifstream ReadSpriteFile(FilePath);
+
+    // extract file content
+    while(getline(ReadSpriteFile, ShaderFileLine))
+    {   
+
+    }
+
+    // Close file
+    ReadSpriteFile.close();
+}
+
+
+void Shader::CreateFragmentShader(const char *ShaderCode)
 {
     // Tell the variable that it is a fragment shader.
     FragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -15,7 +33,8 @@ void Shader::LoadFragmentShader(const char *ShaderCode)
     glCompileShader(FragmentShader);
 }
 
-void Shader::LoadVertexShader(const char *ShaderCode)
+
+void Shader::CreateVertexShader(const char *ShaderCode)
 {
     // Tell the variable that it is a vertex shader.
     VertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -35,3 +54,4 @@ void Shader::AttachShader()
     glAttachShader(ShaderProgram, FragmentShader);
     glAttachShader(ShaderProgram, VertexShader);
 }
+

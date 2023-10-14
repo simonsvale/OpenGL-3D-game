@@ -29,13 +29,8 @@ class Graphics
         }
 
         void SetVBO(array<float, 32> Vertecies);
-
         void SetVAO();
-
         void SetEBO(array<unsigned int, 6> indices);
-
-
-        void LoadShaderFile(const char *Shader, string FilePath);
 
         void LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
 

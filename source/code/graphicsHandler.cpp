@@ -1,5 +1,4 @@
 #include <string>
-#include <fstream>
 #include <array>
 #include <iostream>
 
@@ -8,24 +7,6 @@
 #include "graphicsHandler.h"
 
 using namespace std;
-
-
-void Graphics::LoadShaderFile(const char *Shader, string FilePath)
-{
-    string ShaderFileLine;
-
-    // Open File
-    ifstream ReadSpriteFile(FilePath);
-
-    // extract file content
-    while(getline(ReadSpriteFile, ShaderFileLine))
-    {   
-
-    }
-
-    // Close file
-    ReadSpriteFile.close();
-}
 
 // WIP
 void Graphics::SetVBO(array<float, 32> Vertecies)
@@ -95,10 +76,13 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     stbi_image_free(bytes);
     glBindTexture(GL_TEXTURE_2D, 0);
 
+
+
+    // ------------------------------- The rest should brob. be new mathod, in the shader class.
+
     // Needs to be a parameter "tex0"
     GLuint tex0Uni = glGetUniformLocation(*ShaderProgramPtr, "tex0");
     glLinkProgram(*ShaderProgramPtr);
 
-    // Needs to be a parameter
     glUniform1i(tex0Uni, 0);
 }

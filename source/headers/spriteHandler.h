@@ -6,6 +6,8 @@
 
 #include <glad/glad.h>
 
+#include <graphicsHandler.h>
+
 using namespace std;
 
 class Sprite
@@ -14,15 +16,26 @@ class Sprite
 
     public:
 
+        /* For the renderer:
+
+           ShaderProgram: What shader program the sprite should use, (This could be the base texture, or the texture with a water like shader). 
+                          (Predefined shader programs should exist in code)
+
+           RenderLayer: What layer the Sprite should be rendered on.
+           Position: Where on the screen should the sprite be rendered.
+           AnimationFrame: The frame of the sprite's animation to be rendered, if it is not static. (Could maybe be done by assigning a new texture to the shader program)
+
+
+        */
+
 // Constructor
         Sprite(string FilePath)
         {
                 // Load .atris file, and set the variables.
                 LoadSpriteFile(FilePath);
-        }
 
-// Texture loading
-        // Have been moved to the GraphicsHandler class.
+                // Should now call the graphicsHandler with its texture.
+        }
 
         
 // Sprite loading        
