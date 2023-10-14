@@ -35,14 +35,12 @@ class Graphics
         void SetEBO(array<unsigned int, 6> indices);
 
 
-        void LoadShader(const char *Shader, string FilePath);
+        void LoadShaderFile(const char *Shader, string FilePath);
 
         void LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
 
+
 };
-
-
-
 
 
 

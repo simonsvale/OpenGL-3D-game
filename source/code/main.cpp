@@ -16,6 +16,7 @@
 #include "spriteHandler.h"
 #include "renderer.h"
 #include "graphicsHandler.h"
+#include "shaderHandler.h"
 
 using namespace std;
 
@@ -78,6 +79,18 @@ const char *myFragmentShader =
         "FragColor = texture(tex0, texCoord) * vec4(ourColor, 1.0);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
     "}\0";
 
+// Fragment Shader 2
+const char *myFragmentShader2 = 
+    "#version 410 core\n"
+    "out vec4 FragColor;\n"  
+    "in vec3 ourColor;\n"
+    "in vec2 texCoord;\n"
+    "uniform sampler2D tex0;\n"
+    "void main()\n"
+    "{\n"
+        "FragColor = texture(tex0, texCoord) * vec4(1.0,0.0,1.0,0.4);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
+    "}\0";
+
 int main(int argc, char **argv) 
 {
     int Mode = 0 ;
@@ -89,8 +102,6 @@ int main(int argc, char **argv)
     // !!!
     Sprite SpriteObj_1("source/textures/dummy.atris");
     Sprite SpriteObj_2("source/textures/dummy2.atris");
-
-    cout << "hello2" << endl;
 
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -134,37 +145,31 @@ int main(int argc, char **argv)
     Graphics GraphicsObj_1(Square, indices);
     Graphics GraphicsObj_2(Square2, indices2);
 
-    // Initialize vertex shader
-    GLuint basic_vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(basic_vertex_shader, 1, &myVertexShader, NULL);
-    glCompileShader(basic_vertex_shader);
-    
+    // !!!
+    Shader Shader_1;
+    Shader Shader_2;
 
-    // Initialize fragment shader
-    GLuint basic_fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(basic_fragment_shader, 1, &myFragmentShader, NULL);
-    glCompileShader(basic_fragment_shader);
+    Shader_1.LoadVertexShader(myVertexShader);
+    Shader_1.LoadFragmentShader(myFragmentShader);
+    Shader_1.AttachShader();
 
+    Shader_2.LoadVertexShader(myVertexShader);
+    Shader_2.LoadFragmentShader(myFragmentShader2);
+    Shader_2.AttachShader();
 
-    // Start shader program with OpenGL, attach the shaders and link the program
-    GLuint ShaderProgram = glCreateProgram();
-    GLuint *ShaderProgramPtr = &ShaderProgram;
-
-    glAttachShader(ShaderProgram, basic_fragment_shader);
-    glAttachShader(ShaderProgram, basic_vertex_shader);
-
-    SDL_Event windowEvent;
 
     GLuint Texture;
     GLuint *TexturePtr = &Texture;
 
     // Load texture (Working, but unfinished function).
-    GraphicsObj_1.LoadTexture(TexturePtr, ShaderProgramPtr, "source/textures/debug3.png");
+    GraphicsObj_1.LoadTexture(TexturePtr, &Shader_1.ShaderProgram, "source/textures/debug3.png");
+
 
     GLuint Texture2;
     GLuint *TexturePtr2 = &Texture2;
 
-    GraphicsObj_2.LoadTexture(TexturePtr2, ShaderProgramPtr, "source/textures/debug2.png");
+    GraphicsObj_2.LoadTexture(TexturePtr2, &Shader_2.ShaderProgram, "source/textures/debug.png");
+
 
     // Setup variables for maintaining 60 fps
     int FrameTimeTotal;
@@ -174,6 +179,7 @@ int main(int argc, char **argv)
     const int FrameDelay = 1000 / 60;
 
     bool Running = true;
+    SDL_Event windowEvent;
 
     // Window loop
     while(Running == true)
@@ -181,11 +187,6 @@ int main(int argc, char **argv)
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
         
-        // Set viewport
-        glViewport(0, 0, WIDTH, HEIGHT);
-
-        int vertexColorLocation = glGetUniformLocation(ShaderProgram, "ourColor");
-
         while(SDL_PollEvent(&windowEvent) != 0)
         {   
 
@@ -198,30 +199,36 @@ int main(int argc, char **argv)
 
         }
 
+        // Set viewport
+        glViewport(0, 0, WIDTH, HEIGHT);
+
         // background color
         glClearColor(0.03f, 0.1f, 0.24f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        // Use the previously specified shader program, bind the vertex array to VAO and bind the EBO to a OpenGL buffer.
-        glUseProgram(ShaderProgram);
+        // !!!
+        int vertexColorLocation = glGetUniformLocation(Shader_1.ShaderProgram, "ourColor");
+        glUseProgram(Shader_1.ShaderProgram);
        
-
-        //!!!
         glBindTexture(GL_TEXTURE_2D, Texture2);
         glBindVertexArray(GraphicsObj_2.VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_2.EBO);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        // !!!
+        vertexColorLocation = glGetUniformLocation(Shader_2.ShaderProgram, "ourColor");
+        glUseProgram(Shader_2.ShaderProgram);
 
         // Draw elements for obj_1
         glBindTexture(GL_TEXTURE_2D, Texture);
-
         glBindVertexArray(GraphicsObj_1.VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_1.EBO);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 
-        // Update the SDL OpenGL window.
+        // Update the SDL OpenGL window with the drawn elements.
         SDL_GL_SwapWindow(window);
 
 

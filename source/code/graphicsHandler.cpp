@@ -10,7 +10,7 @@
 using namespace std;
 
 
-void Graphics::LoadShader(const char *Shader, string FilePath)
+void Graphics::LoadShaderFile(const char *Shader, string FilePath)
 {
     string ShaderFileLine;
 
@@ -102,6 +102,3 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     // Needs to be a parameter
     glUniform1i(tex0Uni, 0);
 }
-
-
-
