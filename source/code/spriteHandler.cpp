@@ -14,17 +14,8 @@
 
 using namespace std;
 
-
 // Create helper object
 HelperFunctions HelperObj;
-
-
-// Class Functions
-void Sprite::LoadImageTexture(unsigned int Texture)
-{
-
-}
-
 
 // Function for reading .atris files.
 void Sprite::LoadSpriteFile(string FilePath)

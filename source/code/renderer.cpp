@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-#include <glad/glad.h>
 
 #include <iostream>
 #include <string>
@@ -9,34 +8,25 @@
 
 using namespace std;
 
-
-void LoadShader(const char *Shader, string FilePath)
-{
-    string ShaderFileLine;
-
-    // Open File
-    ifstream ReadSpriteFile(FilePath);
-
-    // extract file content
-    while(getline(ReadSpriteFile, ShaderFileLine))
-    {   
-
-    }
-
-    // Close file
-    ReadSpriteFile.close();
-
-
-}
-
-
-
-
-
-void Renderer::RenderEverything()
+/** 
+  *  Renders all elements in the scene
+  * 
+  *  @param vector<GLuint> ShaderProgramArray, a vector of all Shaderprogrammes
+  *  @param 
+  *  @param 
+  *
+  *  @return void
+*/
+void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 {
 
 }
+
+
+
+
+
+
 
 
 

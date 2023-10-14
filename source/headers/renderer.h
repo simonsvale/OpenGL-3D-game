@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <string>
+#include <glad/glad.h>
+
+#include <spriteHandler.h>
 
 using namespace std;
 
@@ -10,10 +13,9 @@ using namespace std;
 class Renderer
 {
     public:
-        void RenderEverything();
 
-        // Loads a shader from a seperate file.
-        void LoadShader(const char *Shader, string FilePath);
+        // A method for rendering everything
+        void RenderEverything(vector<Sprite> SpriteArray);
 
 };
 
