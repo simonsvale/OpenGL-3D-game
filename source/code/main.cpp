@@ -202,7 +202,7 @@ int main(int argc, char **argv)
         }
 
 
-        // Set viewport
+        // Set viewport.
         glViewport(0, 0, WIDTH, HEIGHT);
 
         // background color
