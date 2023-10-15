@@ -1,3 +1,3 @@
-# OpenGL-2D-game
+# OpenGL-3D-game
 
-The [NAME PENDING] is made using SDL2 and OpenGL.
+The [NAME PENDING] is made using SDL2, OpenGL with glad header, OpenGL mathmatics (GLM) and stb_image.
