@@ -159,11 +159,7 @@ int main(int argc, char **argv)
 
     // !!!
     Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
-    RedShader.AttachShader(&RedShader.ShaderProgram);
-
     Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
-    RainbowShader.AttachShader(&RainbowShader.ShaderProgram);
-
 
     GLuint Texture;
     GLuint *TexturePtr = &Texture;
@@ -243,7 +239,7 @@ int main(int argc, char **argv)
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
         // !!!
-        model = glm::rotate(model, float(SDL_GetTicks64()/1000.0) * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
+        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
 
 
         int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");

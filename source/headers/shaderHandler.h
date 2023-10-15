@@ -30,6 +30,9 @@ class Shader
             // Load and create the Fragment shader, from a GLSL file.
             LoadShaderFile(FragmentShaderFilePath, &GLSLCode);
             CreateFragmentShader(GLSLCode.c_str());
+
+            // Attach the shaders to the shader program.
+            AttachShader(&ShaderProgram);
         }
 
         // Vertex and fragment shaders
