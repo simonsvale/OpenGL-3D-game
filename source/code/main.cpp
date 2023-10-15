@@ -10,6 +10,11 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
+// Header file for 3D camera.
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 // Include own headers
 #include "options.h"
 #include "structures.h"
@@ -26,10 +31,55 @@ const int WIDTH = 800, HEIGHT = 800;
 // Vertecies to be rendered by OpenGL.
 array<float, 32> Square = {
     // Verticies                // Colors               // Texture
-  -0.5f,-0.5f, 0.0f,       1.0f,  0.0f, 0.0f,         0.0f, 0.0f,       
-  -0.5f, 0.5f, 0.0f,       0.0f,  1.0f, 0.0f,         0.0f, 1.0f,
-   0.5f, 0.5f, 0.0f,       0.0f,  0.0f, 1.0f,         1.0f, 1.0f,
-   0.5f,-0.5f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
+  -0.5f,-0.5f, 0.0f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
+  -0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
+   0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
+   0.5f,-0.5f, 0.0f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f        
+};
+
+array<float, 288> Cube = {
+    // Verticies                // Colors               // Texture
+  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
+  -0.5f, 0.5f,-0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
+   0.5f, 0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
+   0.5f, 0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
+   0.5f,-0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f,
+  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,  
+
+  -0.5f,-0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
+  -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
+   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
+   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
+   0.5f,-0.5f, 0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f,
+  -0.5f,-0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,  
+
+  -0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,       
+  -0.5f,-0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
+  -0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
+  -0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
+  -0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
+  -0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,  
+
+   0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,       
+   0.5f,-0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
+   0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
+   0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
+   0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
+   0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,  
+
+  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
+  -0.5f,-0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
+   0.5f,-0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+   0.5f,-0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+   0.5f,-0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
+  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,  
+
+  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
+  -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
+   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+   0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
+  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f  
 };
 
 // Indices creating a square from two triangle vertecies.
@@ -41,10 +91,10 @@ array<unsigned int, 6> indices = {
 // !!!
 array<float, 32> Square2 = {
     // Verticies                // Colors               // Texture
-  -1.0f,-1.0f, 0.0f,       1.0f,  0.0f, 0.0f,         0.0f, 0.0f,       
-  -0.5f, 0.5f, 0.0f,       0.0f,  1.0f, 0.0f,         0.0f, 1.0f,
-   1.0f, 1.0f, 0.0f,       0.0f,  0.0f, 1.0f,         1.0f, 1.0f,
-   0.2f,-0.2f, 0.0f,       1.0f,  1.0f, 1.0f,         1.0f, 0.0f        
+  -1.0f,-1.0f, 0.0f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
+  -0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
+   1.0f, 1.0f, 0.0f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
+   0.2f,-0.2f, 0.0f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f        
 };
 
 array<unsigned int, 6> indices2 = {
@@ -104,16 +154,12 @@ int main(int argc, char **argv)
     }
 
     // Do graphics
-    Graphics GraphicsObj_1(Square, indices);
-    Graphics GraphicsObj_2(Square2, indices2);
+    Graphics GraphicsObj_1(Cube, indices);
+    //Graphics GraphicsObj_2(Square2, indices2);
 
     // !!!
     Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
-    RedShader.AttachShader(&RedShader.ShaderProgram);
-
     Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
-    RainbowShader.AttachShader(&RainbowShader.ShaderProgram);
-
 
     GLuint Texture;
     GLuint *TexturePtr = &Texture;
@@ -121,7 +167,10 @@ int main(int argc, char **argv)
 
     GLuint Texture2;
     GLuint *TexturePtr2 = &Texture2;
-    GraphicsObj_2.LoadTexture(TexturePtr2, &RainbowShader.ShaderProgram, "source/textures/debug.png");
+    //GraphicsObj_2.LoadTexture(TexturePtr2, &RainbowShader.ShaderProgram, "source/textures/debug.png");
+
+    // !!!
+    glEnable(GL_DEPTH_TEST);  
 
 
     // Setup variables for maintaining 60 fps
@@ -152,7 +201,8 @@ int main(int argc, char **argv)
 
         }
 
-        // Set viewport
+
+        // Set viewport.
         glViewport(0, 0, WIDTH, HEIGHT);
 
         // background color
@@ -161,24 +211,56 @@ int main(int argc, char **argv)
 
         // !!!
         int vertexColorLocation = glGetUniformLocation(RainbowShader.ShaderProgram, "ourColor");
+
+        /*
         glUseProgram(RainbowShader.ShaderProgram);
-       
+
         glBindTexture(GL_TEXTURE_2D, Texture2);
         glBindVertexArray(GraphicsObj_2.VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_2.EBO);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        */
 
-        // !!!
+        // 3D
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glBindTexture(GL_TEXTURE_2D, Texture);
         glUseProgram(RedShader.ShaderProgram);
 
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+
+        glm::mat4 view = glm::mat4(1.0f);
+        // note that we're translating the scene in the reverse direction of where we want to move
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+        // !!!
+        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
+
+
+        int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        int viewLoc = glGetUniformLocation(RedShader.ShaderProgram, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        int projectionLoc = glGetUniformLocation(RedShader.ShaderProgram, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        
+
         // Draw elements for obj_1
-        glBindTexture(GL_TEXTURE_2D, Texture);
         glBindVertexArray(GraphicsObj_1.VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_1.EBO);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+        // Draw cube
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+     
 
         // Update the SDL OpenGL window with the drawn elements.
         SDL_GL_SwapWindow(window);

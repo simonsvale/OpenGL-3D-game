@@ -26,10 +26,6 @@ void Sprite::LoadSpriteFile(string FilePath)
 
     vector<string> AtrisInfoVector;
 
-    // Assign a pointer to the vector
-    vector<string> *AtrisPtr = &AtrisInfoVector;
-
-
     // Open File
     ifstream ReadSpriteFile(FilePath);
 
@@ -44,29 +40,29 @@ void Sprite::LoadSpriteFile(string FilePath)
     ReadSpriteFile.close();
 
     // Split the string by delimiter ;
-    HelperObj.SplitByDelimiter(NoSpacesInfo, AtrisPtr, ';');
+    HelperObj.SplitByDelimiter(NoSpacesInfo, &AtrisInfoVector, ';');
 
     // Set Sprite attributes for created object, pass in FilePath for easier debugging, when during map/level construction.
-    HasAnimation = HelperObj.GetAtrisKeyValue_bool("HasAnimation", AtrisInfoVector, AtrisPtr, FilePath);
+    HasAnimation = HelperObj.GetAtrisKeyValue_bool("HasAnimation", AtrisInfoVector, &AtrisInfoVector, FilePath);
 
     // DEBUG
     cout << "HasAnimation: " << HasAnimation << endl;
     if(HasAnimation == true)
     {
-        AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, AtrisPtr, FilePath);
+        AnimationFrameAmount = HelperObj.GetAtrisKeyValue_uint8_t("AnimationFrameAmount", AtrisInfoVector, &AtrisInfoVector, FilePath);
 
         // DEBUG
         cout << "AnimationFrameAmount: " << +AnimationFrameAmount << endl;
     }
    
 
-    Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector, AtrisPtr, FilePath);
+    Collision = HelperObj.GetAtrisKeyValue_bool("Collision", AtrisInfoVector, &AtrisInfoVector, FilePath);
 
     // DEBUG
     cout << "Collision: " << Collision << endl;
     if(Collision == true)
     {
-        CollisionBox = HelperObj.GetAtrisKeyValue_vector("CollisionBox", AtrisInfoVector, AtrisPtr, FilePath);
+        CollisionBox = HelperObj.GetAtrisKeyValue_vector("CollisionBox", AtrisInfoVector, &AtrisInfoVector, FilePath);
 
         // DEBUG
         cout << "CollisionBox: " << CollisionBox[0] << "," << CollisionBox[1] << endl;
