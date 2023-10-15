@@ -52,44 +52,6 @@ array<unsigned int, 6> indices2 = {
     0, 3, 2    // second triangle.
 }; 
 
-// Vertex shader
-const char *myVertexShader = 
-    "#version 410 core\n"
-    "layout (location = 0) in vec3 aPos;\n"  
-    "layout (location = 1) in vec3 aColor;\n"
-    "layout (location = 2) in vec2 aTex;\n"
-    "out vec3 ourColor;\n" 
-    "out vec2 texCoord;\n"
-    "void main()\n"
-    "{\n"
-        "gl_Position = vec4(aPos, 1.0);\n"
-        "ourColor = aColor;\n"   
-        "texCoord = aTex;"  
-    "}\0";
-
-// Fragment shader
-const char *myFragmentShader = 
-    "#version 410 core\n"
-    "out vec4 FragColor;\n"  
-    "in vec3 ourColor;\n"
-    "in vec2 texCoord;\n"
-    "uniform sampler2D tex0;\n"
-    "void main()\n"
-    "{\n"
-        "FragColor = texture(tex0, texCoord) * vec4(ourColor, 1.0);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
-    "}\0";
-
-// Fragment Shader 2 (test)
-const char *myFragmentShader2 = 
-    "#version 410 core\n"
-    "out vec4 FragColor;\n"  
-    "in vec3 ourColor;\n"
-    "in vec2 texCoord;\n"
-    "uniform sampler2D tex0;\n"
-    "void main()\n"
-    "{\n"
-        "FragColor = texture(tex0, texCoord) * vec4(1.0, 0.0, 0.3, 0.4);\n" // The string: "* vec4(ourColor, 1.0)" is applying the color shader ontop of the texture.
-    "}\0";
 
 int main(int argc, char **argv) 
 {
@@ -146,29 +108,20 @@ int main(int argc, char **argv)
     Graphics GraphicsObj_2(Square2, indices2);
 
     // !!!
-    Shader Shader_1;
-    Shader Shader_2;
+    Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
+    RedShader.AttachShader(&RedShader.ShaderProgram);
 
-    Shader_1.CreateVertexShader(myVertexShader);
-    Shader_1.CreateFragmentShader(myFragmentShader);
-    Shader_1.AttachShader();
-
-    Shader_2.CreateVertexShader(myVertexShader);
-    Shader_2.CreateFragmentShader(myFragmentShader2);
-    Shader_2.AttachShader();
+    Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
+    RainbowShader.AttachShader(&RainbowShader.ShaderProgram);
 
 
     GLuint Texture;
     GLuint *TexturePtr = &Texture;
-
-    // Load texture (Working, but unfinished function).
-    GraphicsObj_1.LoadTexture(TexturePtr, &Shader_1.ShaderProgram, "source/textures/debug3.png");
-
+    GraphicsObj_1.LoadTexture(TexturePtr, &RedShader.ShaderProgram, "source/textures/debug3.png");
 
     GLuint Texture2;
     GLuint *TexturePtr2 = &Texture2;
-
-    GraphicsObj_2.LoadTexture(TexturePtr2, &Shader_2.ShaderProgram, "source/textures/debug.png");
+    GraphicsObj_2.LoadTexture(TexturePtr2, &RainbowShader.ShaderProgram, "source/textures/debug.png");
 
 
     // Setup variables for maintaining 60 fps
@@ -207,8 +160,8 @@ int main(int argc, char **argv)
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // !!!
-        int vertexColorLocation = glGetUniformLocation(Shader_1.ShaderProgram, "ourColor");
-        glUseProgram(Shader_1.ShaderProgram);
+        int vertexColorLocation = glGetUniformLocation(RainbowShader.ShaderProgram, "ourColor");
+        glUseProgram(RainbowShader.ShaderProgram);
        
         glBindTexture(GL_TEXTURE_2D, Texture2);
         glBindVertexArray(GraphicsObj_2.VAO);
@@ -217,7 +170,7 @@ int main(int argc, char **argv)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // !!!
-        glUseProgram(Shader_2.ShaderProgram);
+        glUseProgram(RedShader.ShaderProgram);
 
         // Draw elements for obj_1
         glBindTexture(GL_TEXTURE_2D, Texture);

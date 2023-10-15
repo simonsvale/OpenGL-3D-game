@@ -78,7 +78,7 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
 
 
 
-    // ------------------------------- The rest should brob. be new mathod, in the shader class.
+    // ------------------------------- The rest should probably be new method, in the shader class.
 
     // Needs to be a parameter "tex0"
     GLuint tex0Uni = glGetUniformLocation(*ShaderProgramPtr, "tex0");
