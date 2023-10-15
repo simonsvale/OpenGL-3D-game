@@ -19,16 +19,16 @@ class Graphics
         GLuint EBO;      // Element Buffer Object
 
         // Constructor (Basic graphics setup for now)
-        Graphics(array<float, 32> Vertecies, array<unsigned int, 6> indices)
+        Graphics(array<float, 288> Vertecies, array<unsigned int, 6> indices)
         {   
             SetVBO(Vertecies);
 
             SetVAO();
 
-            SetEBO(indices);
+            //SetEBO(indices);
         }
 
-        void SetVBO(array<float, 32> Vertecies);
+        void SetVBO(array<float, 288> Vertecies);
         void SetVAO();
         void SetEBO(array<unsigned int, 6> indices);
 
