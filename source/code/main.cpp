@@ -229,19 +229,22 @@ int main(int argc, char **argv)
         glUseProgram(RedShader.ShaderProgram);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
-
         glm::mat4 view = glm::mat4(1.0f);
-        // note that we're translating the scene in the reverse direction of where we want to move
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
-
         glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        
+        // The placement of the object
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.5f)); 
 
-        // !!!
-        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f)); 
+        // Rotate the model
+        model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 
+        // The "camera", the first float is how close things will be rendered (Cannot be zero, because math), the last float is the max distance objects will be rendered.
+        projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.0001f, 100.0f);
 
+        // The rotation of the cube.
+        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+
+        // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -255,8 +258,6 @@ int main(int argc, char **argv)
         // Draw elements for obj_1
         glBindVertexArray(GraphicsObj_1.VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_1.EBO);
-
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Draw cube
         glDrawArrays(GL_TRIANGLES, 0, 36);
