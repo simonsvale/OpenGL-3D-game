@@ -18,7 +18,7 @@ void Graphics::SetVBO(float Vertecies[], int VertSize)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     // Write the data that the VBO should contain
-    // 2: Size of array * reference to decayed point i.e. &Vertecies[0]
+    // @Note: Parameter 2 is the Size of array * reference to the array that have decayed into a pointer i.e. &Vertecies[0]
     glBufferData(GL_ARRAY_BUFFER, VertSize*sizeof(&Vertecies[0]), Vertecies, GL_STATIC_DRAW);
 }
 
@@ -28,17 +28,18 @@ void Graphics::SetVAO()
     // Initialize VAO (Vertex Array Object)
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-
-    // All of these should be parameters:
     
-    // position attribute
+    // Tell OpenGL, how the buffer data, from the VBO is structured.
+
+    // Tell OpenGL, that the first 3 indexes of a row is vertex positions, give it the ID 0 and enable it.
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // color attribute
+    // Tell OpenGL, that the next 3 indexes of a row is RGB colors, give it the ID 1 and enable it.
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    // Tell OpenGL, that the next 2 indexes of a row is the texture mapping, give it the ID 2 and enable it.
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6* sizeof(float)));
     glEnableVertexAttribArray(2);
 }

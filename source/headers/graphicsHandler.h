@@ -20,9 +20,10 @@ class Graphics
         // Constructor (Basic graphics setup for now)
         Graphics(float Vertecies[], int VertSize)
         {   
-            cout << VertSize << endl;
+            // Set Vertex Buffer object of the given vertecies.
             SetVBO(Vertecies, VertSize);
 
+            // Set the Vertex Array object, (configuration of how openGL elements are structured.)
             SetVAO();
 
             //SetEBO(indices);
