@@ -16,25 +16,28 @@ class Graphics
 
         GLuint VBO;     // Vertex Buffer Object
         GLuint VAO;     // Vertex Array Object
-        GLuint EBO;      // Element Buffer Object
 
         // Constructor (Basic graphics setup for now)
-        Graphics(array<float, 288> Vertecies, array<unsigned int, 6> indices)
+        Graphics(float Vertecies[], int VertSize)
         {   
-            SetVBO(Vertecies);
+            cout << VertSize << endl;
+            SetVBO(Vertecies, VertSize);
 
             SetVAO();
 
             //SetEBO(indices);
         }
 
-        void SetVBO(array<float, 288> Vertecies);
+        // Since C style arrays decays to pointers, we need to pass the size in too.
+        void SetVBO(float Vertecies[], int VertSize);
         void SetVAO();
-        void SetEBO(array<unsigned int, 6> indices);
 
         void LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
 
 
+        // Deprecated for 3D graphics.
+        GLuint EBO;      // Element Buffer Object
+        void SetEBO(array<unsigned int, 6> indices);
 };
 
 

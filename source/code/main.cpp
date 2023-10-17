@@ -10,7 +10,7 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
-// Header file for 3D camera.
+// Header file for 3D.
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -26,18 +26,9 @@
 using namespace std;
 
 // Window width and height
-const int WIDTH = 800, HEIGHT = 800;
+const int WIDTH = 600, HEIGHT = 600;
 
-// Vertecies to be rendered by OpenGL.
-array<float, 32> Square = {
-    // Verticies                // Colors               // Texture
-  -0.5f,-0.5f, 0.0f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
-  -0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
-   0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
-   0.5f,-0.5f, 0.0f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f        
-};
-
-array<float, 288> Cube = {
+float Cube[] = {
     // Verticies                // Colors               // Texture
   -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
   -0.5f, 0.5f,-0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
@@ -81,27 +72,6 @@ array<float, 288> Cube = {
    0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
   -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f  
 };
-
-// Indices creating a square from two triangle vertecies.
-array<unsigned int, 6> indices = {
-    0, 2, 1,   // first triangle
-    0, 3, 2    // second triangle.
-}; 
-
-// !!!
-array<float, 32> Square2 = {
-    // Verticies                // Colors               // Texture
-  -1.0f,-1.0f, 0.0f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
-  -0.5f, 0.5f, 0.0f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
-   1.0f, 1.0f, 0.0f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
-   0.2f,-0.2f, 0.0f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f        
-};
-
-array<unsigned int, 6> indices2 = {
-    0, 2, 1,   // first triangle
-    0, 3, 2    // second triangle.
-}; 
-
 
 int main(int argc, char **argv) 
 {
@@ -154,7 +124,7 @@ int main(int argc, char **argv)
     }
 
     // Do graphics
-    Graphics GraphicsObj_1(Cube, indices);
+    Graphics GraphicsObj_1(Cube, sizeof(Cube)/sizeof(Cube[0]));
     //Graphics GraphicsObj_2(Square2, indices2);
 
     // !!!
@@ -241,8 +211,10 @@ int main(int argc, char **argv)
         // The "camera", the first float is how close things will be rendered (Cannot be zero, because math), the last float is the max distance objects will be rendered.
         projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.0001f, 100.0f);
 
+
         // The rotation of the cube.
         model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+
 
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");
@@ -257,12 +229,10 @@ int main(int argc, char **argv)
 
         // Draw elements for obj_1
         glBindVertexArray(GraphicsObj_1.VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_1.EBO);
 
         // Draw cube
         glDrawArrays(GL_TRIANGLES, 0, 36);
-     
-
+    
         // Update the SDL OpenGL window with the drawn elements.
         SDL_GL_SwapWindow(window);
 

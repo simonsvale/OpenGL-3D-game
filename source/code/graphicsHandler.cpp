@@ -9,7 +9,7 @@
 using namespace std;
 
 // WIP
-void Graphics::SetVBO(array<float, 288> Vertecies)
+void Graphics::SetVBO(float Vertecies[], int VertSize)
 {
     // Initialize VBO (Vertex Buffer Object)
     glGenBuffers(1, &VBO);
@@ -18,7 +18,8 @@ void Graphics::SetVBO(array<float, 288> Vertecies)
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     // Write the data that the VBO should contain
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertecies), &Vertecies[0], GL_STATIC_DRAW); // x * sizeof(Vertex_list), where x is the total amount of floats, and vertex_list is a list containing them.
+    // 2: Size of array * reference to decayed point i.e. &Vertecies[0]
+    glBufferData(GL_ARRAY_BUFFER, VertSize*sizeof(&Vertecies[0]), Vertecies, GL_STATIC_DRAW);
 }
 
 
@@ -42,7 +43,7 @@ void Graphics::SetVAO()
     glEnableVertexAttribArray(2);
 }
 
-
+// Deprecated
 void Graphics::SetEBO(array<unsigned int, 6> indices)
 {
     // Initialize EBO (Element Buffer Object)
