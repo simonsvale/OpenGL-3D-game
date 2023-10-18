@@ -30,14 +30,18 @@ class HelperFunctions
         */
         void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter);
 
-        // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
-        int GetAtrisKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
-        int GetAtrisKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
+		// Pass array pointer by reference
+        void GetArrayFromStr(string String, float *ArrayPtr);
 
-        vector<short> GetAtrisKeyValue_vector(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
+
+        // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
+        int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
+        int GetKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
+
+        vector<int> GetKeyValue_vector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
 
         // A function for getting a value from a given key string from an .atris file for bool.
-        bool GetAtrisKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string AtrisFilePath);
+        bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
 
 };
 

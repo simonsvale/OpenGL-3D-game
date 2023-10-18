@@ -6,6 +6,7 @@
 
 #include "renderer.h"
 #include "helperFunctions.h"
+#include "mapHandler.h"
 
 using namespace std;
 
@@ -26,12 +27,11 @@ void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 {
     // Setup Variables
     string ArrmapFileLine;
     string NoSpacesArrmap;
-
 
 	string AuxLine;
 
@@ -60,6 +60,23 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath)
 	// Split the string by the ';' delimiter
 	HelperObjRenderer.SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';');
 
+
+	// Get player spawnpoint and put it in the pointer to the Arrmapobj:
+	//ArrmapObj->Spawnpoint = HelperObjRenderer.GetKeyValue_vector("SPAWNPOINT", ArrmapInfoVector, &ArrmapInfoVector, ArrmapFilePath);
+
+
+
+	float MapArray[] = {0.0f};
+
+	HelperObjRenderer.GetArrayFromStr("{1,2,3,4,5,6,7,8,9}", MapArray);
+
+	cout << sizeof(MapArray)/sizeof(float) << endl;
+
+	for(int test1 = 0; test1 < sizeof(MapArray)*sizeof(MapArray[0]);)
+    {
+        cout << ArrmapInfoVector[test1] << endl;
+        test1++;
+    }
 
     // DEBUG !!!
     for(int test = 0; test < ArrmapInfoVector.size();)

@@ -22,6 +22,7 @@
 #include "renderer.h"
 #include "graphicsHandler.h"
 #include "shaderHandler.h"
+#include "mapHandler.h"
 
 using namespace std;
 
@@ -80,9 +81,10 @@ int main(int argc, char **argv)
     // !!!
     Options OptionsObj;
     Renderer RenderObj;
+    ArrayLevelMap MapObj;
 
     // !!!
-    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap");
+    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj);
 
     // !!!
     Sprite SpriteObj_1("source/textures/dummy.atris");

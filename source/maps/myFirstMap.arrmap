@@ -1,6 +1,6 @@
 // Define map:
 
-Spawnpoint = 100, 23, 21;
+SPAWNPOINT = {100, 23, 21};
 
 // Define map geometry:
 
