@@ -17,6 +17,8 @@ class Renderer
         // A method for rendering everything
         void RenderEverything(vector<Sprite> SpriteArray);
 
+        void LoadArrmapFile(string ArrmapFilePath);
+
 };
 
 #endif

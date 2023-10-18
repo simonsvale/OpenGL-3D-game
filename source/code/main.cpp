@@ -82,6 +82,9 @@ int main(int argc, char **argv)
     Renderer RenderObj;
 
     // !!!
+    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap");
+
+    // !!!
     Sprite SpriteObj_1("source/textures/dummy.atris");
     Sprite SpriteObj_2("source/textures/dummy2.atris");
 
