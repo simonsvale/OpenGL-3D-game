@@ -300,7 +300,10 @@ void HelperFunctions::GetArrayFromStr(string String, float *ArrayPtr)
     
     for(int Index = 0; Index < StringVector.size();)
     {
-        ArrayPtr[Index] = stoi(StringVector[Index]);
+        ArrayPtr[Index] = stof(StringVector[Index]);
         Index++;
     }
+
+    // Still does not return correct size of array...
+    cout << sizeof(ArrayPtr)/sizeof(ArrayPtr[0]) << endl;
 }

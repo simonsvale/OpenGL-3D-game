@@ -68,22 +68,23 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
 	float MapArray[] = {0.0f};
 
-	HelperObjRenderer.GetArrayFromStr("{1,2,3,4,5,6,7,8,9}", MapArray);
+	HelperObjRenderer.GetArrayFromStr("{0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f}", MapArray);
 
-	cout << sizeof(MapArray)/sizeof(float) << endl;
 
 	for(int test1 = 0; test1 < sizeof(MapArray)*sizeof(MapArray[0]);)
     {
-        cout << ArrmapInfoVector[test1] << endl;
+        cout << MapArray[test1] << endl;
         test1++;
     }
 
+	/*
     // DEBUG !!!
     for(int test = 0; test < ArrmapInfoVector.size();)
     {
         cout << ArrmapInfoVector[test] << endl;
         test++;
     }
+	*/
 
 }
 
