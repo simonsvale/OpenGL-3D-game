@@ -287,7 +287,7 @@ vector<int> HelperFunctions::GetKeyValue_vector(string Key, vector<string> Strin
 }
 
 
-void HelperFunctions::GetArrayFromStr(string String, float *ArrayPtr)
+void HelperFunctions::GetArrayFromStr(string String, float *ArrayPtr, int *ArraySize)
 {
     HelperFunctions HelperObject;
     vector<string> StringVector;
@@ -297,13 +297,12 @@ void HelperFunctions::GetArrayFromStr(string String, float *ArrayPtr)
     // Split the string and pass by reference to the vector.
     HelperObject.SplitByDelimiter(String, &StringVector, ',');
 
+    // Pass the StringVector to the ArraySize by reference.
+    *ArraySize = StringVector.size();
     
     for(int Index = 0; Index < StringVector.size();)
     {
         ArrayPtr[Index] = stof(StringVector[Index]);
         Index++;
     }
-
-    // Still does not return correct size of array...
-    cout << sizeof(ArrayPtr)/sizeof(ArrayPtr[0]) << endl;
 }

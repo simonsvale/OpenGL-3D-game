@@ -31,7 +31,7 @@ class HelperFunctions
         void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter);
 
 		// Pass array pointer by reference
-        void GetArrayFromStr(string String, float *ArrayPtr);
+        void GetArrayFromStr(string String, float *ArrayPtr, int *ArraySize);
 
 
         // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.

@@ -81,6 +81,7 @@ int main(int argc, char **argv)
     // !!!
     Options OptionsObj;
     Renderer RenderObj;
+
     ArrayLevelMap MapObj;
 
     // !!!
@@ -111,7 +112,7 @@ int main(int argc, char **argv)
     
     if (NULL == window)
     {
-        std::cout << "Could not create window" << SDL_GetError() << std::endl;
+        cout << "Could not create window" << SDL_GetError() << endl;
         return 1;
     }
 
@@ -124,7 +125,7 @@ int main(int argc, char **argv)
 
     if (NULL == GL_context)
     {
-        std::cout << "Could not create OpenGL context" << SDL_GetError() << std::endl;
+        cout << "Could not create OpenGL context" << SDL_GetError() << endl;
         return 1; 
     }
 
