@@ -1,10 +1,10 @@
 // Define map:
 
-SPAWNPOINT = {100, 23, 21};
+SPAWNPOINT = {100.0f, 23.0f, 21.0f};
 
 // Define map geometry:
 
-geometry = 
+GEOMETRY_INFO = 
 {   TYPE = 2, 
     VERTEX_SHADER = y, 
     FRAGMENT_SHADER = z, 
@@ -52,9 +52,6 @@ geometry =
        0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
       -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f  
 }}, 
-
 {1},
-
 {2}, 
-
 {3};

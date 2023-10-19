@@ -12,7 +12,7 @@ using namespace std;
 class ArrayLevelMap
 {	
 	public:
-		vector<int> Spawnpoint;
+		float SpawnpointArr[3];
 };
 
 

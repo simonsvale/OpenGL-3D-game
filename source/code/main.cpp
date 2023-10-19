@@ -109,7 +109,7 @@ int main(int argc, char **argv)
         SDL_WINDOWPOS_UNDEFINED, 
         WIDTH, HEIGHT, 
         SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL);
-    
+
     if (NULL == window)
     {
         cout << "Could not create window" << SDL_GetError() << endl;
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 
     // OpenGL function pointers.
     gladLoadGLLoader(SDL_GL_GetProcAddress);
-
+    
     if (NULL == GL_context)
     {
         cout << "Could not create OpenGL context" << SDL_GetError() << endl;

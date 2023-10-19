@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "mapHandler.h"
+
 using namespace std;
 
 class HelperFunctions
@@ -32,6 +34,7 @@ class HelperFunctions
 
 		// Pass array pointer by reference
         void GetArrayFromStr(string String, float *ArrayPtr, int *ArraySize);
+        void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath);
 
 
         // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
@@ -42,6 +45,7 @@ class HelperFunctions
 
         // A function for getting a value from a given key string from an .atris file for bool.
         bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
+        
 
 };
 

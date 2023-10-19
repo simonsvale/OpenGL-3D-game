@@ -255,16 +255,14 @@ vector<int> HelperFunctions::GetKeyValue_vector(string Key, vector<string> Strin
 
                 SplitByDelimiter(KeyString, KeyValueStrPtr, ',');
 
-                if(KeyValueString.size() != 2)
-                {
-                    throw invalid_argument("Key: "+string(Key)+"'s values must be contained in a vector of size 2, at: "+FilePath);
-                }
-                
                 try
                 {   
-                    // Get values from key
-                    KeyValue.push_back(stoi(KeyValueString[0]));
-                    KeyValue.push_back(stoi(KeyValueString[1]));
+
+                    for(int Number = 0; Number < KeyValueString.size();)
+                    {
+                        KeyValue.push_back(stoi(KeyValueString[Number]));
+                        Number++;
+                    }
 
                 }
                 catch(...)
@@ -304,5 +302,30 @@ void HelperFunctions::GetArrayFromStr(string String, float *ArrayPtr, int *Array
     {
         ArrayPtr[Index] = stof(StringVector[Index]);
         Index++;
+    }
+}
+
+// Gets an array from a key
+void HelperFunctions::GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath)
+{
+    string KeyString;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
+
+                cout << KeyString << endl;
+
+                GetArrayFromStr(KeyString, ArrayPtr, ArraySize);
+
+            }
+        }
+        StrNum++;
     }
 }

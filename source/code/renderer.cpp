@@ -61,10 +61,9 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 	HelperObjRenderer.SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';');
 
 
-	// Get player spawnpoint and put it in the pointer to the Arrmapobj:
-	//ArrmapObj->Spawnpoint = HelperObjRenderer.GetKeyValue_vector("SPAWNPOINT", ArrmapInfoVector, &ArrmapInfoVector, ArrmapFilePath);
-
-
+    // Get player spawnpoint, from its 3D coordinates.
+    int SpawnpointArraySize = 3;
+    HelperObjRenderer.GetKeyValue_floatarray("SPAWNPOINT", ArrmapInfoVector, ArrmapObj->SpawnpointArr, &SpawnpointArraySize, ArrmapFilePath);
 
 	float MapArray[] = {0.0f};
 
@@ -72,11 +71,6 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
 	HelperObjRenderer.GetArrayFromStr("{0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f}", MapArray, &MapArrSize);
 
-	for(int test1 = 0; test1 < MapArrSize;)
-    {
-        cout << MapArray[test1] << endl;
-        test1++;
-    }
 
 	/*
     // DEBUG !!!
