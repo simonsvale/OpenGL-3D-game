@@ -75,9 +75,9 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
     //HelperObjRenderer.SplitByBraces();
     
-	float MapArray[] = {0.0f};
+	float MapArray[2];
     int MapArrSize;
-	//HelperObjRenderer.GetFloatArrayFromStr("{0.1f,0.5f}", MapArray, &MapArrSize);
+	HelperObjRenderer.GetFloatArrayFromStr("{0.1f,0.5f}", MapArray, &MapArrSize);
 
     /*
     // DEBUG !!!
