@@ -65,22 +65,28 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     int SpawnpointArraySize = 3;
     HelperObjRenderer.GetKeyValue_floatarray("SPAWNPOINT", ArrmapInfoVector, ArrmapObj->SpawnpointArr, &SpawnpointArraySize, ArrmapFilePath);
 
+
+    vector<string> MapGeometry;
+    HelperObjRenderer.GetKeyValue_strvector("MAP_GEOMETRY", ArrmapInfoVector, &MapGeometry);
+
+    // !!!
+    cout << MapGeometry[0] << endl;
+
+
+    //HelperObjRenderer.SplitByBraces();
+    
 	float MapArray[] = {0.0f};
-
     int MapArrSize;
+	//HelperObjRenderer.GetFloatArrayFromStr("{0.1f,0.5f}", MapArray, &MapArrSize);
 
-	HelperObjRenderer.GetArrayFromStr("{0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f}", MapArray, &MapArrSize);
-
-
-	/*
+    /*
     // DEBUG !!!
     for(int test = 0; test < ArrmapInfoVector.size();)
     {
         cout << ArrmapInfoVector[test] << endl;
         test++;
     }
-	*/
-
+    */
 }
 
 

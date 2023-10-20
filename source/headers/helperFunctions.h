@@ -31,11 +31,14 @@ class HelperFunctions
           *  @return void
         */
         void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter);
+		void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace);
 
 		// Pass array pointer by reference
-        void GetArrayFromStr(string String, float *ArrayPtr, int *ArraySize);
+        void GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize);
         void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath);
 
+        void GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector);
+ 
 
         // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
         int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);

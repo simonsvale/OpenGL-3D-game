@@ -82,6 +82,41 @@ void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVe
     SplitStrVecPtr->push_back(String.substr(0, String.length()));
 }
 
+void HelperFunctions::SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace)
+{
+    int BraceStack = 0;
+    int StartBracePos;
+
+    // Run through the string, and check for the given delimiter.
+    for(int CharNum = 0; CharNum < String.length();)
+    {   
+        if(String[CharNum ] == StartBrace)
+        {
+            // If bracestack is zero, we know that a new brace has started.
+            if(BraceStack == 0)
+            {
+                StartBracePos = CharNum ;
+            }
+            // If a startbrace is found add one to the brace stack.
+            BraceStack++;
+        }
+
+        if((String[CharNum ] == EndBrace) && (BraceStack != 0))
+        {
+            // If a endbrace is found retract one from the brace stack.
+            BraceStack--;
+
+            if(BraceStack==0)
+            {
+                // If the stack have been cleared, we know that we have gone through the braces, and this can be pushed to a vector.
+                SplitStrVecPtr->push_back(String.substr(StartBracePos, CharNum));
+            }
+        }
+
+        CharNum++;
+    }
+}
+
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
 int HelperFunctions::GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
@@ -257,7 +292,6 @@ vector<int> HelperFunctions::GetKeyValue_vector(string Key, vector<string> Strin
 
                 try
                 {   
-
                     for(int Number = 0; Number < KeyValueString.size();)
                     {
                         KeyValue.push_back(stoi(KeyValueString[Number]));
@@ -267,7 +301,7 @@ vector<int> HelperFunctions::GetKeyValue_vector(string Key, vector<string> Strin
                 }
                 catch(...)
                 {
-                    throw invalid_argument("Key: "+string(Key)+"'s values are not of type uint16_t, at: "+FilePath);
+                    throw invalid_argument("Key: "+string(Key)+"'s values are not of type int, at: "+FilePath);
                 }
    
                 // Erase the string element that the key value pair was a part of, since it only have to be found once, this is to make the searching more efficient.
@@ -281,11 +315,11 @@ vector<int> HelperFunctions::GetKeyValue_vector(string Key, vector<string> Strin
 
     // Because a key was not found throw exception.
     throw invalid_argument("Key: "+string(Key)+", does not exist in the input string vector, at: "+FilePath);
-    return {0, 0};
+    return {-1};
 }
 
 
-void HelperFunctions::GetArrayFromStr(string String, float *ArrayPtr, int *ArraySize)
+void HelperFunctions::GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize)
 {
     HelperFunctions HelperObject;
     vector<string> StringVector;
@@ -320,10 +354,24 @@ void HelperFunctions::GetKeyValue_floatarray(string Key, vector<string> StringVe
             {   
                 KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
 
-                cout << KeyString << endl;
+                GetFloatArrayFromStr(KeyString, ArrayPtr, ArraySize);
+            }
+        }
+        StrNum++;
+    }
+}
 
-                GetArrayFromStr(KeyString, ArrayPtr, ArraySize);
-
+void HelperFunctions::GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector)
+{
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                NestedStringVector->push_back(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
             }
         }
         StrNum++;
