@@ -72,9 +72,22 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     // !!!
     cout << MapGeometry[0] << endl;
 
+    MapGeometry[0] = MapGeometry[0].substr(1, MapGeometry[0].size()-2);
 
-    //HelperObjRenderer.SplitByBraces();
+
+    // Split the Map_Geometry of the map file into seperate Geometry.
+    vector<string> GeometryVector;
+    HelperObjRenderer.SplitByBraces(MapGeometry[0], &GeometryVector, '{', '}');
+
+    // DEBUG !!!
+    for(int test = 0; test < GeometryVector.size();)
+    {
+        cout << GeometryVector[test] << endl;
+        cout << "end" << endl;
+        test++;
+    }
     
+
 	float MapArray[2];
     int MapArrSize;
 	HelperObjRenderer.GetFloatArrayFromStr("{0.1f,0.5f}", MapArray, &MapArrSize);
