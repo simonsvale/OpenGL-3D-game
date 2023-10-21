@@ -42,10 +42,11 @@ string HelperFunctions::RemoveChar(string String, char Char)
   *  @param std::string `String`, any string with `String.length()` >= 0.
   *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
   *  @param char Delimiter, any ASCII character.
+  *  @param int DelimiterAmount, the amount of delimiters to be found before termination, if DelimiterAmount =< 0 it finds all delimiters in the string.
   *
   *  @return void
 */
-void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter)
+void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
 {
     // Run through the string, and check for the given delimiter.
     for(int Char = 0; Char < String.length();)
@@ -63,11 +64,21 @@ void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVe
             // Create a substring to the right of the delimiter, excluding the delimiter.
             String = String.substr(Char+1, String.size());
 
+            // Found delimiter decrease amount to look for by 1.
+            DelimiterAmount -= 1;
+
+            if(DelimiterAmount == 0)
+            {
+                // Reached last delimiter, push rest of string and return.
+                SplitStrVecPtr->push_back(String);
+                return;
+            }
+
             /* 
                 Run the function with this new substring, since this is recursive function, 
                 at some point, the case where no delimiters are found is reached. And the function terminates.
             */
-            SplitByDelimiter(String, SplitStrVecPtr, Delimiter);
+            SplitByDelimiter(String, SplitStrVecPtr, Delimiter, DelimiterAmount);
             
             // Terminate this recursive step of the function.
             return;
@@ -289,7 +300,7 @@ vector<int> HelperFunctions::GetKeyValue_vector(string Key, vector<string> Strin
             {   
                 KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
 
-                SplitByDelimiter(KeyString, KeyValueStrPtr, ',');
+                SplitByDelimiter(KeyString, KeyValueStrPtr, ',', -1);
 
                 try
                 {   
@@ -328,7 +339,7 @@ void HelperFunctions::GetFloatArrayFromStr(string String, float *ArrayPtr, int *
     String = String.substr(1, String.size()-2);
 
     // Split the string and pass by reference to the vector.
-    HelperObject.SplitByDelimiter(String, &StringVector, ',');
+    HelperObject.SplitByDelimiter(String, &StringVector, ',', -1);
 
     // Pass the StringVector to the ArraySize by reference.
     *ArraySize = StringVector.size();

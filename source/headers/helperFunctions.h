@@ -22,15 +22,16 @@ class HelperFunctions
         string RemoveChar(string String, char Char);
 
         /** 
-          *  Splits a `string` by a given delimiter of type `char` in ASCII, and takes the substrings created by the split and pushes them into a `std::vector<std::string>`, without the delimiter, using a pointer.
-          * 
-          *  @param std::string `String`, any string with `String.length()` >= 0.
-          *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
-          *  @param char Delimiter, any ASCII character.
-          *
-          *  @return void
-        */
-        void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter);
+		  *  Splits a `string` by a given delimiter of type `char` in ASCII, and takes the substrings created by the split and pushes them into a `std::vector<std::string>`, without the delimiter, using a pointer.
+		  * 
+		  *  @param std::string `String`, any string with `String.length()` >= 0.
+		  *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
+		  *  @param char Delimiter, any ASCII character.
+		  *  @param int DelimiterAmount, the amount of delimiters to be found before termination, if DelimiterAmount =< 0 it finds all delimiters in the string.
+		  *
+		  *  @return void
+		*/
+        void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount);
 		void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace);
 
 		// Pass array pointer by reference

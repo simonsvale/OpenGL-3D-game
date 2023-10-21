@@ -40,7 +40,7 @@ void Sprite::LoadSpriteFile(string FilePath)
     ReadSpriteFile.close();
 
     // Split the string by delimiter ;
-    HelperObj.SplitByDelimiter(NoSpacesInfo, &AtrisInfoVector, ';');
+    HelperObj.SplitByDelimiter(NoSpacesInfo, &AtrisInfoVector, ';', -1);
 
     // Set Sprite attributes for created object, pass in FilePath for easier debugging, when during map/level construction.
     HasAnimation = HelperObj.GetKeyValue_bool("HasAnimation", AtrisInfoVector, &AtrisInfoVector, FilePath);

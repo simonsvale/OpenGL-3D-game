@@ -58,7 +58,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     ReadSpriteFile.close();
 
 	// Split the string by the ';' delimiter
-	HelperObjRenderer.SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';');
+	HelperObjRenderer.SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';', -1);
 
 
     // Get player spawnpoint, from its 3D coordinates.
@@ -69,23 +69,49 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     vector<string> MapGeometry;
     HelperObjRenderer.GetKeyValue_strvector("MAP_GEOMETRY", ArrmapInfoVector, &MapGeometry);
 
-    // !!!
-    cout << MapGeometry[0] << endl;
+    // Remove outer braces.
+    string GeometryInfo = MapGeometry[0].substr(1, MapGeometry[0].size()-2);
 
-    MapGeometry[0] = MapGeometry[0].substr(1, MapGeometry[0].size()-2);
 
+    // Vector for holding all geometry in the MAP_GEOMETRY.
+    vector<string> GeometryVector;
 
     // Split the Map_Geometry of the map file into seperate Geometry.
-    vector<string> GeometryVector;
-    HelperObjRenderer.SplitByBraces(MapGeometry[0], &GeometryVector, '{', '}');
+    HelperObjRenderer.SplitByBraces(GeometryInfo, &GeometryVector, '{', '}');
 
-    // DEBUG !!!
-    for(int test = 0; test < GeometryVector.size();)
+
+    vector<string> SingleGeometryVector;
+
+    // Go through each vector index, and extract information.
+    for(int Index = 0; Index < GeometryVector.size();)
     {
-        cout << GeometryVector[test] << endl;
-        cout << "end" << endl;
-        test++;
+        HelperObjRenderer.SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 4);
+
+        // !!!
+        for(int test = 0; test < SingleGeometryVector.size();)
+        {
+            cout << SingleGeometryVector[test] << endl;
+            test++;
+        }
+
+        cout << "\n" << endl;
+
+
+        // Do data processing !
+
+
+
+        // Generate the float arrays.
+
+        // Clear vector
+        SingleGeometryVector.clear();
+
+        Index++;
+
+        // Perhaps a loading bar on another thread.
     }
+    
+
     
 
 	float MapArray[2];

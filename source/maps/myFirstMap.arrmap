@@ -6,7 +6,7 @@ SPAWNPOINT = {100.0f, 23.0f, 21.0f};
 
 MAP_GEOMETRY = 
 {  
-   {TYPE = 2,
+   {TYPE = -1,
     VERTEX_SHADER = y,
     FRAGMENT_SHADER = z,
     DRAW_TYPE = w,
