@@ -90,27 +90,27 @@ void HelperFunctions::SplitByBraces(string String, vector<string> *SplitStrVecPt
     // Run through the string, and check for the given delimiter.
     for(int CharNum = 0; CharNum < String.length();)
     {   
-        if(String[CharNum ] == StartBrace)
+        if(String[CharNum] == StartBrace)
         {
             // If bracestack is zero, we know that a new brace has started.
             if(BraceStack == 0)
             {
                 // Set the Start position of the brace in the string to the current character index of the string.
-                StartBracePos = CharNum ;
+                StartBracePos = CharNum;
             }
             // If a startbrace is found add one to the brace stack.
             BraceStack++;
         }
 
-        if((String[CharNum ] == EndBrace) && (BraceStack != 0))
+        if((String[CharNum] == EndBrace) && (BraceStack != 0))
         {
             // If a endbrace is found retract one from the brace stack.
             BraceStack--;
 
-            if(BraceStack==0)
+            if(BraceStack == 0)
             {
                 // If the stack have been cleared, we know that we have gone through all the braces in this "section", and this can be pushed to a vector.
-                SplitStrVecPtr->push_back(String.substr(StartBracePos, CharNum));
+                SplitStrVecPtr->push_back(String.substr(StartBracePos, CharNum-StartBracePos));
             }
         }
 
