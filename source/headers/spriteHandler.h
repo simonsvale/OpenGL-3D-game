@@ -52,7 +52,7 @@ class Sprite
         bool Collision;
         
         // @NOTE: Perhaps not necesary, since the entire source texture size could be used as the collision box.
-        vector<short> CollisionBox; 
+        vector<int> CollisionBox; 
 
 
 // Animation
