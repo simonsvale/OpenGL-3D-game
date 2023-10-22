@@ -24,6 +24,8 @@
 #include "shaderHandler.h"
 #include "mapHandler.h"
 
+#include "controls.h"
+
 using namespace std;
 
 // Window width and height
@@ -76,6 +78,8 @@ float Cube[] = {
 
 int main(int argc, char **argv) 
 {
+    Camera CameraObj;
+
     int Mode = 0 ;
 
     // !!!
@@ -177,10 +181,6 @@ int main(int argc, char **argv)
 
         }
 
-
-        // Set viewport.
-        glViewport(0, 0, WIDTH, HEIGHT);
-
         // background color
         glClearColor(0.03f, 0.1f, 0.24f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -220,6 +220,14 @@ int main(int argc, char **argv)
 
         // The rotation of the cube.
         model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+
+        // Occilate the cube from side to side.
+        //view = glm::translate(view, glm::vec3(sin(SDL_GetTicks64()/2000.0), 0.0f, -2.5f)); 
+
+        // Camera movement
+        CameraObj.ComputeMouseInput(window);
+        projection = CameraObj.ProjectionMatrix;
+        view = CameraObj.ViewMatrix;
 
 
         // Assign new values to vertex shader.

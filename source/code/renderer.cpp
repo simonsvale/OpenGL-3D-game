@@ -81,24 +81,24 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
 
     vector<string> SingleGeometryVector;
+    vector<string> ArrmapAttributeVector;
 
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)
     {
         HelperObjRenderer.SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 4);
 
-        // !!!
-        for(int test = 0; test < SingleGeometryVector.size();)
-        {
-            cout << SingleGeometryVector[test] << endl;
-            test++;
-        }
 
-        cout << "\n" << endl;
+        // !!!
+        for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
+        {   
+            cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
+            ArrmapAttributeNumber++;
+        }
 
 
         // Do data processing !
-
+        
 
 
         // Generate the float arrays.
