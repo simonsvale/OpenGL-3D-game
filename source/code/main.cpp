@@ -163,7 +163,7 @@ int main(int argc, char **argv)
     // Hide cursor
     SDL_ShowCursor(0);
 
-    // Is need for mouse inputs to work correctly
+    // Is needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     bool Running = true;
@@ -175,6 +175,18 @@ int main(int argc, char **argv)
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
         
+        SDL_PumpEvents();
+        // Get keystate
+        const Uint8 *keyArray = SDL_GetKeyboardState(NULL);
+
+        if(keyArray[SDL_SCANCODE_ESCAPE])
+        {
+            cout << "RET" << endl;
+        }
+
+        CameraObj.GetMovementInput(keyArray);
+
+
         while(SDL_PollEvent(&windowEvent) != 0)
         {   
 
@@ -185,9 +197,10 @@ int main(int argc, char **argv)
 
             Mode = OptionsObj.ToggleRenderMode(Mode, windowEvent);
 
-            CameraObj.GetMovementInput(windowEvent);
-
         }
+
+
+        
 
         // background color
         glClearColor(0.03f, 0.1f, 0.24f, 1.0f);
@@ -210,7 +223,7 @@ int main(int argc, char **argv)
         model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 
         // The rotation of the cube.
-        //model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
 
         //model = glm::translate(model, glm::vec3(float(SDL_GetTicks64()/2000.0), 0.0f, 2.0f)); 
 

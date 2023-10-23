@@ -29,11 +29,11 @@ class Camera
     	float horizontalAngle;
     	float verticalAngle;
 
-        glm::vec3 direction2;
+        glm::vec3 direction;
         glm::vec3 right;
 
         void ComputeMouseInput(SDL_Window *window);
-        void GetMovementInput(SDL_Event windowEvent);
+        void GetMovementInput(const Uint8 *keyArray);
 };
 
 
