@@ -160,6 +160,12 @@ int main(int argc, char **argv)
 
     const int FrameDelay = 1000 / 60;
 
+    // Hide cursor
+    SDL_ShowCursor(0);
+
+    // Is need for mouse inputs to work correctly
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     bool Running = true;
     SDL_Event windowEvent;
 
@@ -179,6 +185,8 @@ int main(int argc, char **argv)
 
             Mode = OptionsObj.ToggleRenderMode(Mode, windowEvent);
 
+            CameraObj.GetMovementInput(windowEvent);
+
         }
 
         // background color
@@ -187,16 +195,6 @@ int main(int argc, char **argv)
 
         // !!!
         int vertexColorLocation = glGetUniformLocation(RainbowShader.ShaderProgram, "ourColor");
-
-        /*
-        glUseProgram(RainbowShader.ShaderProgram);
-
-        glBindTexture(GL_TEXTURE_2D, Texture2);
-        glBindVertexArray(GraphicsObj_2.VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_2.EBO);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        */
 
         // 3D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -207,28 +205,19 @@ int main(int argc, char **argv)
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection;
-        
-        // The placement of the object
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.5f)); 
 
         // Rotate the model
         model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 
-        // The "camera", the first float is how close things will be rendered (Cannot be zero, because math), the last float is the max distance objects will be rendered.
-        projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.0001f, 100.0f);
-
-
         // The rotation of the cube.
-        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+        //model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
 
-        // Occilate the cube from side to side.
-        //view = glm::translate(view, glm::vec3(sin(SDL_GetTicks64()/2000.0), 0.0f, -2.5f)); 
+        //model = glm::translate(model, glm::vec3(float(SDL_GetTicks64()/2000.0), 0.0f, 2.0f)); 
 
         // Camera movement
         CameraObj.ComputeMouseInput(window);
         projection = CameraObj.ProjectionMatrix;
         view = CameraObj.ViewMatrix;
-
 
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");

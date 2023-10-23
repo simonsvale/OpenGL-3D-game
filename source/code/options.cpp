@@ -19,6 +19,7 @@ int Options::ToggleRenderMode(int Mode, SDL_Event windowEvent)
             {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
                 Mode++;
+                SDL_ShowCursor(1);
                 break;
             } 
             case 1:
