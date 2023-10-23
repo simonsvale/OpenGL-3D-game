@@ -2,13 +2,14 @@
 #include <iostream>
 
 #include <SDL2/SDL.h>
+#include <glad/glad.h>
 
 
 #include "controls.h"
 
 using namespace std;
 
-void Camera::ComputeMouseInput(SDL_Window *window)
+void Controls::ComputeMouseInput(SDL_Window *window)
 {
 	// is called only once, the first time this function is called
 	static double lastTime = SDL_GetTicks64()/1000.0;
@@ -49,7 +50,7 @@ void Camera::ComputeMouseInput(SDL_Window *window)
 	lastTime = currentTime;
 }
 
-void Camera::GetMovementInput(const Uint8 *keyArray)
+void Controls::GetMovementInput(const Uint8 *keyArray)
 {	
 
     if(keyArray[SDL_SCANCODE_W])
@@ -72,4 +73,60 @@ void Camera::GetMovementInput(const Uint8 *keyArray)
         position -= right * deltaTime * speed;
     }
 
+}
+
+
+void Controls::ToggleRenderMode(const Uint8 *keyArray)
+{
+    if((keyArray[SDL_SCANCODE_P]))
+    {
+        switch(RenderMode)
+        {
+            case 0:
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+                RenderMode++;
+                break;
+            } 
+            case 1:
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                RenderMode++;
+                break;
+            } 
+            case 2:
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                RenderMode = 0;
+                break;
+            } 
+        }
+    }
+}
+
+
+void Controls::QuitGame(const Uint8 *keyArray)
+{
+    // QUIT if escape
+    if(keyArray[SDL_SCANCODE_ESCAPE])
+    {
+        Running = false;
+    }
+}
+
+// Main control loop
+void Controls::RunControls()
+{	
+	// Needed to get keystate
+    SDL_PumpEvents();
+
+    // Get keystate
+    const Uint8 *keyArray = SDL_GetKeyboardState(NULL);
+
+	// Do controls
+	GetMovementInput(keyArray);
+
+    ToggleRenderMode(keyArray);
+
+	QuitGame(keyArray);
 }

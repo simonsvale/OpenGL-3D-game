@@ -16,7 +16,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // Include own headers
-#include "options.h"
 #include "structures.h"
 #include "spriteHandler.h"
 #include "renderer.h"
@@ -77,13 +76,13 @@ float Cube[] = {
 };
 
 int main(int argc, char **argv) 
-{
-    Camera CameraObj;
+{   
+    // Object for options and controls
+    Controls Controls;
 
     int Mode = 0 ;
 
     // !!!
-    Options OptionsObj;
     Renderer RenderObj;
 
     ArrayLevelMap MapObj;
@@ -166,41 +165,17 @@ int main(int argc, char **argv)
     // Is needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
-    bool Running = true;
     SDL_Event windowEvent;
 
     // Window loop
-    while(Running == true)
+    while(Controls.Running == true)
     {   
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
         
-        SDL_PumpEvents();
-        // Get keystate
-        const Uint8 *keyArray = SDL_GetKeyboardState(NULL);
+        // Run controls, does keystate and everthing
+        Controls.RunControls();
 
-        if(keyArray[SDL_SCANCODE_ESCAPE])
-        {
-            cout << "RET" << endl;
-        }
-
-        CameraObj.GetMovementInput(keyArray);
-
-
-        while(SDL_PollEvent(&windowEvent) != 0)
-        {   
-
-            if (SDL_QUIT == windowEvent.type)
-            {
-                Running = false;
-            }
-
-            Mode = OptionsObj.ToggleRenderMode(Mode, windowEvent);
-
-        }
-
-
-        
 
         // background color
         glClearColor(0.03f, 0.1f, 0.24f, 1.0f);
@@ -228,9 +203,9 @@ int main(int argc, char **argv)
         //model = glm::translate(model, glm::vec3(float(SDL_GetTicks64()/2000.0), 0.0f, 2.0f)); 
 
         // Camera movement
-        CameraObj.ComputeMouseInput(window);
-        projection = CameraObj.ProjectionMatrix;
-        view = CameraObj.ViewMatrix;
+        Controls.ComputeMouseInput(window);
+        projection = Controls.ProjectionMatrix;
+        view = Controls.ViewMatrix;
 
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");
