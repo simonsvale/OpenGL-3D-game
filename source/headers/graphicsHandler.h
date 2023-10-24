@@ -2,7 +2,10 @@
 #define GRAPHICS_HANDLER_H
 
 #include <string>
+#include <vector>
+
 #include <array>
+
 #include <glad/glad.h>
 #include <iostream>
 
@@ -16,7 +19,7 @@ class Graphics
 
         GLuint VBO;     // Vertex Buffer Object
         GLuint VAO;     // Vertex Array Object
-
+        
         // Constructor (Basic graphics setup for now)
         Graphics(float Vertecies[], int VertSize)
         {   

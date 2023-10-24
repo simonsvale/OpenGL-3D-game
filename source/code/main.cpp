@@ -16,7 +16,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // Include own headers
-#include "options.h"
 #include "structures.h"
 #include "spriteHandler.h"
 #include "renderer.h"
@@ -24,10 +23,12 @@
 #include "shaderHandler.h"
 #include "mapHandler.h"
 
+#include "controls.h"
+
 using namespace std;
 
 // Window width and height
-const int WIDTH = 600, HEIGHT = 600;
+const int WIDTH = 1080, HEIGHT = 720;
 
 float Cube[] = {
     // Verticies                // Colors               // Texture
@@ -74,23 +75,30 @@ float Cube[] = {
   -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f  
 };
 
+float GroundLayer[] = {
+    // Verticies                // Colors               // Texture
+  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
+  -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
+   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+   0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
+  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f
+};
+
 int main(int argc, char **argv) 
-{
+{   
+    // Object for options and controls
+    Controls Controls;
+
     int Mode = 0 ;
 
     // !!!
-    Options OptionsObj;
     Renderer RenderObj;
 
     ArrayLevelMap MapObj;
 
     // !!!
     RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj);
-
-    // !!!
-    Sprite SpriteObj_1("source/textures/dummy.atris");
-    Sprite SpriteObj_2("source/textures/dummy2.atris");
-
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -131,7 +139,7 @@ int main(int argc, char **argv)
 
     // Do graphics
     Graphics GraphicsObj_1(Cube, sizeof(Cube)/sizeof(Cube[0]));
-    //Graphics GraphicsObj_2(Square2, indices2);
+    Graphics GraphicsObj_2(Cube, sizeof(GroundLayer)/sizeof(GroundLayer[0]));
 
     // !!!
     Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
@@ -143,7 +151,7 @@ int main(int argc, char **argv)
 
     GLuint Texture2;
     GLuint *TexturePtr2 = &Texture2;
-    //GraphicsObj_2.LoadTexture(TexturePtr2, &RainbowShader.ShaderProgram, "source/textures/debug.png");
+    GraphicsObj_2.LoadTexture(TexturePtr2, &RainbowShader.ShaderProgram, "source/textures/mars_sand.png");
 
     // !!!
     glEnable(GL_DEPTH_TEST);  
@@ -156,71 +164,77 @@ int main(int argc, char **argv)
 
     const int FrameDelay = 1000 / 60;
 
-    bool Running = true;
-    SDL_Event windowEvent;
+    // Hide cursor
+    SDL_ShowCursor(0);
+
+    // Is needed for mouse inputs to work correctly
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     // Window loop
-    while(Running == true)
+    while(Controls.Running == true)
     {   
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
         
-        while(SDL_PollEvent(&windowEvent) != 0)
-        {   
-
-            if (SDL_QUIT == windowEvent.type)
-            {
-                Running = false;
-            }
-
-            Mode = OptionsObj.ToggleRenderMode(Mode, windowEvent);
-
-        }
-
-
-        // Set viewport.
-        glViewport(0, 0, WIDTH, HEIGHT);
-
-        // background color
-        glClearColor(0.03f, 0.1f, 0.24f, 1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-        // !!!
-        int vertexColorLocation = glGetUniformLocation(RainbowShader.ShaderProgram, "ourColor");
-
-        /*
-        glUseProgram(RainbowShader.ShaderProgram);
-
-        glBindTexture(GL_TEXTURE_2D, Texture2);
-        glBindVertexArray(GraphicsObj_2.VAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GraphicsObj_2.EBO);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        */
-
-        // 3D
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glBindTexture(GL_TEXTURE_2D, Texture);
-        glUseProgram(RedShader.ShaderProgram);
+        // Run controls, does keystate and everthing
+        Controls.RunControls();
 
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection;
+
+        // Camera movement
+        Controls.ComputeMouseInput(window);
+        projection = Controls.ProjectionMatrix;
+        view = Controls.ViewMatrix;
+
         
-        // The placement of the object
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.5f)); 
+        // background color
+        glClearColor(0.766f, 0.922f, 0.970f, 1.0f);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        
+        // !!!
+        int vertexColorLocation = glGetUniformLocation(RainbowShader.ShaderProgram, "ourColor");
+
+        // 3D
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+        // !!!  
+        glBindTexture(GL_TEXTURE_2D, Texture2);
+        glUseProgram(RainbowShader.ShaderProgram);
+
+        glm::vec3 scale2 = glm::vec3(30.0f, 30.0f, 30.0f);
+
+        glm::mat4 model2 = glm::mat4(1.0f);
+        model2 = glm::translate(model2, glm::vec3(0.0f, -13.0f, 0.0f));
+        model2 = glm::rotate(model2, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+        model2 = glm::scale(model2, scale2);
+
+        // Assign new values to vertex shader.
+        int modelLoc2 = glGetUniformLocation(RainbowShader.ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc2, 1, GL_FALSE, glm::value_ptr(model2));
+        int viewLoc2 = glGetUniformLocation(RainbowShader.ShaderProgram, "view");
+        glUniformMatrix4fv(viewLoc2, 1, GL_FALSE, glm::value_ptr(view));
+        int projectionLoc2 = glGetUniformLocation(RainbowShader.ShaderProgram, "projection");
+        glUniformMatrix4fv(projectionLoc2, 1, GL_FALSE, glm::value_ptr(projection));
+
+        // Draw elements for obj_1
+        glBindVertexArray(GraphicsObj_2.VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        
+
+
+        // New element
+        glBindTexture(GL_TEXTURE_2D, Texture);
+        glUseProgram(RedShader.ShaderProgram);
 
         // Rotate the model
-        model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.5f, 0.0f, 0.0f));
-
-        // The "camera", the first float is how close things will be rendered (Cannot be zero, because math), the last float is the max distance objects will be rendered.
-        projection = glm::perspective(glm::radians(45.0f), float(WIDTH) / float(HEIGHT), 0.0001f, 100.0f);
-
+        model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
 
         // The rotation of the cube.
         model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
-
 
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");
@@ -261,4 +275,3 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
-
