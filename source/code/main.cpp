@@ -165,8 +165,6 @@ int main(int argc, char **argv)
     // Is needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
-    SDL_Event windowEvent;
-
     // Window loop
     while(Controls.Running == true)
     {   

@@ -4,11 +4,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <glad/glad.h>
+
 class Controls
 {
     public:
     // Main control loop
         void RunControls();
+
+        // Variable for handling input events. Only for inputs dependent on keyup!
+        SDL_Event windowEvent;
 
     // Camera Controls
         // position
@@ -45,7 +50,7 @@ class Controls
 
         // 0 = Full, 1 = Vertecies, 2 = points
         int RenderMode = 0;
-        void ToggleRenderMode(const Uint8 *keyArray);
+        void ToggleRenderMode(SDL_Event windowEvent);
 
         // QUIT
         bool Running = true;

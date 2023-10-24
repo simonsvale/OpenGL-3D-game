@@ -76,9 +76,9 @@ void Controls::GetMovementInput(const Uint8 *keyArray)
 }
 
 
-void Controls::ToggleRenderMode(const Uint8 *keyArray)
+void Controls::ToggleRenderMode(SDL_Event windowEvent)
 {
-    if((keyArray[SDL_SCANCODE_P]))
+    if((windowEvent.key.keysym.sym == SDLK_p) && (SDL_KEYUP == windowEvent.type))
     {
         switch(RenderMode)
         {
@@ -125,8 +125,17 @@ void Controls::RunControls()
 
 	// Do controls
 	GetMovementInput(keyArray);
-
-    ToggleRenderMode(keyArray);
-
+    
 	QuitGame(keyArray);
+
+
+
+    // To handle one keypress, SDL_PollEvent is used.
+    while(SDL_PollEvent(&windowEvent) != 0)
+    {   
+        // All methods dependent on key up press.
+        ToggleRenderMode(windowEvent);
+        
+    }
+ 
 }
