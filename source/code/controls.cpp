@@ -23,10 +23,10 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 
 	// Reset mouse to the middle of the screen 
 	// WIP
-	SDL_WarpMouseInWindow(window, 600/2, 600/2);
+	SDL_WarpMouseInWindow(window, 1080/2, 720/2);
 
-	horizontalAngle += mouseSpeed * float(600/2 - MousePosX);
-	verticalAngle   += mouseSpeed * float(600/2 - MousePosY);
+	horizontalAngle += mouseSpeed * float(1080/2 - MousePosX);
+	verticalAngle   += mouseSpeed * float(720/2 - MousePosY);
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	direction = glm::vec3(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
@@ -37,8 +37,8 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 	// Up vector
 	glm::vec3 up = glm::cross(right, direction);
 
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	ProjectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 100.0f);
+	// Projection matrix : 45° Field of View,              Aspect ratio, "render distance" like, where 0.1 is close and 100.0 is far.
+	ProjectionMatrix = glm::perspective(glm::radians(FoV), 1080.0f / 720.0f, 0.1f, 100.0f);
 	// Camera matrix
 	ViewMatrix = glm::lookAt(
 								position,           // Camera is here
@@ -50,7 +50,7 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 	lastTime = currentTime;
 }
 
-void Controls::GetMovementInput(const Uint8 *keyArray)
+void Controls::GetPlayerMovementInput(const Uint8 *keyArray)
 {	
 
     if(keyArray[SDL_SCANCODE_W])
@@ -124,8 +124,8 @@ void Controls::RunControls()
     const Uint8 *keyArray = SDL_GetKeyboardState(NULL);
 
 	// Do controls
-	GetMovementInput(keyArray);
-    
+	GetPlayerMovementInput(keyArray);
+
 	QuitGame(keyArray);
 
 

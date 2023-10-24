@@ -17,7 +17,7 @@ class Controls
 
     // Camera Controls
         // position
-        glm::vec3 position = glm::vec3(0, 0, 5);
+        glm::vec3 position = glm::vec3(0, 5, 0);
 
         float deltaTime;
 
@@ -43,7 +43,7 @@ class Controls
     
 
         void ComputeMouseInput(SDL_Window *window);
-        void GetMovementInput(const Uint8 *keyArray);
+        void GetPlayerMovementInput(const Uint8 *keyArray);
 
 
     // Control Options:
