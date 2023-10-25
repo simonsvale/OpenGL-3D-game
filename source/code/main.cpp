@@ -165,8 +165,6 @@ int main(int argc, char **argv)
     const int FrameDelay = 1000 / 60;
 
     // Hide cursor
-    SDL_ShowCursor(0);
-
     // Is needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 

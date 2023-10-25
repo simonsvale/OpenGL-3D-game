@@ -39,13 +39,14 @@ class HelperFunctions
         void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath);
 
         void GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector);
+        void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath);
  
 
         // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
         int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
         int GetKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
 
-        vector<int> GetKeyValue_vector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
+        vector<int> GetKeyValue_intvector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
 
         // A function for getting a value from a given key string from an .atris file for bool.
         bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);

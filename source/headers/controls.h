@@ -25,7 +25,7 @@ class Controls
         float FoV = 45.0f;
 
         float speed = 3.0f; // 3 units / second
-        float mouseSpeed = 0.005f;
+        float mouseSpeed = 0.002f;
 
         // Mouse position
         int MousePosX, MousePosY;

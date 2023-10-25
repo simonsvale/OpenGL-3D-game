@@ -80,7 +80,6 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
-
     // ------------------------------- The rest should probably be new method, in the shader class.
 
     // Needs to be a parameter "tex0"

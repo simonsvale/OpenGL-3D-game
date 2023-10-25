@@ -62,7 +62,7 @@ void Sprite::LoadSpriteFile(string FilePath)
     cout << "Collision: " << Collision << endl;
     if(Collision == true)
     {
-        CollisionBox = HelperObj.GetKeyValue_vector("CollisionBox", AtrisInfoVector, &AtrisInfoVector, FilePath);
+        CollisionBox = HelperObj.GetKeyValue_intvector("CollisionBox", AtrisInfoVector, &AtrisInfoVector, FilePath);
 
         // DEBUG
         cout << "CollisionBox: " << CollisionBox[0] << "," << CollisionBox[1] << endl;

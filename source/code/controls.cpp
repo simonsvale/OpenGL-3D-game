@@ -21,6 +21,8 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 	// Get the mouse coordinates using SDL2.
 	SDL_GetMouseState(&MousePosX, &MousePosY);
 
+    //cout << MousePosX << ", " << MousePosY << endl;
+
 	// Reset mouse to the middle of the screen 
 	// WIP
 	SDL_WarpMouseInWindow(window, 1080/2, 720/2);

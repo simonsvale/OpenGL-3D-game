@@ -83,23 +83,28 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     vector<string> SingleGeometryVector;
     vector<string> ArrmapAttributeVector;
 
+    vector<float> VertexVec;
+
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)
     {
         HelperObjRenderer.SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 4);
 
 
-        // !!!
+        /*
         for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
         {   
             cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
             ArrmapAttributeNumber++;
         }
-
+        */
 
         // Do data processing !
-        
 
+        HelperObjRenderer.GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+
+        
+        break;
 
         // Generate the float arrays.
 
@@ -111,6 +116,10 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
         // Perhaps a loading bar on another thread.
     }
     
+
+    //float *VertexPtr = (float*) malloc(10);
+
+    //free(VertexPtr);
 
     
 

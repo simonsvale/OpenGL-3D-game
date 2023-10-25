@@ -280,7 +280,7 @@ bool HelperFunctions::GetKeyValue_bool(string Key, vector<string> StringVector, 
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key as a vector. 
 If the key is not found, returns {0, 0}, if out of range of uint16_t throws exception. */
-vector<int> HelperFunctions::GetKeyValue_vector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+vector<int> HelperFunctions::GetKeyValue_intvector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     vector<int> KeyValue;
@@ -367,6 +367,7 @@ void HelperFunctions::GetKeyValue_floatarray(string Key, vector<string> StringVe
                 KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
 
                 GetFloatArrayFromStr(KeyString, ArrayPtr, ArraySize);
+                return;
             }
         }
         StrNum++;
@@ -384,6 +385,46 @@ void HelperFunctions::GetKeyValue_strvector(string Key, vector<string> StringVec
             if((StringVector[StrNum].find(Key) != string::npos) == true)
             {   
                 NestedStringVector->push_back(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
+                return;
+            }
+        }
+        StrNum++;
+    }
+}
+
+// Based on a string
+void HelperFunctions::GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath)
+{
+    string ArrayString;
+    vector<string> AuxFloatVector;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                // Create a new substring consisting of all floats in the string array.
+                ArrayString = StringVector[StrNum].substr(Key.length()+2, StringVector[StrNum].length()-(Key.length()+3));
+
+                SplitByDelimiter(ArrayString, &AuxFloatVector, ',', -1);
+                
+                try
+                {
+                    for(int Index = 0; Index < AuxFloatVector.size();)
+                    {
+                        VectorPtr->push_back(stof(AuxFloatVector[Index]));
+                        Index++;
+                    }
+                }
+                catch(...)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s values are not of type float, at: "+FilePath);
+                }
+
+                return;
             }
         }
         StrNum++;
