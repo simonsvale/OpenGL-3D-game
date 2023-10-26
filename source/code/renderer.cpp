@@ -83,8 +83,6 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     vector<string> SingleGeometryVector;
     vector<string> ArrmapAttributeVector;
 
-    vector<float> VertexVec;
-
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)
     {

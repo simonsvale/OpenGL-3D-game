@@ -30,51 +30,6 @@ using namespace std;
 // Window width and height
 const int WIDTH = 1080, HEIGHT = 720;
 
-float Cube[] = {
-    // Verticies                // Colors               // Texture
-  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
-  -0.5f, 0.5f,-0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
-   0.5f, 0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
-   0.5f, 0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
-   0.5f,-0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f,
-  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,  
-
-  -0.5f,-0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
-  -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
-   0.5f,-0.5f, 0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 0.0f,
-  -0.5f,-0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,  
-
-  -0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,       
-  -0.5f,-0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
-  -0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
-  -0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
-  -0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
-  -0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,  
-
-   0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,       
-   0.5f,-0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
-   0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
-   0.5f,-0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         0.0f, 1.0f,
-   0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
-   0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 0.0f,         1.0f, 0.0f,  
-
-  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
-  -0.5f,-0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
-   0.5f,-0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f,-0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f,-0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
-  -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,  
-
-  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
-  -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
-  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f  
-};
-
 float GroundLayer[] = {
     // Verticies                // Colors               // Texture
   -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
@@ -138,8 +93,8 @@ int main(int argc, char **argv)
     }
 
     // Do graphics
-    Graphics GraphicsObj_1(Cube, sizeof(Cube)/sizeof(Cube[0]));
-    Graphics GraphicsObj_2(Cube, sizeof(GroundLayer)/sizeof(GroundLayer[0]));
+    Graphics GraphicsObj_1(&RenderObj.VertexVec[0], RenderObj.VertexVec.size());
+    Graphics GraphicsObj_2(GroundLayer, sizeof(GroundLayer)/sizeof(GroundLayer[0]));
 
     // !!!
     Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
@@ -191,10 +146,6 @@ int main(int argc, char **argv)
         glClearColor(0.766f, 0.922f, 0.970f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        
-        // !!!
-        int vertexColorLocation = glGetUniformLocation(RainbowShader.ShaderProgram, "ourColor");
-
         // 3D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -207,7 +158,6 @@ int main(int argc, char **argv)
 
         glm::mat4 model2 = glm::mat4(1.0f);
         model2 = glm::translate(model2, glm::vec3(0.0f, -13.0f, 0.0f));
-        model2 = glm::rotate(model2, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
         model2 = glm::scale(model2, scale2);
 
         // Assign new values to vertex shader.
@@ -221,7 +171,6 @@ int main(int argc, char **argv)
         // Draw elements for obj_1
         glBindVertexArray(GraphicsObj_2.VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        
 
 
         // New element
