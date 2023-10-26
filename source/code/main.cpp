@@ -42,17 +42,16 @@ float GroundLayer[] = {
 
 int main(int argc, char **argv) 
 {   
+    
     // Object for options and controls
     Controls Controls;
-
-    int Mode = 0 ;
 
     // !!!
     Renderer RenderObj;
 
     ArrayLevelMap MapObj;
 
-    // !!!
+    // !!! Load map
     RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj);
 
     SDL_Init(SDL_INIT_EVERYTHING);

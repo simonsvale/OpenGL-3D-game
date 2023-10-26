@@ -9,6 +9,8 @@
 
 using namespace std;
 
+glm::vec3 up;
+
 void Controls::ComputeMouseInput(SDL_Window *window)
 {
 	// is called only once, the first time this function is called
@@ -17,6 +19,8 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 	// Compute the time between the last frame.
 	double currentTime = SDL_GetTicks64()/1000.0;
 	deltaTime = currentTime - lastTime;
+
+    //cout << "Delta: " << deltaTime << endl;
 
 	// Get the mouse coordinates using SDL2.
 	SDL_GetMouseState(&MousePosX, &MousePosY);
@@ -27,14 +31,21 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 	// WIP
 	SDL_WarpMouseInWindow(window, 1080/2, 720/2);
 
-	horizontalAngle += mouseSpeed * float(1080/2 - MousePosX);
-	verticalAngle   += mouseSpeed * float(720/2 - MousePosY);
+	horizontalAngle += mouseSpeed * (1080/2 - MousePosX);
+	verticalAngle   += mouseSpeed * (720/2 - MousePosY);
+
+    //cout << "HozA: " << horizontalAngle << endl;
+    //cout << "MusX: " << MousePosX << endl;
+
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	direction = glm::vec3(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
 	
 	// Right vector
 	right = glm::vec3(sin(horizontalAngle - 3.14f/2.0f), 0, cos(horizontalAngle - 3.14f/2.0f));
+
+    //cout << direction.x << ", " << direction.y << ", " << direction.z << endl;
+    //cout << right.x << ", " << right.y << ", " << right.z << endl;
 	
 	// Up vector
 	glm::vec3 up = glm::cross(right, direction);
@@ -47,6 +58,7 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 								position+direction, // and looks here : at the same position, plus "direction"
 								up                  // Head is up (set to 0,-1,0 to look upside-down)
 						   );
+
 
 	// For the next frame, the "last time" will be "now"
 	lastTime = currentTime;
@@ -131,13 +143,11 @@ void Controls::RunControls()
 	QuitGame(keyArray);
 
 
-
     // To handle one keypress, SDL_PollEvent is used.
     while(SDL_PollEvent(&windowEvent) != 0)
     {   
         // All methods dependent on key up press.
-        ToggleRenderMode(windowEvent);
-        
+        ToggleRenderMode(windowEvent);  
     }
  
 }
