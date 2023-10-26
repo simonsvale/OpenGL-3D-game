@@ -25,7 +25,7 @@ class Controls
         float FoV = 45.0f;
 
         float speed = 3.0f; // 3 units / second
-        float mouseSpeed = 0.005f;
+        double mouseSpeed = 0.002;
 
         // Mouse position
         int MousePosX, MousePosY;
@@ -35,8 +35,8 @@ class Controls
         glm::mat4 ProjectionMatrix;
 
         // Compute new orientation
-    	float horizontalAngle;
-    	float verticalAngle;
+    	double horizontalAngle;
+    	double verticalAngle;
 
         glm::vec3 direction;
         glm::vec3 right;
