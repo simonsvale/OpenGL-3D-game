@@ -116,7 +116,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         
         GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader->ShaderProgram, "source/textures/debug3.png");
 
-        GraphicsObjs[Index].VAO = *VAOPtr;
+        *VAOPtr = GraphicsObjs[Index].VAO;
 
         
         break;
