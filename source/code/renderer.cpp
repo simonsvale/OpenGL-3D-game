@@ -1,4 +1,9 @@
 #include <SDL2/SDL.h>
+#include <glad/glad.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 #include <string>
@@ -83,6 +88,15 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     vector<string> SingleGeometryVector;
     vector<string> ArrmapAttributeVector;
 
+    // Size should be: GeometryVector.size()
+    Graphics *GraphicsObjs = new Graphics[1];
+
+
+    vector<float> VertexVec;
+
+    GLuint Texture;
+    GLuint *TexturePtr = &Texture;
+
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)
     {
@@ -101,6 +115,38 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
         HelperObjRenderer.GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
 
+        // Load vertecies into VBO and set VAO.
+        GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());
+        GraphicsObjs[Index].SetVAO();
+        
+        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader.ShaderProgram, "source/textures/debug3.png");
+
+        // New element
+        glBindTexture(GL_TEXTURE_2D, Texture);
+        glUseProgram(RedShader.ShaderProgram);
+
+        // Rotate the model
+        model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
+
+        // The rotation of the cube.
+        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+
+        // Assign new values to vertex shader.
+        int modelLoc = glGetUniformLocation(RedShader.ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        int viewLoc = glGetUniformLocation(RedShader.ShaderProgram, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        int projectionLoc = glGetUniformLocation(RedShader.ShaderProgram, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        
+
+        // Draw elements for obj_1
+        glBindVertexArray(GraphicsObjs[Index].VAO);
+
+        // Draw cube
+        glDrawArrays(GL_TRIANGLES, 0, 36);
         
         break;
 
@@ -113,18 +159,11 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
         // Perhaps a loading bar on another thread.
     }
+
+    // Delete all instances of the Graphics class.
+    delete[] GraphicsObjs;
     
-
-    //float *VertexPtr = (float*) malloc(10);
-
-    //free(VertexPtr);
-
     
-
-	float MapArray[2];
-    int MapArrSize;
-	HelperObjRenderer.GetFloatArrayFromStr("{0.1f,0.5f}", MapArray, &MapArrSize);
-
     /*
     // DEBUG !!!
     for(int test = 0; test < ArrmapInfoVector.size();)

@@ -91,21 +91,10 @@ int main(int argc, char **argv)
         return 1; 
     }
 
-    // Do graphics
-    Graphics GraphicsObj_1(&RenderObj.VertexVec[0], RenderObj.VertexVec.size());
-    Graphics GraphicsObj_2(GroundLayer, sizeof(GroundLayer)/sizeof(GroundLayer[0]));
 
     // !!!
     Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
     Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
-
-    GLuint Texture;
-    GLuint *TexturePtr = &Texture;
-    GraphicsObj_1.LoadTexture(TexturePtr, &RedShader.ShaderProgram, "source/textures/debug3.png");
-
-    GLuint Texture2;
-    GLuint *TexturePtr2 = &Texture2;
-    GraphicsObj_2.LoadTexture(TexturePtr2, &RainbowShader.ShaderProgram, "source/textures/mars_sand.png");
 
     // !!!
     glEnable(GL_DEPTH_TEST);  
@@ -148,7 +137,7 @@ int main(int argc, char **argv)
         // 3D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
+        /*
         // !!!  
         glBindTexture(GL_TEXTURE_2D, Texture2);
         glUseProgram(RainbowShader.ShaderProgram);
@@ -170,7 +159,7 @@ int main(int argc, char **argv)
         // Draw elements for obj_1
         glBindVertexArray(GraphicsObj_2.VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-
+        */
 
         // New element
         glBindTexture(GL_TEXTURE_2D, Texture);

@@ -16,8 +16,6 @@ class Renderer
 {
     public:
 
-        vector<float> VertexVec;
-
         // A method for rendering everything
         void RenderEverything(vector<Sprite> SpriteArray);
 

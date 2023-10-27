@@ -19,18 +19,6 @@ class Graphics
 
         GLuint VBO;     // Vertex Buffer Object
         GLuint VAO;     // Vertex Array Object
-        
-        // Constructor (Basic graphics setup for now)
-        Graphics(float Vertecies[], int VertSize)
-        {   
-            // Set Vertex Buffer object of the given vertecies.
-            SetVBO(Vertecies, VertSize);
-
-            // Set the Vertex Array object, (configuration of how openGL elements are structured.)
-            SetVAO();
-
-            //SetEBO(indices);
-        }
 
         // Since C style arrays decays to pointers, we need to pass the size in too.
         void SetVBO(float Vertecies[], int VertSize);
