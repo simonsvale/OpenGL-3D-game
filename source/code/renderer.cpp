@@ -8,6 +8,7 @@
 #include "renderer.h"
 #include "helperFunctions.h"
 #include "mapHandler.h"
+#include "shaderHandler.h"
 
 using namespace std;
 
@@ -28,7 +29,7 @@ void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -90,8 +91,6 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
     vector<float> VertexVec;
 
-    GLuint Texture;
-    GLuint *TexturePtr = &Texture;
 
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)
@@ -115,9 +114,10 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
         GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());
         GraphicsObjs[Index].SetVAO();
         
-        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader.ShaderProgram, "source/textures/debug3.png");
+        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader->ShaderProgram, "source/textures/debug3.png");
 
-        
+        GraphicsObjs[Index].VAO = *VAOPtr;
+
         
         break;
 
@@ -132,7 +132,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     }
 
     // Delete all instances of the Graphics class.
-    delete[] GraphicsObjs;
+    //delete[] GraphicsObjs;
     
     
     /*

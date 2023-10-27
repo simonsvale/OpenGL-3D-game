@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <array>
-
 #include <glad/glad.h>
 #include <iostream>
 
@@ -26,10 +24,6 @@ class Graphics
 
         void LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
 
-
-        // Deprecated for 3D graphics.
-        GLuint EBO;      // Element Buffer Object
-        void SetEBO(array<unsigned int, 6> indices);
 };
 
 

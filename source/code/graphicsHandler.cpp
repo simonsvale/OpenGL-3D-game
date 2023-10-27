@@ -28,9 +28,7 @@ void Graphics::SetVAO()
     // Initialize VAO (Vertex Array Object)
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-    
-    // Tell OpenGL, how the buffer data, from the VBO is structured.
-
+  
     // Tell OpenGL, that the first 3 indexes of a row is vertex positions, give it the ID 0 and enable it.
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -42,17 +40,6 @@ void Graphics::SetVAO()
     // Tell OpenGL, that the next 2 indexes of a row is the texture mapping, give it the ID 2 and enable it.
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6* sizeof(float)));
     glEnableVertexAttribArray(2);
-}
-
-// Deprecated
-void Graphics::SetEBO(array<unsigned int, 6> indices)
-{
-    // Initialize EBO (Element Buffer Object)
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-
-    // EBO's can be used to make complex structures from vertecies, here we use the indicies list to store a square, created from 2 triangles.
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices[0], GL_STATIC_DRAW);
 }
 
 

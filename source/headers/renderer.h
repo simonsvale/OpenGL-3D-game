@@ -8,6 +8,7 @@
 #include <spriteHandler.h>
 
 #include "mapHandler.h"
+#include "shaderHandler.h"
 
 using namespace std;
 
@@ -16,10 +17,10 @@ class Renderer
 {
     public:
 
+
         // A method for rendering everything
         void RenderEverything(vector<Sprite> SpriteArray);
-
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj);
+        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr);
 };
 
 #endif
