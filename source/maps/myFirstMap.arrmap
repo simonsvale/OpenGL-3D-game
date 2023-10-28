@@ -7,7 +7,7 @@ SPAWNPOINT = {100.0f, 23.0f, 21.0f};
 MAP_GEOMETRY = 
 {  
    {TYPE = -1,
-    TEXTURE_PATH = source/textures/debug3.png,
+    TEXTURE_PATH = "source/textures/debug3.png",
     VERTEX_SHADER = y,
     FRAGMENT_SHADER = z,
     DRAW_TYPE = w,

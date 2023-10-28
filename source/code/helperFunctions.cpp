@@ -426,8 +426,9 @@ void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr)
             if((StringVector[StrNum].find(Key) != string::npos) == true)
             {   
                 // Create a new substring containing the actual string. 
-                // Offset = key+1, since we need to remove the equal sign, and Count = str.length()-(key+1) , sincethe string goes till its the length of the vector index - key+1.
-                *StringPtr = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-(Key.length()+1));
+                // Offset = key+2, since we need to remove the equal sign and the " sign.
+                // Count = str.length()-(key+3), since the string goes till its the length of the vector index - key+3.
+                *StringPtr = StringVector[StrNum].substr(Key.length()+2, StringVector[StrNum].length()-(Key.length()+3));
 
                 return;
             }
