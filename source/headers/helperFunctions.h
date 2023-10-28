@@ -38,6 +38,8 @@ void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *Arra
 void GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector);
 void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath);
 
+void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr);
+
 
 // A function for getting a value from a given key string from an .atris file for uint8_t and uint16_t.
 int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);

@@ -108,14 +108,16 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         */
 
         // Do data processing !
-
+        GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath);
         GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+
+        cout << TexturePath << endl;
 
         // Load vertecies into VBO and set VAO.
         GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());
         GraphicsObjs[Index].SetVAO();
         
-        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader->ShaderProgram, "source/textures/debug3.png");
+        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader->ShaderProgram, TexturePath.c_str());
 
         *VAOPtr = GraphicsObjs[Index].VAO;
 
@@ -145,17 +147,4 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     }
     */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 

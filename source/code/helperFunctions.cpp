@@ -7,14 +7,6 @@
 
 using namespace std;
 
-/** 
-  *  Removes all of a given ASCII character from the given `string`.
-  * 
-  *  @param std::string `String`, any string with `String.length()` >= 0.
-  *  @param char `Char`, any ASCII character. 
-  *
-  *  @return `std::string`, returns the input `String` without the given Char.
-*/
 string RemoveChar(string String, char Char)
 {
     string ReturnString;
@@ -36,16 +28,7 @@ string RemoveChar(string String, char Char)
     return ReturnString;
 }
 
-/** 
-  *  Splits a `string` by a given delimiter of type `char` in ASCII, and takes the substrings created by the split and pushes them into a `std::vector<std::string>`, without the delimiter, using a pointer.
-  * 
-  *  @param std::string `String`, any string with `String.length()` >= 0.
-  *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
-  *  @param char Delimiter, any ASCII character.
-  *  @param int DelimiterAmount, the amount of delimiters to be found before termination, if DelimiterAmount =< 0 it finds all delimiters in the string.
-  *
-  *  @return void
-*/
+
 void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
 {
     // Run through the string, and check for the given delimiter.
@@ -92,6 +75,7 @@ void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimi
     // Will only reach when base case
     SplitStrVecPtr->push_back(String.substr(0, String.length()));
 }
+
 
 void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace)
 {
@@ -422,6 +406,28 @@ void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<flo
                 {
                     throw invalid_argument("Key: "+string(Key)+"'s values are not of type float, at: "+FilePath);
                 }
+
+                return;
+            }
+        }
+        StrNum++;
+    }
+}
+
+// Function for getting a key from a vector of strings.
+void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr)
+{
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                // Create a new substring containing the actual string. 
+                // Offset = key+1, since we need to remove the equal sign, and Count = str.length()-(key+1) , sincethe string goes till its the length of the vector index - key+1.
+                *StringPtr = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-(Key.length()+1));
 
                 return;
             }
