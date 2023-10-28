@@ -12,8 +12,6 @@
 
 using namespace std;
 
-HelperFunctions HelperObjRenderer;
-
 /** 
   *  Renders all elements in the scene
   * 
@@ -46,13 +44,13 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     while(getline(ReadSpriteFile, ArrmapFileLine))
     { 	
 		// Remove empty spaces in .arrmap line.
-		AuxLine = HelperObjRenderer.RemoveChar(ArrmapFileLine, ' ');
+		AuxLine = RemoveChar(ArrmapFileLine, ' ');
 
 		// Remove comments, defined by "//" in .arrmap line.
 		if('/' != AuxLine[0] && '/' != AuxLine[1])
 		{
 			// Add line to new string.
-			NoSpacesArrmap += HelperObjRenderer.RemoveChar(ArrmapFileLine, ' ');
+			NoSpacesArrmap += RemoveChar(ArrmapFileLine, ' ');
 		}
     }
 		
@@ -60,16 +58,16 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     ReadSpriteFile.close();
 
 	// Split the string by the ';' delimiter
-	HelperObjRenderer.SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';', -1);
+	SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';', -1);
 
 
     // Get player spawnpoint, from its 3D coordinates.
     int SpawnpointArraySize = 3;
-    HelperObjRenderer.GetKeyValue_floatarray("SPAWNPOINT", ArrmapInfoVector, ArrmapObj->SpawnpointArr, &SpawnpointArraySize, ArrmapFilePath);
+    GetKeyValue_floatarray("SPAWNPOINT", ArrmapInfoVector, ArrmapObj->SpawnpointArr, &SpawnpointArraySize, ArrmapFilePath);
 
 
     vector<string> MapGeometry;
-    HelperObjRenderer.GetKeyValue_strvector("MAP_GEOMETRY", ArrmapInfoVector, &MapGeometry);
+    GetKeyValue_strvector("MAP_GEOMETRY", ArrmapInfoVector, &MapGeometry);
 
     // Remove outer braces.
     string GeometryInfo = MapGeometry[0].substr(1, MapGeometry[0].size()-2);
@@ -79,7 +77,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     vector<string> GeometryVector;
 
     // Split the Map_Geometry of the map file into seperate Geometry.
-    HelperObjRenderer.SplitByBraces(GeometryInfo, &GeometryVector, '{', '}');
+    SplitByBraces(GeometryInfo, &GeometryVector, '{', '}');
 
 
     vector<string> SingleGeometryVector;
@@ -91,11 +89,14 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
     vector<float> VertexVec;
 
+    // Path of a texture
+    string TexturePath;
+
 
     // Go through each vector index, and extract information.
-    for(int Index = 0; Index < GeometryVector.size();)
-    {
-        HelperObjRenderer.SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 4);
+    for(int Index = 0; Index < GeometryVector.size();)      
+    {                                                                                                                // Number of atrributes + 1 per map geometry.
+        SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 5);
 
 
         /*
@@ -108,7 +109,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
         // Do data processing !
 
-        HelperObjRenderer.GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+        GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
 
         // Load vertecies into VBO and set VAO.
         GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());

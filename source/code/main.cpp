@@ -198,6 +198,7 @@ int main(int argc, char **argv)
         glBindVertexArray(VAOTest);
 
         // Draw cube
+        // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
         glDrawArrays(GL_TRIANGLES, 0, 36);
     
         // Update the SDL OpenGL window with the drawn elements.

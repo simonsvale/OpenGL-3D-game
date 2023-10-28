@@ -15,7 +15,7 @@ using namespace std;
   *
   *  @return `std::string`, returns the input `String` without the given Char.
 */
-string HelperFunctions::RemoveChar(string String, char Char)
+string RemoveChar(string String, char Char)
 {
     string ReturnString;
 
@@ -46,7 +46,7 @@ string HelperFunctions::RemoveChar(string String, char Char)
   *
   *  @return void
 */
-void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
+void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
 {
     // Run through the string, and check for the given delimiter.
     for(int Char = 0; Char < String.length();)
@@ -93,7 +93,7 @@ void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVe
     SplitStrVecPtr->push_back(String.substr(0, String.length()));
 }
 
-void HelperFunctions::SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace)
+void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace)
 {
     int BraceStack = 0;
     int StartBracePos;
@@ -131,7 +131,7 @@ void HelperFunctions::SplitByBraces(string String, vector<string> *SplitStrVecPt
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
-int HelperFunctions::GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     int KeyValue;
@@ -176,7 +176,7 @@ int HelperFunctions::GetKeyValue_uint8_t(string Key, vector<string> StringVector
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint16_t throw exception. */
-int HelperFunctions::GetKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+int GetKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     int KeyValue;
@@ -221,7 +221,7 @@ int HelperFunctions::GetKeyValue_uint16_t(string Key, vector<string> StringVecto
 
 /* Given a key of type string and a vector containing the string, the function will return the boolean of the key. 
 If the key is not found, returns -1. */
-bool HelperFunctions::GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     bool KeyValue;
@@ -280,7 +280,7 @@ bool HelperFunctions::GetKeyValue_bool(string Key, vector<string> StringVector, 
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key as a vector. 
 If the key is not found, returns {0, 0}, if out of range of uint16_t throws exception. */
-vector<int> HelperFunctions::GetKeyValue_intvector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+vector<int> GetKeyValue_intvector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     vector<int> KeyValue;
@@ -331,15 +331,14 @@ vector<int> HelperFunctions::GetKeyValue_intvector(string Key, vector<string> St
 }
 
 
-void HelperFunctions::GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize)
+void GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize)
 {
-    HelperFunctions HelperObject;
     vector<string> StringVector;
 
     String = String.substr(1, String.size()-2);
 
     // Split the string and pass by reference to the vector.
-    HelperObject.SplitByDelimiter(String, &StringVector, ',', -1);
+    SplitByDelimiter(String, &StringVector, ',', -1);
 
     // Pass the StringVector to the ArraySize by reference.
     *ArraySize = StringVector.size();
@@ -352,7 +351,7 @@ void HelperFunctions::GetFloatArrayFromStr(string String, float *ArrayPtr, int *
 }
 
 // Gets an array from a key
-void HelperFunctions::GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath)
+void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath)
 {
     string KeyString;
 
@@ -374,7 +373,7 @@ void HelperFunctions::GetKeyValue_floatarray(string Key, vector<string> StringVe
     }
 }
 
-void HelperFunctions::GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector)
+void GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector)
 {
     // Iterate through all strings in the vector.
     for(int StrNum = 0; StrNum < StringVector.size();)
@@ -393,7 +392,7 @@ void HelperFunctions::GetKeyValue_strvector(string Key, vector<string> StringVec
 }
 
 // Based on a string
-void HelperFunctions::GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath)
+void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath)
 {
     string ArrayString;
     vector<string> AuxFloatVector;

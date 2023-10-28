@@ -7,6 +7,7 @@ SPAWNPOINT = {100.0f, 23.0f, 21.0f};
 MAP_GEOMETRY = 
 {  
    {TYPE = -1,
+    TEXTURE_PATH = source/textures/debug3.png,
     VERTEX_SHADER = y,
     FRAGMENT_SHADER = z,
     DRAW_TYPE = w,
@@ -54,18 +55,21 @@ MAP_GEOMETRY =
        0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
       -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f}}, 
   {TYPE = 0, 
+   TEXTURE_PATH = source/textures/debug2.png,
    VERTEX_SHADER = y0, 
    FRAGMENT_SHADER = z0, 
    DRAW_TYPE = w0, 
    VERTECIES =
    {0.0f, 1.0f}},
   {TYPE = 1,
+   TEXTURE_PATH = source/textures/debug.png,
    VERTEX_SHADER = y1,
    FRAGMENT_SHADER = z1,
    DRAW_TYPE = w1,
    VERTECIES =
    {1.0f, 2.0f}}, 
    {TYPE = 2,
+    TEXTURE_PATH = source/textures/mars_sand.png,
     VERTEX_SHADER = y2, 
     FRAGMENT_SHADER = z2, 
     DRAW_TYPE = w2, 
