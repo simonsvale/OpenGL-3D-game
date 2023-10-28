@@ -108,10 +108,8 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         */
 
         // Do data processing !
-        GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath);
+        GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
         GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
-
-        cout << TexturePath << endl;
 
         // Load vertecies into VBO and set VAO.
         GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());
@@ -121,7 +119,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
         *VAOPtr = GraphicsObjs[Index].VAO;
 
-        
+        // !!!
         break;
 
         // Generate the float arrays.

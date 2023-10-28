@@ -412,10 +412,13 @@ void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<flo
         }
         StrNum++;
     }
+
+    // If no key was found throw error to avoid confusion.
+    throw invalid_argument("Key: "+string(Key)+" does not exist in "+FilePath);
 }
 
 // Function for getting a key from a vector of strings.
-void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr)
+void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr, string FilePath)
 {
     // Iterate through all strings in the vector.
     for(int StrNum = 0; StrNum < StringVector.size();)
@@ -435,4 +438,9 @@ void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr)
         }
         StrNum++;
     }
+
+    // If no key was found throw error to avoid confusion.
+    throw 
+    
+    invalid_argument("Key: "+string(Key)+" does not exist in "+FilePath);
 }
