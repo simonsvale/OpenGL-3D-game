@@ -12,6 +12,8 @@ class GameElement: public Graphics
         // All variables that need to be set using the .arrmap file.
         int Type;
 
+        float WorldPosition[3];
+
         // Only here to allow change of textures on the fly.
         string VertexShaderPath = NULL;
         string FragmentShaderPath = NULL;

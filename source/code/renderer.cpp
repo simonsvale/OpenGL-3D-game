@@ -96,16 +96,16 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)      
     {                                                                                                                // Number of atrributes + 1 per map geometry.
-        SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 5);
+        SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 6);
 
 
-        /*
+        
         for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
         {   
             cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
             ArrmapAttributeNumber++;
         }
-        */
+        
 
         // Do data processing !
         GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
