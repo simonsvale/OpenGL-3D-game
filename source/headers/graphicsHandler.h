@@ -15,7 +15,6 @@ class Graphics
 {
     public:
 
-        GLuint VBO;     // Vertex Buffer Object
         GLuint VAO;     // Vertex Array Object
 
         // Since C style arrays decays to pointers, we need to pass the size in too.

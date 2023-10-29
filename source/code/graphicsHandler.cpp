@@ -11,6 +11,7 @@ using namespace std;
 // WIP
 void Graphics::SetVBO(float Vertecies[], int VertSize)
 {
+    GLuint VBO;
     // Initialize VBO (Vertex Buffer Object)
     glGenBuffers(1, &VBO);
 
