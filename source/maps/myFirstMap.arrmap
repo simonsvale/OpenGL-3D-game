@@ -8,8 +8,8 @@ MAP_GEOMETRY =
 {  
    {TYPE = -1,
     TEXTURE_PATH = "source/textures/debug3.png",
-    VERTEX_SHADER = y,
-    FRAGMENT_SHADER = z,
+    VERTEX_SHADER_PATH = y,
+    FRAGMENT_SHADER_PATH = z,
     DRAW_TYPE = w,
     VERTECIES = 
     {
