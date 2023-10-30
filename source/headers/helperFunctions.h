@@ -31,6 +31,9 @@ string RemoveChar(string String, char Char);
 void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount);
 void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace);
 
+// Basically more efficient than calling either both SplitByDelimiter and SplitByBraces.
+void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, char Delimiter, char StartBrace, char EndBrace);
+
 // Pass array pointer by reference
 void GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize);
 void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath);

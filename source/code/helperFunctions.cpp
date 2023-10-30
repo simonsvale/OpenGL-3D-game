@@ -113,6 +113,108 @@ void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrac
     }
 }
 
+// Needs commenting
+// Splits a string by a delimiter, but takes a a brace into account to avoid problems with using the same delimiters inside the braces.
+void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, char Delimiter, char StartBrace, char EndBrace)
+{
+    vector<string> AuxVector;
+    string AuxString;
+
+    int BraceStack = 0;
+    int StartBracePos;
+
+    int CharBraceNumber = 0;
+
+    bool Running = true;
+    bool RanBrace = false;
+
+    for(int CharNumber = 0; CharNumber < String.length();)
+    {
+        if(String[CharNumber] == StartBrace)
+        {   
+            CharBraceNumber = CharNumber;
+
+            // Run while loop until braces have concluded.
+            while(Running)
+            {
+                if(String[CharBraceNumber] == StartBrace)
+                {   
+                    // If bracestack is zero, we know that a new brace has started.
+                    if(BraceStack == 0)
+                    {
+                        // Set the Start position of the brace in the string to the current character index of the string.
+                        StartBracePos = CharNumber;
+                    }
+
+                    // If a startbrace is found add one to the brace stack.
+                    BraceStack++;
+                }
+
+                if((String[CharBraceNumber] == EndBrace) && (BraceStack != 0))
+                {
+                    // If a endbrace is found retract one from the brace stack.
+                    BraceStack--;
+
+                    if(BraceStack == 0)
+                    {
+                        // If the stack have been cleared, we know that we have gone through all the braces in this "section", and this can be pushed to a vector.
+                        SplitStrVecPtr->push_back(String.substr(0, CharBraceNumber+1));
+                        Running = false;
+                    }
+                }
+
+                CharBraceNumber++;
+            }
+            
+            if(String.size() == CharBraceNumber)
+            {
+                return;
+            }
+
+            String = String.substr(CharBraceNumber+1, (String.length()-(CharBraceNumber+1)));
+
+            // Reset CharBraceNumber
+            CharBraceNumber = 0;
+            CharNumber = 0;
+            Running = true;
+            RanBrace = false;
+        }
+        else
+        {
+            if(String[CharNumber] == Delimiter)
+            {   
+                if(RanBrace != true)
+                {
+                    // Create an auxiliary string
+                    AuxString = String.substr(0, CharNumber);
+                }
+                else
+                {
+                    RanBrace = false;
+                }
+
+                if(AuxString != "")
+                {
+                    SplitStrVecPtr->push_back(AuxString);
+                }
+
+                String = String.substr(CharNumber+1, (String.length()-(CharNumber+1)));
+
+                CharNumber = 0;
+            }
+            else
+            {
+                CharNumber++;
+            }
+        }
+    }
+
+    if((String != "") && (RanBrace == false))
+    {
+        SplitStrVecPtr->push_back(String);
+    }
+}
+
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
 int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)

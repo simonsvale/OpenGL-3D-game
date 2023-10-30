@@ -79,7 +79,6 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     // Split the Map_Geometry of the map file into seperate Geometry.
     SplitByBraces(GeometryInfo, &GeometryVector, '{', '}');
 
-
     vector<string> SingleGeometryVector;
     vector<string> ArrmapAttributeVector;
 
@@ -95,11 +94,10 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)      
-    {                                                                                                                // Number of atrributes + 1 per map geometry.
-        SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 6);
+    {                                                                                                           
+        SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
-
-        
+        // !!!
         for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
         {   
             cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
