@@ -7,15 +7,8 @@
 
 using namespace std;
 
-/** 
-  *  Removes all of a given ASCII character from the given `string`.
-  * 
-  *  @param std::string `String`, any string with `String.length()` >= 0.
-  *  @param char `Char`, any ASCII character. 
-  *
-  *  @return `std::string`, returns the input `String` without the given Char.
-*/
-string HelperFunctions::RemoveChar(string String, char Char)
+
+string RemoveChar(string String, char Char)
 {
     string ReturnString;
 
@@ -36,17 +29,8 @@ string HelperFunctions::RemoveChar(string String, char Char)
     return ReturnString;
 }
 
-/** 
-  *  Splits a `string` by a given delimiter of type `char` in ASCII, and takes the substrings created by the split and pushes them into a `std::vector<std::string>`, without the delimiter, using a pointer.
-  * 
-  *  @param std::string `String`, any string with `String.length()` >= 0.
-  *  @param std::vector<std::string> *SplitStrVecPtr, a pointer pointing to the reference of a vector of same type, i.e. `std::vector<std::string> *SplitStrVecPtr = &Vector`.
-  *  @param char Delimiter, any ASCII character.
-  *  @param int DelimiterAmount, the amount of delimiters to be found before termination, if DelimiterAmount =< 0 it finds all delimiters in the string.
-  *
-  *  @return void
-*/
-void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
+
+void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
 {
     // Run through the string, and check for the given delimiter.
     for(int Char = 0; Char < String.length();)
@@ -93,8 +77,10 @@ void HelperFunctions::SplitByDelimiter(string String, vector<string> *SplitStrVe
     SplitStrVecPtr->push_back(String.substr(0, String.length()));
 }
 
-void HelperFunctions::SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace)
+
+void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace)
 {
+    // Setup the brace stack.
     int BraceStack = 0;
     int StartBracePos;
 
@@ -129,9 +115,127 @@ void HelperFunctions::SplitByBraces(string String, vector<string> *SplitStrVecPt
     }
 }
 
+
+void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, char Delimiter, char StartBrace, char EndBrace)
+{   
+    // Create an auxiliary string.
+    string AuxString = "";
+
+    // Setup the brace stack.
+    int BraceStack = 0;
+    int StartBracePos;
+
+    // Char counter for the brace loop.
+    int CharBraceNumber = 0;
+
+    // Variables for stopping the brace loop.
+    bool BraceLoopRunning = true;
+    bool RanBrace = false;
+
+    // Run through all characters in the string.
+    for(int CharNumber = 0; CharNumber < String.length();)
+    {
+        // If a character in the string is a StartBrace, go through the brace loop.
+        if(String[CharNumber] == StartBrace)
+        {   
+            // To be able to remeber how many characters are part of this split, use an auxiliary char counter called CharBraceNumber.
+            CharBraceNumber = CharNumber;
+
+            // Run while loop until braces have concluded. (The brace loop)
+            while(BraceLoopRunning)
+            {
+                // The first iteration through this comparison is unnecesary, however every subsequent comparison is needed.
+                if(String[CharBraceNumber] == StartBrace)
+                {   
+                    // If bracestack is zero here, we know that a new brace has started.
+                    if(BraceStack == 0)
+                    {
+                        // Set the Start position of the brace in the string to the current character index of the string.
+                        StartBracePos = CharBraceNumber;
+                    }
+
+                    // If a startbrace is found add one to the brace stack.
+                    BraceStack++;
+                }
+
+                if((String[CharBraceNumber] == EndBrace) && (BraceStack != 0))
+                {
+                    // If a endbrace is found retract one from the brace stack.
+                    BraceStack--;
+                    
+                    // If the Bracestack is zero here, we know that the brace loop have concluded, since the start brace(s) has/have been closed.
+                    if(BraceStack == 0)
+                    {
+                        // Stop the loop
+                        BraceLoopRunning = false;
+                    }
+                }
+
+                // Add one to the CharBraceNumber to be able to iterate through the brace loop.
+                CharBraceNumber++;
+            }
+            
+            // If the end brace is the last part of the string, push this string into the vector and return.
+            if(String.size() == CharBraceNumber)
+            {
+                SplitStrVecPtr->push_back(String.substr(0, CharBraceNumber+1));
+                return;
+            }
+
+            // Reset variables to be able to reuse the brace loop, if more braces exists in the string.
+            CharNumber = CharBraceNumber;
+            CharBraceNumber = 0;
+            BraceLoopRunning = true;
+            RanBrace = false;
+        }
+        else
+        {
+            // If the character is a delimiter
+            if(String[CharNumber] == Delimiter)
+            {   
+                // if the brace loop have not been run just before.
+                if(RanBrace != true)
+                {
+                    // Create an auxiliary string
+                    AuxString = String.substr(0, CharNumber);
+                }
+                else
+                {
+                    // Set it to false, instead of creating the auxiliary string.
+                    RanBrace = false;
+                }
+
+                // If the auxiliary string is non-empty.
+                if(AuxString != "")
+                {
+                    // Push auxiliary string into the vector pointer.
+                    SplitStrVecPtr->push_back(AuxString);
+                }
+
+                // Create a new substring of the string to the right of the delimiter, excluding the delimiter.
+                String = String.substr(CharNumber+1, (String.length()-(CharNumber+1)));
+
+                // Reset so we start at the start position of the new substring.
+                CharNumber = 0;
+            }
+            else
+            {
+                CharNumber++;
+            }
+        }
+    }
+
+    // If all elements of the string have been iterated through, check if there is a non-empty string and the brace loop have been run just before.
+    if((String != "") && (RanBrace == false))
+    {
+        // push the last part of the string into the vector pointer.
+        SplitStrVecPtr->push_back(String);
+    }
+}
+
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
-int HelperFunctions::GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     int KeyValue;
@@ -176,7 +280,7 @@ int HelperFunctions::GetKeyValue_uint8_t(string Key, vector<string> StringVector
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint16_t throw exception. */
-int HelperFunctions::GetKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+int GetKeyValue_uint16_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     int KeyValue;
@@ -221,7 +325,7 @@ int HelperFunctions::GetKeyValue_uint16_t(string Key, vector<string> StringVecto
 
 /* Given a key of type string and a vector containing the string, the function will return the boolean of the key. 
 If the key is not found, returns -1. */
-bool HelperFunctions::GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     bool KeyValue;
@@ -280,7 +384,7 @@ bool HelperFunctions::GetKeyValue_bool(string Key, vector<string> StringVector, 
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key as a vector. 
 If the key is not found, returns {0, 0}, if out of range of uint16_t throws exception. */
-vector<int> HelperFunctions::GetKeyValue_intvector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
+vector<int> GetKeyValue_intvector(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
 {   
     // Return variable
     vector<int> KeyValue;
@@ -331,15 +435,14 @@ vector<int> HelperFunctions::GetKeyValue_intvector(string Key, vector<string> St
 }
 
 
-void HelperFunctions::GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize)
+void GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize)
 {
-    HelperFunctions HelperObject;
     vector<string> StringVector;
 
     String = String.substr(1, String.size()-2);
 
     // Split the string and pass by reference to the vector.
-    HelperObject.SplitByDelimiter(String, &StringVector, ',', -1);
+    SplitByDelimiter(String, &StringVector, ',', -1);
 
     // Pass the StringVector to the ArraySize by reference.
     *ArraySize = StringVector.size();
@@ -352,7 +455,7 @@ void HelperFunctions::GetFloatArrayFromStr(string String, float *ArrayPtr, int *
 }
 
 // Gets an array from a key
-void HelperFunctions::GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath)
+void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath)
 {
     string KeyString;
 
@@ -374,7 +477,7 @@ void HelperFunctions::GetKeyValue_floatarray(string Key, vector<string> StringVe
     }
 }
 
-void HelperFunctions::GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector)
+void GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector)
 {
     // Iterate through all strings in the vector.
     for(int StrNum = 0; StrNum < StringVector.size();)
@@ -393,7 +496,7 @@ void HelperFunctions::GetKeyValue_strvector(string Key, vector<string> StringVec
 }
 
 // Based on a string
-void HelperFunctions::GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath)
+void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath)
 {
     string ArrayString;
     vector<string> AuxFloatVector;
@@ -429,4 +532,35 @@ void HelperFunctions::GetKeyValue_floatvector(string Key, vector<string> StringV
         }
         StrNum++;
     }
+
+    // If no key was found throw error to avoid confusion.
+    throw invalid_argument("Key: "+string(Key)+" does not exist in "+FilePath);
+}
+
+// Function for getting a key from a vector of strings.
+void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr, string FilePath)
+{
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                // Create a new substring containing the actual string. 
+                // Offset = key+2, since we need to remove the equal sign and the " sign.
+                // Count = str.length()-(key+3), since the string goes till its the length of the vector index - key+3.
+                *StringPtr = StringVector[StrNum].substr(Key.length()+2, StringVector[StrNum].length()-(Key.length()+3));
+
+                return;
+            }
+        }
+        StrNum++;
+    }
+
+    // If no key was found throw error to avoid confusion.
+    throw 
+    
+    invalid_argument("Key: "+string(Key)+" does not exist in "+FilePath);
 }

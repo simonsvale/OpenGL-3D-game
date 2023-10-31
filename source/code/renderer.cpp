@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <glad/glad.h>
 
 #include <iostream>
 #include <string>
@@ -7,10 +8,9 @@
 #include "renderer.h"
 #include "helperFunctions.h"
 #include "mapHandler.h"
+#include "shaderHandler.h"
 
 using namespace std;
-
-HelperFunctions HelperObjRenderer;
 
 /** 
   *  Renders all elements in the scene
@@ -27,7 +27,7 @@ void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -44,13 +44,13 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     while(getline(ReadSpriteFile, ArrmapFileLine))
     { 	
 		// Remove empty spaces in .arrmap line.
-		AuxLine = HelperObjRenderer.RemoveChar(ArrmapFileLine, ' ');
+		AuxLine = RemoveChar(ArrmapFileLine, ' ');
 
 		// Remove comments, defined by "//" in .arrmap line.
 		if('/' != AuxLine[0] && '/' != AuxLine[1])
 		{
 			// Add line to new string.
-			NoSpacesArrmap += HelperObjRenderer.RemoveChar(ArrmapFileLine, ' ');
+			NoSpacesArrmap += RemoveChar(ArrmapFileLine, ' ');
 		}
     }
 		
@@ -58,16 +58,16 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     ReadSpriteFile.close();
 
 	// Split the string by the ';' delimiter
-	HelperObjRenderer.SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';', -1);
+	SplitByDelimiter(NoSpacesArrmap, &ArrmapInfoVector, ';', -1);
 
 
     // Get player spawnpoint, from its 3D coordinates.
     int SpawnpointArraySize = 3;
-    HelperObjRenderer.GetKeyValue_floatarray("SPAWNPOINT", ArrmapInfoVector, ArrmapObj->SpawnpointArr, &SpawnpointArraySize, ArrmapFilePath);
+    GetKeyValue_floatarray("SPAWNPOINT", ArrmapInfoVector, ArrmapObj->SpawnpointArr, &SpawnpointArraySize, ArrmapFilePath);
 
 
     vector<string> MapGeometry;
-    HelperObjRenderer.GetKeyValue_strvector("MAP_GEOMETRY", ArrmapInfoVector, &MapGeometry);
+    GetKeyValue_strvector("MAP_GEOMETRY", ArrmapInfoVector, &MapGeometry);
 
     // Remove outer braces.
     string GeometryInfo = MapGeometry[0].substr(1, MapGeometry[0].size()-2);
@@ -77,31 +77,47 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     vector<string> GeometryVector;
 
     // Split the Map_Geometry of the map file into seperate Geometry.
-    HelperObjRenderer.SplitByBraces(GeometryInfo, &GeometryVector, '{', '}');
-
+    SplitByBraces(GeometryInfo, &GeometryVector, '{', '}');
 
     vector<string> SingleGeometryVector;
     vector<string> ArrmapAttributeVector;
 
+    // Size should be: GeometryVector.size()
+    Graphics *GraphicsObjs = new Graphics[1];
+
+
+    vector<float> VertexVec;
+
+    // Path of a texture
+    string TexturePath;
+
+
     // Go through each vector index, and extract information.
-    for(int Index = 0; Index < GeometryVector.size();)
-    {
-        HelperObjRenderer.SplitByDelimiter(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', 4);
+    for(int Index = 0; Index < GeometryVector.size();)      
+    {                                                                                                           
+        SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
-
-        /*
+        // !!!
         for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
         {   
             cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
             ArrmapAttributeNumber++;
         }
-        */
+        
 
         // Do data processing !
+        GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
+        GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
 
-        HelperObjRenderer.GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
-
+        // Load vertecies into VBO and set VAO.
+        GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());
+        GraphicsObjs[Index].SetVAO();
         
+        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader->ShaderProgram, TexturePath.c_str());
+
+        *VAOPtr = GraphicsObjs[Index].VAO;
+
+        // !!!
         break;
 
         // Generate the float arrays.
@@ -113,18 +129,11 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
 
         // Perhaps a loading bar on another thread.
     }
+
+    // Delete all instances of the Graphics class.
+    //delete[] GraphicsObjs;
     
-
-    //float *VertexPtr = (float*) malloc(10);
-
-    //free(VertexPtr);
-
     
-
-	float MapArray[2];
-    int MapArrSize;
-	HelperObjRenderer.GetFloatArrayFromStr("{0.1f,0.5f}", MapArray, &MapArrSize);
-
     /*
     // DEBUG !!!
     for(int test = 0; test < ArrmapInfoVector.size();)
@@ -134,17 +143,4 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj)
     }
     */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
