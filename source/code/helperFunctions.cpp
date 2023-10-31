@@ -7,6 +7,7 @@
 
 using namespace std;
 
+
 string RemoveChar(string String, char Char)
 {
     string ReturnString;
@@ -79,6 +80,7 @@ void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimi
 
 void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrace, char EndBrace)
 {
+    // Setup the brace stack.
     int BraceStack = 0;
     int StartBracePos;
 
@@ -113,37 +115,43 @@ void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrac
     }
 }
 
-// Needs commenting
-// Splits a string by a delimiter, but takes a a brace into account to avoid problems with using the same delimiters inside the braces.
-void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, char Delimiter, char StartBrace, char EndBrace)
-{
-    vector<string> AuxVector;
-    string AuxString;
 
+void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, char Delimiter, char StartBrace, char EndBrace)
+{   
+    // Create an auxiliary string.
+    string AuxString = "";
+
+    // Setup the brace stack.
     int BraceStack = 0;
     int StartBracePos;
 
+    // Char counter for the brace loop.
     int CharBraceNumber = 0;
 
-    bool Running = true;
+    // Variables for stopping the brace loop.
+    bool BraceLoopRunning = true;
     bool RanBrace = false;
 
+    // Run through all characters in the string.
     for(int CharNumber = 0; CharNumber < String.length();)
     {
+        // If a character in the string is a StartBrace, go through the brace loop.
         if(String[CharNumber] == StartBrace)
         {   
+            // To be able to remeber how many characters are part of this split, use an auxiliary char counter called CharBraceNumber.
             CharBraceNumber = CharNumber;
 
-            // Run while loop until braces have concluded.
-            while(Running)
+            // Run while loop until braces have concluded. (The brace loop)
+            while(BraceLoopRunning)
             {
+                // The first iteration through this comparison is unnecesary, however every subsequent comparison is needed.
                 if(String[CharBraceNumber] == StartBrace)
                 {   
-                    // If bracestack is zero, we know that a new brace has started.
+                    // If bracestack is zero here, we know that a new brace has started.
                     if(BraceStack == 0)
                     {
                         // Set the Start position of the brace in the string to the current character index of the string.
-                        StartBracePos = CharNumber;
+                        StartBracePos = CharBraceNumber;
                     }
 
                     // If a startbrace is found add one to the brace stack.
@@ -154,32 +162,38 @@ void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, ch
                 {
                     // If a endbrace is found retract one from the brace stack.
                     BraceStack--;
-
+                    
+                    // If the Bracestack is zero here, we know that the brace loop have concluded, since the start brace(s) has/have been closed.
                     if(BraceStack == 0)
                     {
-                        // If the stack have been cleared, we know that we have gone through all the braces in this "section", and this can be pushed to a vector.
-                        Running = false;
+                        // Stop the loop
+                        BraceLoopRunning = false;
                     }
                 }
 
+                // Add one to the CharBraceNumber to be able to iterate through the brace loop.
                 CharBraceNumber++;
             }
             
+            // If the end brace is the last part of the string, push this string into the vector and return.
             if(String.size() == CharBraceNumber)
             {
                 SplitStrVecPtr->push_back(String.substr(0, CharBraceNumber+1));
                 return;
             }
 
+            // Reset variables to be able to reuse the brace loop, if more braces exists in the string.
             CharNumber = CharBraceNumber;
             CharBraceNumber = 0;
-            Running = true;
+            BraceLoopRunning = true;
             RanBrace = false;
         }
         else
         {
+            // If the character is a delimiter
             if(String[CharNumber] == Delimiter)
             {   
+                // if the brace loop have not been run just before.
                 if(RanBrace != true)
                 {
                     // Create an auxiliary string
@@ -187,16 +201,21 @@ void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, ch
                 }
                 else
                 {
+                    // Set it to false, instead of creating the auxiliary string.
                     RanBrace = false;
                 }
 
+                // If the auxiliary string is non-empty.
                 if(AuxString != "")
                 {
+                    // Push auxiliary string into the vector pointer.
                     SplitStrVecPtr->push_back(AuxString);
                 }
 
+                // Create a new substring of the string to the right of the delimiter, excluding the delimiter.
                 String = String.substr(CharNumber+1, (String.length()-(CharNumber+1)));
 
+                // Reset so we start at the start position of the new substring.
                 CharNumber = 0;
             }
             else
@@ -206,8 +225,10 @@ void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, ch
         }
     }
 
+    // If all elements of the string have been iterated through, check if there is a non-empty string and the brace loop have been run just before.
     if((String != "") && (RanBrace == false))
     {
+        // push the last part of the string into the vector pointer.
         SplitStrVecPtr->push_back(String);
     }
 }
