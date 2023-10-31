@@ -158,7 +158,6 @@ void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, ch
                     if(BraceStack == 0)
                     {
                         // If the stack have been cleared, we know that we have gone through all the braces in this "section", and this can be pushed to a vector.
-                        SplitStrVecPtr->push_back(String.substr(0, CharBraceNumber+1));
                         Running = false;
                     }
                 }
@@ -168,14 +167,12 @@ void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, ch
             
             if(String.size() == CharBraceNumber)
             {
+                SplitStrVecPtr->push_back(String.substr(0, CharBraceNumber+1));
                 return;
             }
 
-            String = String.substr(CharBraceNumber+1, (String.length()-(CharBraceNumber+1)));
-
-            // Reset CharBraceNumber
+            CharNumber = CharBraceNumber;
             CharBraceNumber = 0;
-            CharNumber = 0;
             Running = true;
             RanBrace = false;
         }
