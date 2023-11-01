@@ -11,7 +11,7 @@ MAP_GEOMETRY =
     VERTEX_SHADER_PATH = y,
     FRAGMENT_SHADER_PATH = z,
     DRAW_TYPE = w,
-    WORLD_POSITION = {1.0f, 1.0f, 1.0f},
+    WORLD_POSITION = {1.0f, 4.0f, 81.0f},
     VERTECIES = 
     {
       -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       

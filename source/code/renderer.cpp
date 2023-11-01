@@ -9,18 +9,11 @@
 #include "helperFunctions.h"
 #include "mapHandler.h"
 #include "shaderHandler.h"
+#include "gameElementHandler.h"
 
 using namespace std;
 
-/** 
-  *  Renders all elements in the scene
-  * 
-  *  @param vector<GLuint> ShaderProgramArray, a vector of all Shaderprogrammes
-  *  @param 
-  *  @param 
-  *
-  *  @return void
-*/
+
 void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 {
 
@@ -83,13 +76,14 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     vector<string> ArrmapAttributeVector;
 
     // Size should be: GeometryVector.size()
-    Graphics *GraphicsObjs = new Graphics[1];
-
+    GameElement *GraphicsObjs = new GameElement[1];
 
     vector<float> VertexVec;
 
     // Path of a texture
     string TexturePath;
+
+    int WorldPositionArrSize = 3;
 
 
     // Go through each vector index, and extract information.
@@ -108,6 +102,11 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         // Do data processing !
         GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
         GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+        GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GraphicsObjs[Index].WorldPosition, &WorldPositionArrSize, ArrmapFilePath);
+
+        cout << GraphicsObjs[Index].WorldPosition[0] << endl;
+        cout << GraphicsObjs[Index].WorldPosition[1] << endl;
+        cout << GraphicsObjs[Index].WorldPosition[2] << endl;
 
         // Load vertecies into VBO and set VAO.
         GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());

@@ -18,8 +18,17 @@ class Renderer
     public:
 
 
-        // A method for rendering everything
+        /** 
+        *  Renders all elements in the scene
+        * 
+        *  @param vector<GLuint> ShaderProgramArray, a vector of all Shaderprogrammes
+        *  @param 
+        *  @param 
+        *
+        *  @return void
+        */
         void RenderEverything(vector<Sprite> SpriteArray);
+        
         void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr);
 };
 
