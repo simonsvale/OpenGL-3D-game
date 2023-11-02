@@ -20,7 +20,7 @@ void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr, vector<GameElement> *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -76,12 +76,14 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     vector<string> ArrmapAttributeVector;
 
     // Size should be: GeometryVector.size()
-    GameElement *GraphicsObjs = new GameElement[1];
+    GameElement *GameElementObj = new GameElement[1];
 
     vector<float> VertexVec;
 
-    // Path of a texture
+    // Path of a texture and shaders
     string TexturePath;
+    string VertexShaderPath;
+    string FragmentShaderPath;
 
     int WorldPositionArrSize = 3;
 
@@ -98,28 +100,31 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
             ArrmapAttributeNumber++;
         }
         
-
-        // Do data processing !
+        // Get values contained in the .arrmap file.
         GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
-        GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
-        GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GraphicsObjs[Index].WorldPosition, &WorldPositionArrSize, ArrmapFilePath);
+        GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
+        GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
-        cout << GraphicsObjs[Index].WorldPosition[0] << endl;
-        cout << GraphicsObjs[Index].WorldPosition[1] << endl;
-        cout << GraphicsObjs[Index].WorldPosition[2] << endl;
+        GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+        GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementObj[Index].WorldPosition, &WorldPositionArrSize, ArrmapFilePath);
+
 
         // Load vertecies into VBO and set VAO.
-        GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());
-        GraphicsObjs[Index].SetVAO();
+        GameElementObj[Index].SetVBO(&VertexVec[0], VertexVec.size());
+        GameElementObj[Index].SetVAO();
         
-        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader->ShaderProgram, TexturePath.c_str());
+        // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
+        GameElementObj[Index].LoadTexture(&GameElementObj[Index].Texture, &RedShader->ShaderProgram, TexturePath.c_str());
 
-        *VAOPtr = GraphicsObjs[Index].VAO;
+        *VAOPtr = GameElementObj[Index].VAO;
+
+
+        // Add object to vector
+        GameElementVector->push_back(GameElementObj[Index]);
 
         // !!!
         break;
 
-        // Generate the float arrays.
 
         // Clear vector
         SingleGeometryVector.clear();
@@ -130,7 +135,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     }
 
     // Delete all instances of the Graphics class.
-    //delete[] GraphicsObjs;
+    //delete[] GameElementObj;
     
     
     /*

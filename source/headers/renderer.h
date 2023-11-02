@@ -9,6 +9,7 @@
 
 #include "mapHandler.h"
 #include "shaderHandler.h"
+#include "gameElementHandler.h"
 
 using namespace std;
 
@@ -29,7 +30,7 @@ class Renderer
         */
         void RenderEverything(vector<Sprite> SpriteArray);
         
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr);
+        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr, vector<GameElement> *GameElementVector);
 };
 
 #endif

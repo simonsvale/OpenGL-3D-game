@@ -23,6 +23,8 @@
 #include "shaderHandler.h"
 #include "mapHandler.h"
 
+#include "gameElementHandler.h"
+
 #include "controls.h"
 
 using namespace std;
@@ -43,12 +45,13 @@ float GroundLayer[] = {
 int main(int argc, char **argv) 
 {   
     
-    // Object for options and controls
+    // Create Class objects
     Controls Controls;
-
     ArrayLevelMap MapObj;
-
     Renderer RenderObj;
+
+    // Create a vector to contain GameElement objects.
+    vector<GameElement> GameElementVector;
 
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -97,7 +100,7 @@ int main(int argc, char **argv)
     GLuint VAOTest;
     
     // !!! Load map and create all vertecies and textures.
-    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &Texture, &VAOTest);
+    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &Texture, &VAOTest, &GameElementVector);
 
     /*
     /!!!
@@ -174,7 +177,7 @@ int main(int argc, char **argv)
         */
 
         // New element
-        glBindTexture(GL_TEXTURE_2D, Texture);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[0].Texture);
         glUseProgram(RedShader.ShaderProgram);
 
         // Rotate the model

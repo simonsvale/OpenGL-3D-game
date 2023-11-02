@@ -14,11 +14,12 @@ class GameElement: public Graphics
 
         float WorldPosition[3];
 
-        // Only here to allow change of textures on the fly.
+        // Only here to allow change of shaders on the fly.
         string VertexShaderPath = "NULL";
         string FragmentShaderPath = "NULL";
 
-        // Because its a Graphics Object, it also includes VAO.
+        // Texture
+        GLuint Texture;
 
 };
 
