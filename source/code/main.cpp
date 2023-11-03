@@ -95,12 +95,9 @@ int main(int argc, char **argv)
     // !!!
     Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
     Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
-
-    GLuint Texture;
-    GLuint VAOTest;
     
     // !!! Load map and create all vertecies and textures.
-    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &Texture, &VAOTest, &GameElementVector);
+    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &GameElementVector);
 
     /*
     /!!!
@@ -198,7 +195,7 @@ int main(int argc, char **argv)
         
 
         // Draw elements for obj_1
-        glBindVertexArray(VAOTest);
+        glBindVertexArray(GameElementVector[0].VAO);
 
         // Draw cube
         // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
@@ -220,6 +217,7 @@ int main(int argc, char **argv)
             SDL_Delay(FrameDelay - FrameTimeTotal);
         }
     }
+
 
     SDL_DestroyWindow(window);
     SDL_Quit();

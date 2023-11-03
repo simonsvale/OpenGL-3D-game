@@ -20,7 +20,7 @@ void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr, vector<GameElement> *GameElementVector)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<GameElement> *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -115,9 +115,6 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
         GameElementObj[Index].LoadTexture(&GameElementObj[Index].Texture, &RedShader->ShaderProgram, TexturePath.c_str());
-
-        *VAOPtr = GameElementObj[Index].VAO;
-
 
         // Add object to vector
         GameElementVector->push_back(GameElementObj[Index]);

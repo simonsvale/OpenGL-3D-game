@@ -21,6 +21,11 @@ class GameElement: public Graphics
         // Texture
         GLuint Texture;
 
+        // Destructor
+        ~ GameElement()
+        {
+            delete this;
+        }
 };
 
 #endif

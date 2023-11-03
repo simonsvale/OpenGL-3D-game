@@ -30,7 +30,7 @@ class Renderer
         */
         void RenderEverything(vector<Sprite> SpriteArray);
         
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr, vector<GameElement> *GameElementVector);
+        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<GameElement> *GameElementVector);
 };
 
 #endif
