@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <memory>
+
 #include <glad/glad.h>
 
 #include <spriteHandler.h>
@@ -30,7 +32,7 @@ class Renderer
         */
         void RenderEverything(vector<Sprite> SpriteArray);
         
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<GameElement> *GameElementVector);
+        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<unique_ptr<GameElement> > *GameElementVector);
 };
 
 #endif

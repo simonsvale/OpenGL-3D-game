@@ -20,7 +20,7 @@ void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<GameElement> *GameElementVector)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<unique_ptr<GameElement> > *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -75,9 +75,6 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     vector<string> SingleGeometryVector;
     vector<string> ArrmapAttributeVector;
 
-    // Size should be: GeometryVector.size()
-    GameElement *GameElementObj = new GameElement[1];
-
     vector<float> VertexVec;
 
     // Path of a texture and shaders
@@ -90,7 +87,10 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)      
-    {                                                                                                           
+    {                                                 
+        // Add object to vector
+        GameElementVector->push_back(make_unique<GameElement>());       
+
         SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
         // !!!
@@ -106,18 +106,16 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
         GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
-        GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementObj[Index].WorldPosition, &WorldPositionArrSize, ArrmapFilePath);
+        GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &WorldPositionArrSize, ArrmapFilePath);
 
 
         // Load vertecies into VBO and set VAO.
-        GameElementObj[Index].SetVBO(&VertexVec[0], VertexVec.size());
-        GameElementObj[Index].SetVAO();
+        GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
+        GameElementVector[0][Index]->SetVAO();
         
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
-        GameElementObj[Index].LoadTexture(&GameElementObj[Index].Texture, &RedShader->ShaderProgram, TexturePath.c_str());
+        GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RedShader->ShaderProgram, TexturePath.c_str());
 
-        // Add object to vector
-        GameElementVector->push_back(GameElementObj[Index]);
 
         // !!!
         break;

@@ -5,6 +5,9 @@
 #include <iostream>
 #include <cmath>
 #include <array>
+#include <memory>
+
+#include <windows.h>
 
 // Include SDL2 and OpenGL headers
 #include <SDL2/SDL.h>
@@ -51,7 +54,7 @@ int main(int argc, char **argv)
     Renderer RenderObj;
 
     // Create a vector to contain GameElement objects.
-    vector<GameElement> GameElementVector;
+    vector<unique_ptr<GameElement> > GameElementVector;
 
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -174,7 +177,7 @@ int main(int argc, char **argv)
         */
 
         // New element
-        glBindTexture(GL_TEXTURE_2D, GameElementVector[0].Texture);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[0]->Texture);
         glUseProgram(RedShader.ShaderProgram);
 
         // Rotate the model
@@ -195,7 +198,7 @@ int main(int argc, char **argv)
         
 
         // Draw elements for obj_1
-        glBindVertexArray(GameElementVector[0].VAO);
+        glBindVertexArray(GameElementVector[0]->VAO);
 
         // Draw cube
         // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
@@ -218,6 +221,15 @@ int main(int argc, char **argv)
         }
     }
 
+    // Free allocated memory of GameElement objects in the vector.
+    for(int Index = 0; Index < GameElementVector.size();)
+    {
+        GameElementVector[Index].reset();
+        Index++;
+    }
+
+    // !!!
+    cout << "Freed memory" << endl;
 
     SDL_DestroyWindow(window);
     SDL_Quit();
