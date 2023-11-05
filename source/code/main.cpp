@@ -35,16 +35,6 @@ using namespace std;
 // Window width and height
 const int WIDTH = 1080, HEIGHT = 720;
 
-float GroundLayer[] = {
-    // Verticies                // Colors               // Texture
-  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
-  -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
-  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f
-};
-
 int main(int argc, char **argv) 
 {   
     
@@ -100,7 +90,7 @@ int main(int argc, char **argv)
     Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
     
     // !!! Load map and create all vertecies and textures.
-    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &GameElementVector);
+    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &RainbowShader, &GameElementVector);
 
     /*
     /!!!
@@ -152,15 +142,16 @@ int main(int argc, char **argv)
         // 3D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        /*
+        
         // !!!  
-        glBindTexture(GL_TEXTURE_2D, Texture2);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[1]->Texture);
         glUseProgram(RainbowShader.ShaderProgram);
 
-        glm::vec3 scale2 = glm::vec3(30.0f, 30.0f, 30.0f);
+        glm::vec3 scale2 = glm::vec3(30.0f, 30.0f, 1.0f);
 
         glm::mat4 model2 = glm::mat4(1.0f);
-        model2 = glm::translate(model2, glm::vec3(0.0f, -13.0f, 0.0f));
+        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f));
+        model2 = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         model2 = glm::scale(model2, scale2);
 
         // Assign new values to vertex shader.
@@ -172,9 +163,9 @@ int main(int argc, char **argv)
         glUniformMatrix4fv(projectionLoc2, 1, GL_FALSE, glm::value_ptr(projection));
 
         // Draw elements for obj_1
-        glBindVertexArray(GraphicsObj_2.VAO);
+        glBindVertexArray(GameElementVector[1]->VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        */
+        
 
         // New element
         glBindTexture(GL_TEXTURE_2D, GameElementVector[0]->Texture);
@@ -224,6 +215,7 @@ int main(int argc, char **argv)
     // Free allocated memory of GameElement objects in the vector.
     for(int Index = 0; Index < GameElementVector.size();)
     {
+        // Free the rest of the memory allocated to the GameElement objects assigned using smart pointers.
         GameElementVector[Index].reset();
         Index++;
     }

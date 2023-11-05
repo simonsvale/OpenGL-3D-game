@@ -32,7 +32,7 @@ class Renderer
         */
         void RenderEverything(vector<Sprite> SpriteArray);
         
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<unique_ptr<GameElement> > *GameElementVector);
+        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, Shader *RainbowShader, vector<unique_ptr<GameElement> > *GameElementVector);
 };
 
 #endif

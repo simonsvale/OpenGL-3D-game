@@ -12,8 +12,7 @@ MAP_GEOMETRY =
     FRAGMENT_SHADER_PATH = "source/shaders/redShader.GLSL",
     DRAW_TYPE = w,
     WORLD_POSITION = {1.0f, 4.0f, 81.0f},
-    VERTECIES = 
-    {
+    VERTECIES = {
       -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
       -0.5f, 0.5f,-0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
        0.5f, 0.5f,-0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 1.0f,
@@ -56,24 +55,16 @@ MAP_GEOMETRY =
        0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
       -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f}}, 
   {TYPE = 0, 
-   TEXTURE_PATH = source/textures/debug2.png,
-   VERTEX_SHADER = y0, 
-   FRAGMENT_SHADER = z0, 
+   TEXTURE_PATH = "source/textures/mars_sand.png",
+   VERTEX_SHADER_PATH = "source/shaders/basicVertexShader.GLSL", 
+   FRAGMENT_SHADER_PATH = "source/shaders/rainbowShader.GLSL", 
    DRAW_TYPE = w0, 
-   VERTECIES =
-   {0.0f, 1.0f}},
-  {TYPE = 1,
-   TEXTURE_PATH = source/textures/debug.png,
-   VERTEX_SHADER = y1,
-   FRAGMENT_SHADER = z1,
-   DRAW_TYPE = w1,
-   VERTECIES =
-   {1.0f, 2.0f}}, 
-   {TYPE = 2,
-    TEXTURE_PATH = source/textures/mars_sand.png,
-    VERTEX_SHADER = y2, 
-    FRAGMENT_SHADER = z2, 
-    DRAW_TYPE = w2, 
-    VERTECIES = 
-    {2.0f, 3.0f}}
-   };
+   WORLD_POSITION = {1.0f, 4.0f, 81.0f},
+   VERTECIES = {
+    -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
+    -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
+     0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+     0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
+     0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
+    -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f}}
+};

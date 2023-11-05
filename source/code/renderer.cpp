@@ -20,7 +20,7 @@ void Renderer::RenderEverything(vector<Sprite> SpriteArray)
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, vector<unique_ptr<GameElement> > *GameElementVector)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, Shader *RainbowShader, vector<unique_ptr<GameElement> > *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -114,12 +114,20 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         GameElementVector[0][Index]->SetVAO();
         
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
-        GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RedShader->ShaderProgram, TexturePath.c_str());
+        if(Index == 0)
+        {
+            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RedShader->ShaderProgram, TexturePath.c_str());
+        }
+
+        if(Index == 1)
+        {
+            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RainbowShader->ShaderProgram, TexturePath.c_str());
+        }
 
 
         // !!!
-        break;
-
+        // break;
+ 
 
         // Clear vector
         SingleGeometryVector.clear();
