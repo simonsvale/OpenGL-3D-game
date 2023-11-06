@@ -12,6 +12,8 @@ MAP_GEOMETRY =
     FRAGMENT_SHADER_PATH = "source/shaders/redShader.GLSL",
     DRAW_TYPE = w,
     WORLD_POSITION = {1.0f, 4.0f, 81.0f},
+    SCALE = {1.0f, 1.0f, 1.0f},
+    ROTATION = {45.0f, 0.0f, 0.0f},
     VERTECIES = {
       -0.5f,-0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 0.0f,       
       -0.5f, 0.5f,-0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 1.0f,
@@ -60,6 +62,8 @@ MAP_GEOMETRY =
    FRAGMENT_SHADER_PATH = "source/shaders/rainbowShader.GLSL", 
    DRAW_TYPE = w0, 
    WORLD_POSITION = {1.0f, 4.0f, 81.0f},
+   SCALE = {3.0f, 3.0f, 3.0f},
+   ROTATION = {90.0f, 0.0f, 0.0f},
    VERTECIES = {
     -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
     -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,

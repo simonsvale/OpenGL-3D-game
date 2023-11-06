@@ -13,6 +13,8 @@ class GameElement: public Graphics
         int Type;
 
         float WorldPosition[3];
+        float Scale[3];
+        float Rotation[3];
 
         // Only here to allow change of shaders on the fly.
         string VertexShaderPath = "NULL";
