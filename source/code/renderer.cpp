@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <array>
 
 #include "renderer.h"
 #include "helperFunctions.h"
@@ -14,7 +15,7 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<Sprite> SpriteArray)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector)
 {
 
 }
@@ -153,3 +154,38 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     */
 }
 
+void CompileRequiredShaders(vector<GLuint> *ShaderProgramVector, vector< array<string, 2> > VertexFragmentPairVector)
+{   
+    vector< array<string, 2> > UniqueVertexFragmentPairVector;
+
+    string VertexShaderPath;
+    string FragmentShaderPath;
+
+    // Run through outer index.
+    for(int Index_1 = 0; Index_1 < VertexFragmentPairVector.size();)
+    {
+
+        VertexShaderPath = VertexFragmentPairVector[Index_1][0];   // Vertex Shader
+        FragmentShaderPath = VertexFragmentPairVector[Index_1][1];   // Fragment Shader
+
+        // !!!
+        cout << VertexShaderPath << ", " << FragmentShaderPath << endl;
+
+        // Check all compile ready shaders
+        for(int Index_2 = 0; Index_2 < UniqueVertexFragmentPairVector.size()+1;)
+        {
+            if((VertexShaderPath != UniqueVertexFragmentPairVector[Index_2][0]) && (FragmentShaderPath != UniqueVertexFragmentPairVector[Index_2][1]))
+            {
+                UniqueVertexFragmentPairVector.push_back({VertexShaderPath, FragmentShaderPath});
+
+                // Create shader program
+                Shader NewShader(VertexShaderPath, FragmentShaderPath);
+
+                // Push the shader program into the vector.
+                ShaderProgramVector->push_back(NewShader.ShaderProgram);
+            }
+            Index_2++;
+        }
+        Index_1++;
+    }
+}

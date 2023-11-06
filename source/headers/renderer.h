@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include <memory>
+#include <memory>   // For smart pointer (unique_ptr<>).
 
 #include <glad/glad.h>
 
@@ -30,9 +30,11 @@ class Renderer
         *
         *  @return void
         */
-        void RenderEverything(vector<Sprite> SpriteArray);
+        void RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector);
         
         void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, Shader *RainbowShader, vector<unique_ptr<GameElement> > *GameElementVector);
+
+        void CompileRequiredShaders(vector<GLuint> *ShaderProgramVector, vector< array<string, 2> > VertexFragmentPairVector);
 };
 
 #endif
