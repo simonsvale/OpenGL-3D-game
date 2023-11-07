@@ -3,12 +3,15 @@
 
 #include <vector>
 #include <string>
+#include <memory>   // For smart pointer (unique_ptr<>).
+
 #include <glad/glad.h>
 
 #include <spriteHandler.h>
 
 #include "mapHandler.h"
 #include "shaderHandler.h"
+#include "gameElementHandler.h"
 
 using namespace std;
 
@@ -18,9 +21,20 @@ class Renderer
     public:
 
 
-        // A method for rendering everything
-        void RenderEverything(vector<Sprite> SpriteArray);
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr);
+        /** 
+        *  Renders all elements in the scene
+        * 
+        *  @param vector<GLuint> ShaderProgramArray, a vector of all Shaderprogrammes
+        *  @param 
+        *  @param 
+        *
+        *  @return void
+        */
+        void RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector);
+        
+        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, Shader *RainbowShader, vector<unique_ptr<GameElement> > *GameElementVector);
+
+        void CompileRequiredShaders(vector<GLuint> *ShaderProgramVector, vector< array<string, 2> > VertexFragmentPairVector);
 };
 
 #endif

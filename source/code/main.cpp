@@ -5,6 +5,9 @@
 #include <iostream>
 #include <cmath>
 #include <array>
+#include <memory>
+
+#include <windows.h>
 
 // Include SDL2 and OpenGL headers
 #include <SDL2/SDL.h>
@@ -23,6 +26,8 @@
 #include "shaderHandler.h"
 #include "mapHandler.h"
 
+#include "gameElementHandler.h"
+
 #include "controls.h"
 
 using namespace std;
@@ -30,25 +35,16 @@ using namespace std;
 // Window width and height
 const int WIDTH = 1080, HEIGHT = 720;
 
-float GroundLayer[] = {
-    // Verticies                // Colors               // Texture
-  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
-  -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
-   0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
-  -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f
-};
-
 int main(int argc, char **argv) 
 {   
     
-    // Object for options and controls
+    // Create Class objects
     Controls Controls;
-
     ArrayLevelMap MapObj;
-
     Renderer RenderObj;
+
+    // Create a vector to contain GameElement objects.
+    vector<unique_ptr<GameElement> > GameElementVector;
 
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -92,12 +88,9 @@ int main(int argc, char **argv)
     // !!!
     Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
     Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
-
-    GLuint Texture;
-    GLuint VAOTest;
     
     // !!! Load map and create all vertecies and textures.
-    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &Texture, &VAOTest);
+    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &RedShader, &RainbowShader, &GameElementVector);
 
     /*
     /!!!
@@ -149,15 +142,16 @@ int main(int argc, char **argv)
         // 3D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        /*
+        
         // !!!  
-        glBindTexture(GL_TEXTURE_2D, Texture2);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[1]->Texture);
         glUseProgram(RainbowShader.ShaderProgram);
 
-        glm::vec3 scale2 = glm::vec3(30.0f, 30.0f, 30.0f);
+        glm::vec3 scale2 = glm::vec3(30.0f, 30.0f, 1.0f);
 
         glm::mat4 model2 = glm::mat4(1.0f);
-        model2 = glm::translate(model2, glm::vec3(0.0f, -13.0f, 0.0f));
+        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f));
+        model2 = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         model2 = glm::scale(model2, scale2);
 
         // Assign new values to vertex shader.
@@ -169,12 +163,12 @@ int main(int argc, char **argv)
         glUniformMatrix4fv(projectionLoc2, 1, GL_FALSE, glm::value_ptr(projection));
 
         // Draw elements for obj_1
-        glBindVertexArray(GraphicsObj_2.VAO);
+        glBindVertexArray(GameElementVector[1]->VAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        */
+        
 
         // New element
-        glBindTexture(GL_TEXTURE_2D, Texture);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[0]->Texture);
         glUseProgram(RedShader.ShaderProgram);
 
         // Rotate the model
@@ -195,7 +189,7 @@ int main(int argc, char **argv)
         
 
         // Draw elements for obj_1
-        glBindVertexArray(VAOTest);
+        glBindVertexArray(GameElementVector[0]->VAO);
 
         // Draw cube
         // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
@@ -217,6 +211,17 @@ int main(int argc, char **argv)
             SDL_Delay(FrameDelay - FrameTimeTotal);
         }
     }
+
+    // Free allocated memory of GameElement objects in the vector.
+    for(int Index = 0; Index < GameElementVector.size();)
+    {
+        // Free the rest of the memory allocated to the GameElement objects assigned using smart pointers.
+        GameElementVector[Index].reset();
+        Index++;
+    }
+
+    // !!!
+    cout << "Freed memory" << endl;
 
     SDL_DestroyWindow(window);
     SDL_Quit();

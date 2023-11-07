@@ -6,6 +6,8 @@
 
 #include <glad/glad.h>
 
+#include "gameElementHandler.h"
+
 class Controls
 {
     public:

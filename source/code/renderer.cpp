@@ -4,30 +4,24 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <array>
 
 #include "renderer.h"
 #include "helperFunctions.h"
 #include "mapHandler.h"
 #include "shaderHandler.h"
+#include "gameElementHandler.h"
 
 using namespace std;
 
-/** 
-  *  Renders all elements in the scene
-  * 
-  *  @param vector<GLuint> ShaderProgramArray, a vector of all Shaderprogrammes
-  *  @param 
-  *  @param 
-  *
-  *  @return void
-*/
-void Renderer::RenderEverything(vector<Sprite> SpriteArray)
+
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector)
 {
 
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, GLuint *TexturePtr, GLuint *VAOPtr)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, Shader *RainbowShader, vector<unique_ptr<GameElement> > *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -82,19 +76,22 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     vector<string> SingleGeometryVector;
     vector<string> ArrmapAttributeVector;
 
-    // Size should be: GeometryVector.size()
-    Graphics *GraphicsObjs = new Graphics[1];
-
-
     vector<float> VertexVec;
 
-    // Path of a texture
+    // Path of a texture and shaders
     string TexturePath;
+    string VertexShaderPath;
+    string FragmentShaderPath;
+
+    int PositionArrSize = 3;
 
 
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)      
-    {                                                                                                           
+    {                                                 
+        // Add object to vector
+        GameElementVector->push_back(make_unique<GameElement>());       
+
         SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
         // !!!
@@ -104,23 +101,36 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
             ArrmapAttributeNumber++;
         }
         
-
-        // Do data processing !
+        // Get values contained in the .arrmap file.
         GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
+        GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
+        GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
+
         GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+        GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &PositionArrSize, ArrmapFilePath);
+        GetKeyValue_floatarray("SCALE", SingleGeometryVector, GameElementVector[0][Index]->Scale, &PositionArrSize, ArrmapFilePath);
+        GetKeyValue_floatarray("ROTATION", SingleGeometryVector, GameElementVector[0][Index]->Rotation, &PositionArrSize, ArrmapFilePath);
+
 
         // Load vertecies into VBO and set VAO.
-        GraphicsObjs[Index].SetVBO(&VertexVec[0], VertexVec.size());
-        GraphicsObjs[Index].SetVAO();
+        GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
+        GameElementVector[0][Index]->SetVAO();
         
-        GraphicsObjs[Index].LoadTexture(TexturePtr, &RedShader->ShaderProgram, TexturePath.c_str());
+        // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
+        if(Index == 0)
+        {
+            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RedShader->ShaderProgram, TexturePath.c_str());
+        }
 
-        *VAOPtr = GraphicsObjs[Index].VAO;
+        if(Index == 1)
+        {
+            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RainbowShader->ShaderProgram, TexturePath.c_str());
+        }
+
 
         // !!!
-        break;
-
-        // Generate the float arrays.
+        // break;
+ 
 
         // Clear vector
         SingleGeometryVector.clear();
@@ -131,7 +141,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     }
 
     // Delete all instances of the Graphics class.
-    //delete[] GraphicsObjs;
+    //delete[] GameElementObj;
     
     
     /*
@@ -144,3 +154,38 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
     */
 }
 
+void CompileRequiredShaders(vector<GLuint> *ShaderProgramVector, vector< array<string, 2> > VertexFragmentPairVector)
+{   
+    vector< array<string, 2> > UniqueVertexFragmentPairVector;
+
+    string VertexShaderPath;
+    string FragmentShaderPath;
+
+    // Run through outer index.
+    for(int Index_1 = 0; Index_1 < VertexFragmentPairVector.size();)
+    {
+
+        VertexShaderPath = VertexFragmentPairVector[Index_1][0];   // Vertex Shader
+        FragmentShaderPath = VertexFragmentPairVector[Index_1][1];   // Fragment Shader
+
+        // !!!
+        cout << VertexShaderPath << ", " << FragmentShaderPath << endl;
+
+        // Check all compile ready shaders
+        for(int Index_2 = 0; Index_2 < UniqueVertexFragmentPairVector.size()+1;)
+        {
+            if((VertexShaderPath != UniqueVertexFragmentPairVector[Index_2][0]) && (FragmentShaderPath != UniqueVertexFragmentPairVector[Index_2][1]))
+            {
+                UniqueVertexFragmentPairVector.push_back({VertexShaderPath, FragmentShaderPath});
+
+                // Create shader program
+                Shader NewShader(VertexShaderPath, FragmentShaderPath);
+
+                // Push the shader program into the vector.
+                ShaderProgramVector->push_back(NewShader.ShaderProgram);
+            }
+            Index_2++;
+        }
+        Index_1++;
+    }
+}
