@@ -21,7 +21,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > *GameElementVec
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector<Shader> *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -133,7 +133,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, v
         GameElementVector[0][Index]->LoadTexture
         (
             &GameElementVector[0][Index]->Texture, 
-            &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex].ShaderProgram, 
+            &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
             TexturePath.c_str()
         );
 
@@ -146,7 +146,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, v
     }
 }
 
-int Renderer::CompileRequiredShaders(vector<Shader> *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair)
+int Renderer::CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair)
 {   
 
     string VertexShaderPath = VertexFragmentPair[0];   // Vertex Shader
@@ -168,8 +168,7 @@ int Renderer::CompileRequiredShaders(vector<Shader> *ShaderObjectVector, vector<
     // Push the pair into the vector.
     UniquePairVector.push_back({VertexShaderPath, FragmentShaderPath});
 
-    // Create shader program
-    Shader *NewShader = new Shader(VertexShaderPath, FragmentShaderPath);
+    ShaderObjectVector->push_back(make_unique<Shader>(VertexShaderPath, FragmentShaderPath));  
 
     // Push the shader program into the vector.
     return ShaderObjectVector->size()-1;

@@ -90,7 +90,7 @@ int main(int argc, char **argv)
     //Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
     
     // Vector containing Shaders.
-    vector<Shader> ShaderObjectVector;
+    vector< unique_ptr<Shader> > ShaderObjectVector;
 
     // !!! Load map and create all vertecies and textures.
     RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &ShaderObjectVector, &GameElementVector);
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
         
         // !!!  
         glBindTexture(GL_TEXTURE_2D, GameElementVector[1]->Texture);
-        glUseProgram(ShaderObjectVector[0].ShaderProgram);
+        glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
         glm::vec3 scale2 = glm::vec3(30.0f, 30.0f, 1.0f);
 
@@ -149,11 +149,11 @@ int main(int argc, char **argv)
         model2 = glm::scale(model2, scale2);
 
         // Assign new values to vertex shader.
-        int modelLoc2 = glGetUniformLocation(ShaderObjectVector[0].ShaderProgram, "model");
+        int modelLoc2 = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc2, 1, GL_FALSE, glm::value_ptr(model2));
-        int viewLoc2 = glGetUniformLocation(ShaderObjectVector[0].ShaderProgram, "view");
+        int viewLoc2 = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "view");
         glUniformMatrix4fv(viewLoc2, 1, GL_FALSE, glm::value_ptr(view));
-        int projectionLoc2 = glGetUniformLocation(ShaderObjectVector[0].ShaderProgram, "projection");
+        int projectionLoc2 = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc2, 1, GL_FALSE, glm::value_ptr(projection));
 
         // Draw elements for obj_1
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
 
         // New element
         glBindTexture(GL_TEXTURE_2D, GameElementVector[0]->Texture);
-        glUseProgram(ShaderObjectVector[1].ShaderProgram);
+        glUseProgram(ShaderObjectVector[1]->ShaderProgram);
 
         // Rotate the model
         model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
@@ -172,13 +172,13 @@ int main(int argc, char **argv)
         model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
 
         // Assign new values to vertex shader.
-        int modelLoc = glGetUniformLocation(ShaderObjectVector[1].ShaderProgram, "model");
+        int modelLoc = glGetUniformLocation(ShaderObjectVector[1]->ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        int viewLoc = glGetUniformLocation(ShaderObjectVector[1].ShaderProgram, "view");
+        int viewLoc = glGetUniformLocation(ShaderObjectVector[1]->ShaderProgram, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-        int projectionLoc = glGetUniformLocation(ShaderObjectVector[1].ShaderProgram, "projection");
+        int projectionLoc = glGetUniformLocation(ShaderObjectVector[1]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
         
 

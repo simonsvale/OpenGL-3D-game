@@ -32,10 +32,10 @@ class Renderer
         */
         void RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector);
         
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector<Shader> *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector);
+        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector);
 
         // Required a possible fragment and vertex shader pair and returns an index to the compiled shaderprogram.
-        int CompileRequiredShaders(vector<Shader> *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair);
+        int CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair);
 };
 
 #endif
