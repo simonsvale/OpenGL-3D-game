@@ -21,7 +21,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > *GameElementVec
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, Shader *RainbowShader, vector<unique_ptr<GameElement> > *GameElementVector)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -85,6 +85,10 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
     int PositionArrSize = 3;
 
+    // !!!
+    vector<array<string, 2> > VertexFragmentVector;
+    vector<GLuint> ProgramVector;
+
 
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)      
@@ -115,22 +119,23 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         // Load vertecies into VBO and set VAO.
         GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         GameElementVector[0][Index]->SetVAO();
+
+
+        array<string, 2> VertFragPair = {VertexShaderPath, FragmentShaderPath};
+
+        // Compile shaders
+        GameElementVector[0][Index]->ShaderProgramIndex = CompileRequiredShaders(ShaderObjectVector, VertexFragmentVector, VertFragPair);
+
+        cout << GameElementVector[0][Index]->ShaderProgramIndex << endl;
         
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
-        if(Index == 0)
-        {
-            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RedShader->ShaderProgram, TexturePath.c_str());
-        }
-
-        if(Index == 1)
-        {
-            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RainbowShader->ShaderProgram, TexturePath.c_str());
-        }
-
-
-        // !!!
-        // break;
- 
+   
+        GameElementVector[0][Index]->LoadTexture
+        (
+            &GameElementVector[0][Index]->Texture, 
+            &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
+            TexturePath.c_str()
+        );
 
         // Clear vector
         SingleGeometryVector.clear();
@@ -139,53 +144,32 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
         // Perhaps a loading bar on another thread.
     }
-
-    // Delete all instances of the Graphics class.
-    //delete[] GameElementObj;
-    
-    
-    /*
-    // DEBUG !!!
-    for(int test = 0; test < ArrmapInfoVector.size();)
-    {
-        cout << ArrmapInfoVector[test] << endl;
-        test++;
-    }
-    */
 }
 
-void CompileRequiredShaders(vector<GLuint> *ShaderProgramVector, vector< array<string, 2> > VertexFragmentPairVector)
+int Renderer::CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair)
 {   
-    vector< array<string, 2> > UniqueVertexFragmentPairVector;
 
-    string VertexShaderPath;
-    string FragmentShaderPath;
+    string VertexShaderPath = VertexFragmentPair[0];   // Vertex Shader
+    string FragmentShaderPath = VertexFragmentPair[1];   // Fragment Shader
 
-    // Run through outer index.
-    for(int Index_1 = 0; Index_1 < VertexFragmentPairVector.size();)
+    // Check if the pair already exists.
+    for(int Index = 0; Index < UniquePairVector.size();)
     {
-
-        VertexShaderPath = VertexFragmentPairVector[Index_1][0];   // Vertex Shader
-        FragmentShaderPath = VertexFragmentPairVector[Index_1][1];   // Fragment Shader
-
-        // !!!
-        cout << VertexShaderPath << ", " << FragmentShaderPath << endl;
-
-        // Check all compile ready shaders
-        for(int Index_2 = 0; Index_2 < UniqueVertexFragmentPairVector.size()+1;)
-        {
-            if((VertexShaderPath != UniqueVertexFragmentPairVector[Index_2][0]) && (FragmentShaderPath != UniqueVertexFragmentPairVector[Index_2][1]))
-            {
-                UniqueVertexFragmentPairVector.push_back({VertexShaderPath, FragmentShaderPath});
-
-                // Create shader program
-                Shader NewShader(VertexShaderPath, FragmentShaderPath);
-
-                // Push the shader program into the vector.
-                ShaderProgramVector->push_back(NewShader.ShaderProgram);
-            }
-            Index_2++;
+        if((VertexShaderPath == UniquePairVector[Index][0]) && (FragmentShaderPath == UniquePairVector[Index][1]))
+        {   
+            // Return the index if the Shader already exists.
+            return Index;
         }
-        Index_1++;
+        Index++;
     }
+
+    // If the shader does not exist do the following:
+
+    // Push the pair into the vector.
+    UniquePairVector.push_back({VertexShaderPath, FragmentShaderPath});
+
+    ShaderObjectVector->push_back(make_unique<Shader>(VertexShaderPath, FragmentShaderPath));  
+
+    // Push the shader program into the vector.
+    return ShaderObjectVector->size()-1;
 }
