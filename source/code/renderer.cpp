@@ -21,7 +21,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > *GameElementVec
 }
 
 
-void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, Shader *RedShader, Shader *RainbowShader, vector<unique_ptr<GameElement> > *GameElementVector)
+void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector<Shader> *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -120,27 +120,22 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
         GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         GameElementVector[0][Index]->SetVAO();
 
-        array<string, 2> StringThing = {VertexShaderPath, FragmentShaderPath};
 
-        GameElementVector[0][Index]->ShaderProgramIndex = CompileRequiredShaders(&ProgramVector, VertexFragmentVector, StringThing);
+        array<string, 2> VertFragPair = {VertexShaderPath, FragmentShaderPath};
+
+        // Compile shaders
+        GameElementVector[0][Index]->ShaderProgramIndex = CompileRequiredShaders(ShaderObjectVector, VertexFragmentVector, VertFragPair);
 
         cout << GameElementVector[0][Index]->ShaderProgramIndex << endl;
         
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
-        if(Index == 0)
-        {
-            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RedShader->ShaderProgram, TexturePath.c_str());
-        }
-
-        if(Index == 1)
-        {
-            GameElementVector[0][Index]->LoadTexture(&GameElementVector[0][Index]->Texture, &RainbowShader->ShaderProgram, TexturePath.c_str());
-        }
-
-
-        // !!!
-        // break;
- 
+   
+        GameElementVector[0][Index]->LoadTexture
+        (
+            &GameElementVector[0][Index]->Texture, 
+            &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex].ShaderProgram, 
+            TexturePath.c_str()
+        );
 
         // Clear vector
         SingleGeometryVector.clear();
@@ -149,22 +144,9 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, S
 
         // Perhaps a loading bar on another thread.
     }
-
-    // Delete all instances of the Graphics class.
-    //delete[] GameElementObj;
-    
-    
-    /*
-    // DEBUG !!!
-    for(int test = 0; test < ArrmapInfoVector.size();)
-    {
-        cout << ArrmapInfoVector[test] << endl;
-        test++;
-    }
-    */
 }
 
-int Renderer::CompileRequiredShaders(vector<GLuint> *ShaderProgramVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair)
+int Renderer::CompileRequiredShaders(vector<Shader> *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair)
 {   
 
     string VertexShaderPath = VertexFragmentPair[0];   // Vertex Shader
@@ -187,10 +169,8 @@ int Renderer::CompileRequiredShaders(vector<GLuint> *ShaderProgramVector, vector
     UniquePairVector.push_back({VertexShaderPath, FragmentShaderPath});
 
     // Create shader program
-    Shader NewShader(VertexShaderPath, FragmentShaderPath);
+    Shader *NewShader = new Shader(VertexShaderPath, FragmentShaderPath);
 
     // Push the shader program into the vector.
-    ShaderProgramVector->push_back(NewShader.ShaderProgram);
-
-    return (ShaderProgramVector->size()-1);
+    return ShaderObjectVector->size()-1;
 }
