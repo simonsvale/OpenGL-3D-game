@@ -46,6 +46,8 @@ int main(int argc, char **argv)
     // Create a vector to contain GameElement objects.
     vector<unique_ptr<GameElement> > GameElementVector;
 
+    // Vector containing Shaders. Used to save memory on reused shaders.
+    vector< unique_ptr<Shader> > ShaderObjectVector;
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -72,25 +74,17 @@ int main(int argc, char **argv)
     }
 
     // OpenGL context.
-    SDL_GLContext GL_context;
-    GL_context = SDL_GL_CreateContext(window);
+    SDL_GLContext GLContext;
+    GLContext = SDL_GL_CreateContext(window);
 
     // OpenGL function pointers.
     gladLoadGLLoader(SDL_GL_GetProcAddress);
     
-    if (NULL == GL_context)
+    if (NULL == GLContext)
     {
         cout << "Could not create OpenGL context" << SDL_GetError() << endl;
         return 1; 
     }
-
-
-    // !!!
-    //Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
-    //Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
-    
-    // Vector containing Shaders.
-    vector< unique_ptr<Shader> > ShaderObjectVector;
 
     // !!! Load map and create all vertecies and textures.
     RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &ShaderObjectVector, &GameElementVector);
@@ -211,6 +205,13 @@ int main(int argc, char **argv)
     {
         // Free the rest of the memory allocated to the GameElement objects assigned using smart pointers.
         GameElementVector[Index].reset();
+        Index++;
+    }
+
+    // Free allocated memory of Shader objects, stored in the vector.
+    for(int Index = 0; Index < ShaderObjectVector.size();)
+    {
+        ShaderObjectVector[Index].reset();
         Index++;
     }
 
