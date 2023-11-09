@@ -1,6 +1,10 @@
 #include <SDL2/SDL.h>
 #include <glad/glad.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -15,9 +19,52 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector)
-{
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window)
+{   
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection;
 
+    int ShaderIndex;
+
+    for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
+    {   
+        // Get GameElement's shaderprogram index.
+        ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
+
+        // New element
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->Texture);
+        glUseProgram(ShaderObjectVector[GameElementVector[GameElementNumber]->ShaderProgramIndex]->ShaderProgram);
+
+        // Rotate the model
+        model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
+
+        // The rotation of the cube.
+        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+
+        // Assign new values to vertex shader.
+        int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        int viewLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        
+
+        // Draw elements for obj_1
+        glBindVertexArray(GameElementVector[0]->VAO);
+
+        // Draw cube
+        // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        GameElementNumber++;
+    }
+    
+    // Render everything.
+    SDL_GL_SwapWindow(window);
 }
 
 

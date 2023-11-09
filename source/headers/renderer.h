@@ -30,7 +30,7 @@ class Renderer
         *
         *  @return void
         */
-        void RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector);
+        void RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window);
         
         void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector);
 
