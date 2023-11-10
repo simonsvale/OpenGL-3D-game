@@ -19,11 +19,9 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, SDL_Window *window)
 {   
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection;
 
     int ShaderIndex;
 
@@ -36,11 +34,16 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->Texture);
         glUseProgram(ShaderObjectVector[GameElementVector[GameElementNumber]->ShaderProgramIndex]->ShaderProgram);
 
-        // Rotate the model
-        model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
+        
+        // Set model position.
+        model = glm::translate(model, glm::vec3(
+            GameElementVector[GameElementNumber]->WorldPosition[0], 
+            GameElementVector[GameElementNumber]->WorldPosition[1], 
+            GameElementVector[GameElementNumber]->WorldPosition[0]));
 
         // The rotation of the cube.
-        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+        //model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+        
 
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
@@ -54,11 +57,12 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         
 
         // Draw elements for obj_1
-        glBindVertexArray(GameElementVector[0]->VAO);
+        glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
 
         // Draw cube
         // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArrays(GL_TRIANGLES, 0, GameElementVector[GameElementNumber]->GLArraySize);
+        cout << GameElementVector[GameElementNumber]->GLArraySize << endl;
 
         GameElementNumber++;
     }
@@ -167,14 +171,15 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, v
         GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         GameElementVector[0][Index]->SetVAO();
 
+        // Set drawarraysize
+        GameElementVector[0][Index]->GLArraySize = VertexVec.size()/8;
+
 
         array<string, 2> VertFragPair = {VertexShaderPath, FragmentShaderPath};
 
         // Compile shaders
         GameElementVector[0][Index]->ShaderProgramIndex = CompileRequiredShaders(ShaderObjectVector, VertexFragmentVector, VertFragPair);
 
-        cout << GameElementVector[0][Index]->ShaderProgramIndex << endl;
-        
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
    
         GameElementVector[0][Index]->LoadTexture
@@ -186,6 +191,7 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, v
 
         // Clear vector
         SingleGeometryVector.clear();
+        VertexVec.clear();
 
         Index++;
 

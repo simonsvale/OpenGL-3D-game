@@ -113,7 +113,6 @@ int main(int argc, char **argv)
         // Run controls, does keystate and everthing
         Controls.RunControls();
 
-        glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection;
 
@@ -130,7 +129,10 @@ int main(int argc, char **argv)
         // 3D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, window);
+
+        /*
+        glm::mat4 model = glm::mat4(1.0f);
         // !!!  
         glBindTexture(GL_TEXTURE_2D, GameElementVector[1]->Texture);
         glUseProgram(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram);
@@ -185,7 +187,7 @@ int main(int argc, char **argv)
     
         // Update the SDL OpenGL window with the drawn elements.
         SDL_GL_SwapWindow(window);
-
+        */
 
         // Get the end time of the frame
         FrameTimeEnd = SDL_GetTicks();
