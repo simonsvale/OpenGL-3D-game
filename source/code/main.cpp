@@ -46,6 +46,8 @@ int main(int argc, char **argv)
     // Create a vector to contain GameElement objects.
     vector<unique_ptr<GameElement> > GameElementVector;
 
+    // Vector containing Shaders. Used to save memory on reused shaders.
+    vector< unique_ptr<Shader> > ShaderObjectVector;
 
     SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -72,25 +74,17 @@ int main(int argc, char **argv)
     }
 
     // OpenGL context.
-    SDL_GLContext GL_context;
-    GL_context = SDL_GL_CreateContext(window);
+    SDL_GLContext GLContext;
+    GLContext = SDL_GL_CreateContext(window);
 
     // OpenGL function pointers.
     gladLoadGLLoader(SDL_GL_GetProcAddress);
     
-    if (NULL == GL_context)
+    if (NULL == GLContext)
     {
         cout << "Could not create OpenGL context" << SDL_GetError() << endl;
         return 1; 
     }
-
-
-    // !!!
-    //Shader RedShader("source/shaders/basicVertexShader.GLSL", "source/shaders/redShader.GLSL");
-    //Shader RainbowShader("source/shaders/basicVertexShader.GLSL", "source/shaders/rainbowShader.GLSL");
-    
-    // Vector containing Shaders.
-    vector< unique_ptr<Shader> > ShaderObjectVector;
 
     // !!! Load map and create all vertecies and textures.
     RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &ShaderObjectVector, &GameElementVector);
@@ -119,7 +113,6 @@ int main(int argc, char **argv)
         // Run controls, does keystate and everthing
         Controls.RunControls();
 
-        glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection;
 
@@ -136,7 +129,10 @@ int main(int argc, char **argv)
         // 3D
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, window);
+
+        /*
+        glm::mat4 model = glm::mat4(1.0f);
         // !!!  
         glBindTexture(GL_TEXTURE_2D, GameElementVector[1]->Texture);
         glUseProgram(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram);
@@ -146,7 +142,7 @@ int main(int argc, char **argv)
         glm::mat4 model2 = glm::mat4(1.0f);
         model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f));
         model2 = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model2 = glm::scale(model2, scale2);
+        model2 = glm::scale(model2, glm::vec3(30.0f, 30.0f, 1.0f));
 
         // Assign new values to vertex shader.
         int modelLoc2 = glGetUniformLocation(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram, "model");
@@ -191,7 +187,7 @@ int main(int argc, char **argv)
     
         // Update the SDL OpenGL window with the drawn elements.
         SDL_GL_SwapWindow(window);
-
+        */
 
         // Get the end time of the frame
         FrameTimeEnd = SDL_GetTicks();
@@ -211,6 +207,13 @@ int main(int argc, char **argv)
     {
         // Free the rest of the memory allocated to the GameElement objects assigned using smart pointers.
         GameElementVector[Index].reset();
+        Index++;
+    }
+
+    // Free allocated memory of Shader objects, stored in the vector.
+    for(int Index = 0; Index < ShaderObjectVector.size();)
+    {
+        ShaderObjectVector[Index].reset();
         Index++;
     }
 

@@ -6,6 +6,9 @@
 #include <memory>   // For smart pointer (unique_ptr<>).
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <spriteHandler.h>
 
@@ -30,7 +33,7 @@ class Renderer
         *
         *  @return void
         */
-        void RenderEverything(vector<unique_ptr<GameElement> > *GameElementVector);
+        void RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, SDL_Window *window);
         
         void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector);
 
