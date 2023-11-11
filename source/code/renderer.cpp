@@ -21,12 +21,12 @@ using namespace std;
 
 void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, SDL_Window *window)
 {   
-    glm::mat4 model = glm::mat4(1.0f);
-
     int ShaderIndex;
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {   
+        glm::mat4 model = glm::mat4(1.0f);
+
         // Get GameElement's shaderprogram index.
         ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
 
@@ -34,12 +34,11 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->Texture);
         glUseProgram(ShaderObjectVector[GameElementVector[GameElementNumber]->ShaderProgramIndex]->ShaderProgram);
 
-        
         // Set model position.
         model = glm::translate(model, glm::vec3(
             GameElementVector[GameElementNumber]->WorldPosition[0], 
             GameElementVector[GameElementNumber]->WorldPosition[1], 
-            GameElementVector[GameElementNumber]->WorldPosition[0]));
+            GameElementVector[GameElementNumber]->WorldPosition[2]));
 
         // The rotation of the cube.
         //model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
@@ -54,20 +53,17 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-        
 
-        // Draw elements for obj_1
+        // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
 
-        // Draw cube
-        // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
+        // Draw GameElement array.
         glDrawArrays(GL_TRIANGLES, 0, GameElementVector[GameElementNumber]->GLArraySize);
-        cout << GameElementVector[GameElementNumber]->GLArraySize << endl;
 
         GameElementNumber++;
     }
-    
-    // Render everything.
+
+    // Draw everything onto the program.
     SDL_GL_SwapWindow(window);
 }
 
@@ -149,12 +145,13 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, v
 
         SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
-        // !!!
+        /*
         for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
         {   
             cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
             ArrmapAttributeNumber++;
         }
+        */
         
         // Get values contained in the .arrmap file.
         GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
@@ -194,9 +191,10 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, v
         VertexVec.clear();
 
         Index++;
-
-        // Perhaps a loading bar on another thread.
     }
+
+    cout << "<[ENGINE]>" << "\nGAME ELEMENTS: "<< GameElementVector[0].size() << "\nSHADER PROGRAMS: " << ShaderObjectVector[0].size() << endl;
+
 }
 
 int Renderer::CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair)
