@@ -34,14 +34,24 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->Texture);
         glUseProgram(ShaderObjectVector[GameElementVector[GameElementNumber]->ShaderProgramIndex]->ShaderProgram);
 
-        // Set model position.
+        // Set GameElement model world position.
         model = glm::translate(model, glm::vec3(
             GameElementVector[GameElementNumber]->WorldPosition[0], 
             GameElementVector[GameElementNumber]->WorldPosition[1], 
-            GameElementVector[GameElementNumber]->WorldPosition[2]));
+            GameElementVector[GameElementNumber]->WorldPosition[2]
+        ));
 
-        // The rotation of the cube.
-        //model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
+        // Set GameElement model rotation around x, y, z, in degrees.
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[0]), glm::vec3(1, 0, 0));
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[1]), glm::vec3(0, 1, 0));
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[2]), glm::vec3(0, 0, 1));
+
+        // Set GameElement model scale.
+        model = glm::scale(model, glm::vec3(
+            GameElementVector[GameElementNumber]->Scale[0], 
+            GameElementVector[GameElementNumber]->Scale[1], 
+            GameElementVector[GameElementNumber]->Scale[2]
+        ));
         
 
         // Assign new values to vertex shader.
@@ -159,9 +169,10 @@ void Renderer::LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, v
         GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
         GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+        
         GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &PositionArrSize, ArrmapFilePath);
-        GetKeyValue_floatarray("SCALE", SingleGeometryVector, GameElementVector[0][Index]->Scale, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("ROTATION", SingleGeometryVector, GameElementVector[0][Index]->Rotation, &PositionArrSize, ArrmapFilePath);
+        GetKeyValue_floatarray("SCALE", SingleGeometryVector, GameElementVector[0][Index]->Scale, &PositionArrSize, ArrmapFilePath);
 
 
         // Load vertecies into VBO and set VAO.

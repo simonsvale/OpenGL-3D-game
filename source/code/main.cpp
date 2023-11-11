@@ -142,7 +142,7 @@ int main(int argc, char **argv)
         glm::mat4 model2 = glm::mat4(1.0f);
         model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f));
         model2 = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model2 = glm::scale(model2, scale2);
+        model2 = glm::scale(model2, glm::vec3(30.0f, 30.0f, 1.0f));
 
         // Assign new values to vertex shader.
         int modelLoc2 = glGetUniformLocation(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram, "model");
