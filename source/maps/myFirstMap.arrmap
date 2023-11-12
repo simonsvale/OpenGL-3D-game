@@ -61,9 +61,9 @@ MAP_GEOMETRY =
    VERTEX_SHADER_PATH = "source/shaders/basicVertexShader.GLSL", 
    FRAGMENT_SHADER_PATH = "source/shaders/rainbowShader.GLSL", 
    DRAW_TYPE = w0, 
-   WORLD_POSITION = {1.0f, 4.0f, 1.0f},
-   SCALE = {3.0f, 3.0f, 3.0f},
-   ROTATION = {33.0f, 0.0f, 0.0f},
+   WORLD_POSITION = {1.0f, -5.0f, 1.0f},
+   SCALE = {10.0f, 10.0f, 10.0f},
+   ROTATION = {0.0f, 0.0f, 0.0f},
    VERTECIES = {
     -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f,       
     -0.5f, 0.5f, 0.5f,       0.0f, 1.0f, 0.0f,         0.0f, 0.0f,
@@ -120,5 +120,4 @@ MAP_GEOMETRY =
      0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
      0.5f, 0.5f, 0.5f,       0.0f, 0.0f, 1.0f,         1.0f, 0.0f,
      0.5f, 0.5f,-0.5f,       1.0f, 1.0f, 1.0f,         1.0f, 1.0f,
-    -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f}}
-};
+    -0.5f, 0.5f,-0.5f,       1.0f, 0.0f, 0.0f,         0.0f, 1.0f}}};

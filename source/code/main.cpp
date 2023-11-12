@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     
     // Create Class objects
     Controls Controls;
-    ArrayLevelMap MapObj;
+    ArrayLevelMap Arraymap;
     Renderer RenderObj;
 
     // Create a vector to contain GameElement objects.
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     }
 
     // !!! Load map and create all vertecies and textures.
-    RenderObj.LoadArrmapFile("source/maps/myFirstMap.arrmap", &MapObj, &ShaderObjectVector, &GameElementVector);
+    Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
 
     // !!!
     glEnable(GL_DEPTH_TEST);  
@@ -122,72 +122,14 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         
-        // background color
+        // background color. Should be a seperate function.
         glClearColor(0.766f, 0.922f, 0.970f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        // 3D
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Render Everything.
         RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, window);
 
-        /*
-        glm::mat4 model = glm::mat4(1.0f);
-        // !!!  
-        glBindTexture(GL_TEXTURE_2D, GameElementVector[1]->Texture);
-        glUseProgram(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram);
-
-        glm::vec3 scale2 = glm::vec3(30.0f, 30.0f, 1.0f);
-
-        glm::mat4 model2 = glm::mat4(1.0f);
-        model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.0f));
-        model2 = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        model2 = glm::scale(model2, glm::vec3(30.0f, 30.0f, 1.0f));
-
-        // Assign new values to vertex shader.
-        int modelLoc2 = glGetUniformLocation(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram, "model");
-        glUniformMatrix4fv(modelLoc2, 1, GL_FALSE, glm::value_ptr(model2));
-        int viewLoc2 = glGetUniformLocation(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram, "view");
-        glUniformMatrix4fv(viewLoc2, 1, GL_FALSE, glm::value_ptr(view));
-        int projectionLoc2 = glGetUniformLocation(ShaderObjectVector[GameElementVector[1]->ShaderProgramIndex]->ShaderProgram, "projection");
-        glUniformMatrix4fv(projectionLoc2, 1, GL_FALSE, glm::value_ptr(projection));
-
-        // Draw elements for obj_1
-        glBindVertexArray(GameElementVector[1]->VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        
-
-        // New element
-        glBindTexture(GL_TEXTURE_2D, GameElementVector[0]->Texture);
-        glUseProgram(ShaderObjectVector[GameElementVector[0]->ShaderProgramIndex]->ShaderProgram);
-
-        // Rotate the model
-        model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
-
-        // The rotation of the cube.
-        model = glm::rotate(model, float(SDL_GetTicks64()/2000.0) * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f)); 
-
-        // Assign new values to vertex shader.
-        int modelLoc = glGetUniformLocation(ShaderObjectVector[GameElementVector[0]->ShaderProgramIndex]->ShaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-        int viewLoc = glGetUniformLocation(ShaderObjectVector[GameElementVector[0]->ShaderProgramIndex]->ShaderProgram, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-        int projectionLoc = glGetUniformLocation(ShaderObjectVector[GameElementVector[0]->ShaderProgramIndex]->ShaderProgram, "projection");
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-        
-
-        // Draw elements for obj_1
-        glBindVertexArray(GameElementVector[0]->VAO);
-
-        // Draw cube
-        // Instead of calling this GL method each time maybe using glbuffersubdata, could reduce this call to a single each loop. !!!!!!!!
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    
-        // Update the SDL OpenGL window with the drawn elements.
-        SDL_GL_SwapWindow(window);
-        */
 
         // Get the end time of the frame
         FrameTimeEnd = SDL_GetTicks();
@@ -202,23 +144,8 @@ int main(int argc, char **argv)
         }
     }
 
-    // Free allocated memory of GameElement objects in the vector.
-    for(int Index = 0; Index < GameElementVector.size();)
-    {
-        // Free the rest of the memory allocated to the GameElement objects assigned using smart pointers.
-        GameElementVector[Index].reset();
-        Index++;
-    }
-
-    // Free allocated memory of Shader objects, stored in the vector.
-    for(int Index = 0; Index < ShaderObjectVector.size();)
-    {
-        ShaderObjectVector[Index].reset();
-        Index++;
-    }
-
-    // !!!
-    cout << "Freed memory" << endl;
+    // Free memory by unloading the .arrmap file.
+    Arraymap.UnloadArrmapFile(&ShaderObjectVector, &GameElementVector);
 
     SDL_DestroyWindow(window);
     SDL_Quit();
