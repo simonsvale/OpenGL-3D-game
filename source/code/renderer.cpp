@@ -5,14 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <array>
-
 #include "renderer.h"
-#include "helperFunctions.h"
-#include "mapHandler.h"
 #include "shaderHandler.h"
 #include "gameElementHandler.h"
 
@@ -25,6 +18,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
     // ################################################################################
     // Need a function call that sets static geometry, since most things do not need to get rotated, scaled and get a position each frame.
+    // Use EBO again!
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {   

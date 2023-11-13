@@ -10,15 +10,17 @@
 #include <string>
 #include <fstream>
 #include <array>
+#include <memory>
 
 #include "renderer.h"
 #include "helperFunctions.h"
 #include "mapHandler.h"
 #include "shaderHandler.h"
 #include "gameElementHandler.h"
+#include "structures.h"
 
 
-void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector)
+void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Shader> > *ShaderObjectVector, vector< unique_ptr<GameElement> > *GameElementVector)
 {
     // Setup Variables
     string ArrmapFileLine;
@@ -145,10 +147,9 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
     }
 
     cout << "<[ENGINE]>" << " Assigned memory to:" << "\nGAME ELEMENTS: "<< GameElementVector[0].size() << "\nSHADER PROGRAMS: " << ShaderObjectVector[0].size() << endl;
-
 }
 
-void ArrayLevelMap::UnloadArrmapFile(vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector)
+void ArrayLevelMap::UnloadArrmapFile(vector< unique_ptr<Shader> > *ShaderObjectVector, vector< unique_ptr<GameElement> > *GameElementVector)
 {
     // Free allocated memory of GameElement objects in the vector.
     for(int Index = 0; Index < GameElementVector[0].size();)
@@ -199,4 +200,74 @@ int ArrayLevelMap::CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderOb
 
     // Push the shader program into the vector.
     return ShaderObjectVector->size()-1;
+}
+
+// Load.obj wavefront file.
+void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel *ModelPtr)
+{
+    // Wavefront .obj
+    string ObjLine;
+
+	vector<string> ObjLineVector;
+
+    // Open File
+    ifstream ReadSpriteFile(ObjFilePath);
+
+    // extract file content
+    while(getline(ReadSpriteFile, ObjLine))
+    { 	
+		// Add line.
+		ObjLineVector.push_back(ObjLine);
+    }
+
+    // Close file
+    ReadSpriteFile.close();
+
+
+    for(int Index = 0; Index < ObjLineVector.size();)
+    {   
+        // Check if it is vertices
+        if((ObjLineVector[Index][0] == 'v'))
+        {   
+            // Check if it is vertices coordinates.
+            if((ObjLineVector[Index][1] == ' '))
+            {
+                cout << "vertices time:" << ObjLineVector[Index] << endl;
+
+
+                
+            }
+
+            // Check if it is texture coordinates
+            if((ObjLineVector[Index][1] == 't'))
+            {
+                cout << "vertices texture time:" << ObjLineVector[Index] << endl;
+
+
+
+            }
+
+        }
+        // Check if it is indices.
+        else if((ObjLineVector[Index][0] == 'f'))
+        {
+            cout << "float time:" << ObjLineVector[Index] << endl;
+
+
+
+        }
+
+        Index++;
+    }
+
+
+    // First find the vertices coordinates: v
+
+
+    // Now look for vertices texture coordinates: vt
+
+
+    // Now look for indices: f
+
+
 }

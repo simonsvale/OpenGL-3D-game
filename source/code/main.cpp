@@ -2,11 +2,8 @@
 
 
 // Include build-in libraries
-#include <iostream>
 #include <cmath>
-#include <array>
 #include <memory>
-
 #include <windows.h>
 
 // Include SDL2 and OpenGL headers
@@ -25,6 +22,7 @@
 #include "graphicsHandler.h"
 #include "shaderHandler.h"
 #include "mapHandler.h"
+#include "structures.h"
 
 #include "gameElementHandler.h"
 
@@ -43,8 +41,12 @@ int main(int argc, char **argv)
     ArrayLevelMap Arraymap;
     Renderer RenderObj;
 
+    struct ObjModel OModel;
+
+    Arraymap.LoadObjFile("source/models/Cubetest.obj", &OModel);
+
     // Create a vector to contain GameElement objects.
-    vector<unique_ptr<GameElement> > GameElementVector;
+    vector< unique_ptr<GameElement> > GameElementVector;
 
     // Vector containing Shaders. Used to save memory on reused shaders.
     vector< unique_ptr<Shader> > ShaderObjectVector;

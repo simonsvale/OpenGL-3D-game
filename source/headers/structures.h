@@ -1,12 +1,17 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
+#include <vector>
+
+using namespace std;
 
 // Contains all structures
 
-struct Test
+// struct for the .obj wavefront format.
+struct ObjModel
 {
-    int x;
+    vector<float> Vertices;
+    vector<float> Indices;
 };
 
 #endif
