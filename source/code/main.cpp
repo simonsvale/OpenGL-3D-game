@@ -41,10 +41,11 @@ int main(int argc, char **argv)
     ArrayLevelMap Arraymap;
     Renderer RenderObj;
 
+    // !!!
     struct ObjModel OModel;
-
     Arraymap.LoadObjFile("source/models/Cubetest.obj", &OModel);
 
+    
     // Create a vector to contain GameElement objects.
     vector< unique_ptr<GameElement> > GameElementVector;
 
