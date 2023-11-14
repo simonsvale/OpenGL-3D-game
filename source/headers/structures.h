@@ -11,7 +11,7 @@ using namespace std;
 struct ObjModel
 {
     vector<float> Vertices;
-    vector<int> Indices;
+    vector<vector<int> > Indices;
     vector<float> TextureVertices;
     vector<int> TextureIndices;
 };

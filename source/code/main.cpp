@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
     // !!!
     struct ObjModel OModel;
-    Arraymap.LoadObjFile("source/models/Cubetest.obj", &OModel);
+    Arraymap.LoadObjFile("source/models/Cubetest.obj", OModel);
 
     
     // Create a vector to contain GameElement objects.

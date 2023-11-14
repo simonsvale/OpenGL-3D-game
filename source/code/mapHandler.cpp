@@ -203,7 +203,7 @@ int ArrayLevelMap::CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderOb
 }
 
 // Load.obj wavefront file.
-void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel *ModelPtr)
+void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
 {
     // Wavefront .obj
     string ObjLine;
@@ -223,36 +223,39 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel *ModelPtr)
     // Close file
     ReadSpriteFile.close();
 
+    vector<int> AuxIndicesVector;
 
     vector<string> SplitObjLineVector;
+    vector<string> SplitIndicesVector;
+    string AuxString;
 
     for(int Index = 0; Index < ObjLineVector.size();)
     {   
         // Check if it is vertices
         if((ObjLineVector[Index][0] == 'v'))
         {   
-            if((ObjLineVector[Index][1] == ' '))
+            if(ObjLineVector[Index][1] == ' ')
             {
                 SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
 
                 // add the vertecies to the struct.
                 for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
                 {
-                    ModelPtr->Vertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
+                    ModelRef.Vertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
                     Index_3++;
                 }
 
             }
 
             // Check if it is texture coordinates
-            if((ObjLineVector[Index][1] == 't'))
+            if(ObjLineVector[Index][1] == 't')
             {
                 SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
 
                 // add the vertecies to the struct.
                 for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
                 {
-                    ModelPtr->TextureVertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
+                    ModelRef.TextureVertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
                     Index_3++;
                 }
             }
@@ -261,21 +264,49 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel *ModelPtr)
         }
 
         // Check if it is indices.
-        if((ObjLineVector[Index][0] == 'f'))
+        if(ObjLineVector[Index][0] == 'f')
         {
             SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
 
-            // f
-            // Handle indicies
+            // get float indices
+            for(int Index_2 = 1; Index_2 < SplitObjLineVector.size();)
+            {
+                AuxString = SplitObjLineVector[Index_2];
+                SplitByDelimiter(AuxString, &SplitIndicesVector, '/', -1);
 
+                AuxIndicesVector.push_back(atoi(SplitIndicesVector[0].c_str()));
+
+                // ########################################
+                // CREATE triangle fication function, converting any face consisting of n vertices to x indices for triangles opengl can render.
+
+                SplitIndicesVector.clear();
+                Index_2++;
+            }
+
+            // Push the indices of the single face.
+            ModelRef.Indices.push_back(AuxIndicesVector);
+
+            AuxIndicesVector.clear();
             SplitObjLineVector.clear();
         }
 
         Index++;
     }
 
+    for(int i = 0; i < ModelRef.Indices.size();)
+    {
+        cout << "\nFace:" << endl;
+        for(int n = 0; n < ModelRef.Indices[i].size();)
+        {
+            cout << ModelRef.Indices[i][n] << ", ";
+            n++;
+        }
+        i++;
+    }
+
     // f is the face structured v/t/n
     // We need the v in the face to create the indecies and a bit of geometry.
+
 
 
 }
