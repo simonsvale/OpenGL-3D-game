@@ -57,6 +57,8 @@ void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrac
 */
 void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, char Delimiter, char StartBrace, char EndBrace);
 
+void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *SplitObjLineVector);
+
 // Pass array pointer by reference
 void GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize);
 void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath);

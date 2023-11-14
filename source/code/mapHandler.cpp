@@ -210,8 +210,6 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel *ModelPtr)
 
 	vector<string> ObjLineVector;
 
-    vector<string> SplitObjLineVector;
-
     // Open File
     ifstream ReadSpriteFile(ObjFilePath);
 
@@ -225,110 +223,59 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel *ModelPtr)
     // Close file
     ReadSpriteFile.close();
 
+
+    vector<string> SplitObjLineVector;
+
     for(int Index = 0; Index < ObjLineVector.size();)
     {   
         // Check if it is vertices
         if((ObjLineVector[Index][0] == 'v'))
         {   
-            // Check if it is vertices coordinates.
             if((ObjLineVector[Index][1] == ' '))
             {
-                for(int Index2 = 0; Index2 < ObjLineVector[Index].size();)
-                {
-                    if(ObjLineVector[Index][Index2] == ' ')
-                    {
-                        SplitObjLineVector.push_back(ObjLineVector[Index].substr(0, Index2));
-                        
-                        ObjLineVector[Index] = ObjLineVector[Index].substr(Index2+1, ObjLineVector.size());
+                SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
 
-                        Index2 = 0;
-                    }
-                    Index2++;
+                // add the vertecies to the struct.
+                for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
+                {
+                    ModelPtr->Vertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
+                    Index_3++;
                 }
 
-                // Push the rest
-                SplitObjLineVector.push_back(ObjLineVector[Index].substr(0, ObjLineVector.size()));
-
-                for(int Index3 = 0; Index3 < SplitObjLineVector.size();)
-                {
-                    cout << SplitObjLineVector[Index3] << endl;
-                    Index3++;
-                }
-
-                // Clear the vector
-                SplitObjLineVector.clear();
             }
 
             // Check if it is texture coordinates
             if((ObjLineVector[Index][1] == 't'))
             {
-                for(int Index2 = 0; Index2 < ObjLineVector[Index].size();)
+                SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
+
+                // add the vertecies to the struct.
+                for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
                 {
-                    if(ObjLineVector[Index][Index2] == ' ')
-                    {
-                        SplitObjLineVector.push_back(ObjLineVector[Index].substr(0, Index2));
-                        
-                        ObjLineVector[Index] = ObjLineVector[Index].substr(Index2+1, ObjLineVector.size());
-
-                        Index2 = 0;
-                    }
-                    Index2++;
+                    ModelPtr->TextureVertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
+                    Index_3++;
                 }
-
-                // Push the rest
-                SplitObjLineVector.push_back(ObjLineVector[Index].substr(0, ObjLineVector.size()));
-
-                for(int Index3 = 0; Index3 < SplitObjLineVector.size();)
-                {
-                    cout << SplitObjLineVector[Index3] << endl;
-                    Index3++;
-                }
-
-                // Clear the vector
-                SplitObjLineVector.clear();
             }
 
+            SplitObjLineVector.clear();
         }
+
         // Check if it is indices.
         if((ObjLineVector[Index][0] == 'f'))
         {
-            for(int Index2 = 0; Index2 < ObjLineVector[Index].size();)
-            {
-                if(ObjLineVector[Index][Index2] == ' ')
-                {
-                    SplitObjLineVector.push_back(ObjLineVector[Index].substr(0, Index2));
-                    
-                    ObjLineVector[Index] = ObjLineVector[Index].substr(Index2+1, ObjLineVector.size());
+            SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
 
-                    Index2 = 0;
-                }
-                Index2++;
-            }
+            // f
+            // Handle indicies
 
-            // Push the rest
-            SplitObjLineVector.push_back(ObjLineVector[Index].substr(0, ObjLineVector.size()));
-
-            for(int Index3 = 0; Index3 < SplitObjLineVector.size();)
-            {
-                cout << SplitObjLineVector[Index3] << endl;
-                Index3++;
-            }
-
-            // Clear the vector
             SplitObjLineVector.clear();
         }
 
         Index++;
     }
 
-
-    // First find the vertices coordinates: v
-
-
-    // Now look for vertices texture coordinates: vt
-
-
-    // Now look for indices: f
+    // f is the face structured v/t/n
+    // We need the v in the face to create the indecies and a bit of geometry.
 
 
 }

@@ -29,6 +29,29 @@ string RemoveChar(string String, char Char)
     return ReturnString;
 }
 
+// ONLY FOR PARSING .OBJ WAVEFRONT FILES.
+void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *SplitObjLineVector)
+{
+    // Loop through all characters in that vector index.
+    for(int Index2 = 0; Index2 < ObjLineVector[Index].size();)
+    {   
+        // If the space delimiter is found, split the string.
+        if(ObjLineVector[Index][Index2] == ' ')
+        {
+            // Pushback the up until the delimiter space.
+            SplitObjLineVector->push_back(ObjLineVector[Index].substr(0, Index2));
+            
+            // Create a new substring excluding the split off part of the string and set index 2 to zero.
+            ObjLineVector[Index] = ObjLineVector[Index].substr(Index2+1, ObjLineVector.size());
+            Index2 = 0;
+        }
+        Index2++;
+    }
+
+    // Push the last bit of the vector.
+    SplitObjLineVector->push_back(ObjLineVector[Index].substr(0, ObjLineVector.size()));
+}
+
 
 void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
 {
