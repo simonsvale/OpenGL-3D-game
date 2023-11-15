@@ -83,8 +83,6 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
     {
         while(FaceEdges.size() > 2)
         {
-            cout << "Size:" << FaceEdges.size() << endl;
-
             // Set random generator seed, based on current time.
             srand(time(NULL));
 
@@ -93,13 +91,11 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
                 // Generate a random number from 0 to the amount of edges of a n sized polygon.
                 RandomEdgeIndex = 0 + (rand() % FaceEdges.size());
 
-                cout << "AUX Size:" <<AuxIndicesVector.size() << endl;
-
                 for(int Index = 0; Index < AuxIndicesVector.size();)
                 {
-                    if(AuxIndicesVector[Index] != FaceEdges[RandomEdgeIndex])
+                    if(AuxIndicesVector[Index] == (FaceEdges[RandomEdgeIndex]))
                     {
-                        NotInVector = true;
+                        NotInVector = false;
                     }
                     Index++;
                 }
@@ -108,13 +104,13 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
                 {
                     // Push back the random edge 
                     AuxIndicesVector.push_back(FaceEdges[RandomEdgeIndex]);
-                    NotInVector = false;
                 }
+
+                NotInVector = true;
             }
 
             for(int i = 0; i < AuxIndicesVector.size();)
             {
-                cout << "Aux:"<< AuxIndicesVector[i] << endl;
                 i++;
             }
 
@@ -127,8 +123,6 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
                 pow((Vertices[AuxIndicesVector[0]][2] - Vertices[AuxIndicesVector[1]][2]), 2)
             );
 
-            cout << "Edge 0 to 1: " << Distance_1 << endl;
-
             // Edge 0 and 2
             Distance_2 = sqrt( 
                 pow((Vertices[AuxIndicesVector[0]][0] - Vertices[AuxIndicesVector[2]][0]), 2) +     
@@ -136,16 +130,12 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
                 pow((Vertices[AuxIndicesVector[0]][2] - Vertices[AuxIndicesVector[2]][2]), 2)
             );
 
-            cout << "Edge 0 to 2: " << Distance_2 << endl;
-
             // Edge 1 and 2
             Distance_3 = sqrt( 
                 pow((Vertices[AuxIndicesVector[1]][0] - Vertices[AuxIndicesVector[2]][0]), 2) +     
                 pow((Vertices[AuxIndicesVector[1]][1] - Vertices[AuxIndicesVector[2]][1]), 2) + 
                 pow((Vertices[AuxIndicesVector[1]][2] - Vertices[AuxIndicesVector[2]][2]), 2)
             );
-
-            cout << "Edge 1 to 2: " << Distance_3 << endl;
 
 
             // If distance 1 is largest
@@ -161,14 +151,13 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
 
                         // Remove edge 2.
                         FaceEdges.erase(FaceEdges.begin()+i);
-                        cout << "[1 Erase]" << endl;
                     }
                     i++;
                 }
             }
 
             // If distance 2 is largest
-            if((Distance_2 >= Distance_1) && (Distance_2 >= Distance_3))
+            else if((Distance_2 >= Distance_1) && (Distance_2 >= Distance_3))
             {
                 // Find the index of edge 1.
                 for(int i = 0; i < FaceEdges.size();)
@@ -180,14 +169,13 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
 
                         // Remove edge 1.
                         FaceEdges.erase(FaceEdges.begin()+i);
-                        cout << "[2 Erase]" << endl;
                     }
                     i++;
                 }
             }
 
             // If distance 3 is largest
-            if((Distance_3 >= Distance_1) && (Distance_3 >= Distance_2))
+            else if((Distance_3 >= Distance_1) && (Distance_3 >= Distance_2))
             {
                 // Find the index of edge 0.
                 for(int i = 0; i < FaceEdges.size();)
@@ -199,7 +187,6 @@ void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, 
 
                         // Remove edge 0 from input.
                         FaceEdges.erase(FaceEdges.begin()+i);
-                        cout << "[3 Erase]" << endl;
                     }
                     i++;
                 }
