@@ -57,8 +57,6 @@ void SplitByBraces(string String, vector<string> *SplitStrVecPtr, char StartBrac
 */
 void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, char Delimiter, char StartBrace, char EndBrace);
 
-void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *SplitObjLineVector);
-
 // Pass array pointer by reference
 void GetFloatArrayFromStr(string String, float *ArrayPtr, int *ArraySize);
 void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *ArrayPtr, int *ArraySize, string FilePath);
@@ -77,6 +75,10 @@ vector<int> GetKeyValue_intvector(string Key, vector<string> StringVector, vecto
 
 // A function for getting a value from a given key string from an .atris file for bool.
 bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
-        
+
+// .OBJ wavefront specific.
+void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, vector<int>*IndicesPtr);
+void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *SplitObjLineVector);
+
 
 #endif

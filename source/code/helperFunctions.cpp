@@ -5,6 +5,10 @@
 
 #include "helperFunctions.h"
 
+
+#include <random>
+#include <cmath>
+
 using namespace std;
 
 
@@ -50,6 +54,173 @@ void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *Split
 
     // Push the last bit of the vector.
     SplitObjLineVector->push_back(ObjLineVector[Index].substr(0, ObjLineVector.size()));
+}
+
+// One at a time.
+void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, vector<int> *IndicesPtr)
+{   
+    int FaceSize = FaceEdges.size();
+    int RandomEdgeIndex;
+
+    // Edge distances
+    double Distance_1;
+    double Distance_2;
+    double Distance_3;
+
+    bool NotInVector = true;
+
+    vector<int> AuxIndicesVector;
+
+    // Push all edges.
+    for(int i = 0; i < FaceEdges.size();)
+    {
+        IndicesPtr->push_back(FaceEdges[i]);
+        i++;
+    }
+    
+    // If there only exist three edges, convert the edges to the indicesPtr directly.
+    if(FaceSize > 3)
+    {
+        while(FaceEdges.size() > 2)
+        {
+            cout << "Size:" << FaceEdges.size() << endl;
+
+            // Set random generator seed, based on current time.
+            srand(time(NULL));
+
+            while(AuxIndicesVector.size() < 3)
+            {
+                // Generate a random number from 0 to the amount of edges of a n sized polygon.
+                RandomEdgeIndex = 0 + (rand() % FaceEdges.size());
+
+                cout << "AUX Size:" <<AuxIndicesVector.size() << endl;
+
+                for(int Index = 0; Index < AuxIndicesVector.size();)
+                {
+                    if(AuxIndicesVector[Index] != FaceEdges[RandomEdgeIndex])
+                    {
+                        NotInVector = true;
+                    }
+                    Index++;
+                }
+
+                if(NotInVector == true)
+                {
+                    // Push back the random edge 
+                    AuxIndicesVector.push_back(FaceEdges[RandomEdgeIndex]);
+                    NotInVector = false;
+                }
+            }
+
+            for(int i = 0; i < AuxIndicesVector.size();)
+            {
+                cout << "Aux:"<< AuxIndicesVector[i] << endl;
+                i++;
+            }
+
+            // Find biggest distance from edge to edge.
+
+            // Edge 0 and 1
+            Distance_1 = sqrt( 
+                pow((Vertices[AuxIndicesVector[0]][0] - Vertices[AuxIndicesVector[1]][0]), 2) +     
+                pow((Vertices[AuxIndicesVector[0]][1] - Vertices[AuxIndicesVector[1]][1]), 2) + 
+                pow((Vertices[AuxIndicesVector[0]][2] - Vertices[AuxIndicesVector[1]][2]), 2)
+            );
+
+            cout << "Edge 0 to 1: " << Distance_1 << endl;
+
+            // Edge 0 and 2
+            Distance_2 = sqrt( 
+                pow((Vertices[AuxIndicesVector[0]][0] - Vertices[AuxIndicesVector[2]][0]), 2) +     
+                pow((Vertices[AuxIndicesVector[0]][1] - Vertices[AuxIndicesVector[2]][1]), 2) + 
+                pow((Vertices[AuxIndicesVector[0]][2] - Vertices[AuxIndicesVector[2]][2]), 2)
+            );
+
+            cout << "Edge 0 to 2: " << Distance_2 << endl;
+
+            // Edge 1 and 2
+            Distance_3 = sqrt( 
+                pow((Vertices[AuxIndicesVector[1]][0] - Vertices[AuxIndicesVector[2]][0]), 2) +     
+                pow((Vertices[AuxIndicesVector[1]][1] - Vertices[AuxIndicesVector[2]][1]), 2) + 
+                pow((Vertices[AuxIndicesVector[1]][2] - Vertices[AuxIndicesVector[2]][2]), 2)
+            );
+
+            cout << "Edge 1 to 2: " << Distance_3 << endl;
+
+
+            // If distance 1 is largest
+            if((Distance_1 >= Distance_2) && (Distance_1 >= Distance_3))
+            {
+                // Find the index of edge 2.
+                for(int i = 0; i < FaceEdges.size();)
+                {   
+                    if(AuxIndicesVector[2] == FaceEdges.at(i))
+                    {
+                        // Push this edge to the ptr.
+                        IndicesPtr->push_back(AuxIndicesVector[2]);
+
+                        // Remove edge 2.
+                        FaceEdges.erase(FaceEdges.begin()+i);
+                        cout << "[1 Erase]" << endl;
+                    }
+                    i++;
+                }
+            }
+
+            // If distance 2 is largest
+            if((Distance_2 >= Distance_1) && (Distance_2 >= Distance_3))
+            {
+                // Find the index of edge 1.
+                for(int i = 0; i < FaceEdges.size();)
+                {   
+                    if(AuxIndicesVector[1] == FaceEdges.at(i))
+                    {
+                        // Push this edge to the ptr.
+                        IndicesPtr->push_back(AuxIndicesVector[1]);
+
+                        // Remove edge 1.
+                        FaceEdges.erase(FaceEdges.begin()+i);
+                        cout << "[2 Erase]" << endl;
+                    }
+                    i++;
+                }
+            }
+
+            // If distance 3 is largest
+            if((Distance_3 >= Distance_1) && (Distance_3 >= Distance_2))
+            {
+                // Find the index of edge 0.
+                for(int i = 0; i < FaceEdges.size();)
+                {   
+                    if(AuxIndicesVector[0] == FaceEdges.at(i))
+                    {
+                        // Push this edge to the ptr.
+                        IndicesPtr->push_back(AuxIndicesVector[0]);
+
+                        // Remove edge 0 from input.
+                        FaceEdges.erase(FaceEdges.begin()+i);
+                        cout << "[3 Erase]" << endl;
+                    }
+                    i++;
+                }
+            }
+
+            // Clear the vector so it can be used for the next 3 random indexes.
+            AuxIndicesVector.clear();
+        }
+
+        return;
+    }
+    else if(FaceSize == 3)
+    {   
+        // If the face consists of 3 edges, set these to indices.
+        *IndicesPtr = FaceEdges;
+        return;
+    }
+    else
+    {
+        throw invalid_argument("A Face must contain 3 or more edges, this face contains "+to_string(FaceSize)+" edges.");
+    }
 }
 
 

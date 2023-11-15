@@ -241,7 +241,7 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
                 // add the vertecies to the struct.
                 for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
                 {
-                    ModelRef.Vertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
+                    ModelRef.Vertices[Index].push_back(atof(SplitObjLineVector[Index_3].c_str()));
                     Index_3++;
                 }
 

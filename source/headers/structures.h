@@ -10,7 +10,7 @@ using namespace std;
 // struct for the .obj wavefront format.
 struct ObjModel
 {
-    vector<float> Vertices;
+    vector<vector<float> > Vertices;
     vector<vector<int> > Indices;
     vector<float> TextureVertices;
     vector<int> TextureIndices;
