@@ -40,176 +40,21 @@ void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *Split
     for(int Index2 = 0; Index2 < ObjLineVector[Index].size();)
     {   
         // If the space delimiter is found, split the string.
-        if(ObjLineVector[Index][Index2] == ' ')
+        if(ObjLineVector[Index][Index2] == 0x20)    // Hex code for "space" in ASCII
         {
             // Pushback the up until the delimiter space.
             SplitObjLineVector->push_back(ObjLineVector[Index].substr(0, Index2));
             
             // Create a new substring excluding the split off part of the string and set index 2 to zero.
-            ObjLineVector[Index] = ObjLineVector[Index].substr(Index2+1, ObjLineVector.size());
+            ObjLineVector[Index] = ObjLineVector[Index].substr(Index2+1, ObjLineVector.size()-(Index2+1));
             Index2 = 0;
         }
         Index2++;
     }
 
     // Push the last bit of the vector.
-    SplitObjLineVector->push_back(ObjLineVector[Index].substr(0, ObjLineVector.size()));
+    SplitObjLineVector->push_back(ObjLineVector[Index]);
 }
-
-// One at a time.
-void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, vector<int> *IndicesPtr)
-{   
-    int FaceSize = FaceEdges.size();
-    int RandomEdgeIndex;
-
-    // Edge distances
-    double Distance_1;
-    double Distance_2;
-    double Distance_3;
-
-    bool NotInVector = true;
-
-    vector<int> AuxIndicesVector;
-
-    // Push all edges.
-    for(int i = 0; i < FaceEdges.size();)
-    {
-        IndicesPtr->push_back(FaceEdges[i]);
-        i++;
-    }
-    
-    // If there only exist three edges, convert the edges to the indicesPtr directly.
-    if(FaceSize > 3)
-    {
-        while(FaceEdges.size() > 2)
-        {
-            // Set random generator seed, based on current time.
-            srand(time(NULL));
-
-            while(AuxIndicesVector.size() < 3)
-            {
-                // Generate a random number from 0 to the amount of edges of a n sized polygon.
-                RandomEdgeIndex = 0 + (rand() % FaceEdges.size());
-
-                for(int Index = 0; Index < AuxIndicesVector.size();)
-                {
-                    if(AuxIndicesVector[Index] == (FaceEdges[RandomEdgeIndex]))
-                    {
-                        NotInVector = false;
-                    }
-                    Index++;
-                }
-
-                if(NotInVector == true)
-                {
-                    // Push back the random edge 
-                    AuxIndicesVector.push_back(FaceEdges[RandomEdgeIndex]);
-                }
-
-                NotInVector = true;
-            }
-
-            for(int i = 0; i < AuxIndicesVector.size();)
-            {
-                i++;
-            }
-
-            // Find biggest distance from edge to edge.
-
-            // Edge 0 and 1
-            Distance_1 = sqrt( 
-                pow((Vertices[AuxIndicesVector[0]][0] - Vertices[AuxIndicesVector[1]][0]), 2) +     
-                pow((Vertices[AuxIndicesVector[0]][1] - Vertices[AuxIndicesVector[1]][1]), 2) + 
-                pow((Vertices[AuxIndicesVector[0]][2] - Vertices[AuxIndicesVector[1]][2]), 2)
-            );
-
-            // Edge 0 and 2
-            Distance_2 = sqrt( 
-                pow((Vertices[AuxIndicesVector[0]][0] - Vertices[AuxIndicesVector[2]][0]), 2) +     
-                pow((Vertices[AuxIndicesVector[0]][1] - Vertices[AuxIndicesVector[2]][1]), 2) + 
-                pow((Vertices[AuxIndicesVector[0]][2] - Vertices[AuxIndicesVector[2]][2]), 2)
-            );
-
-            // Edge 1 and 2
-            Distance_3 = sqrt( 
-                pow((Vertices[AuxIndicesVector[1]][0] - Vertices[AuxIndicesVector[2]][0]), 2) +     
-                pow((Vertices[AuxIndicesVector[1]][1] - Vertices[AuxIndicesVector[2]][1]), 2) + 
-                pow((Vertices[AuxIndicesVector[1]][2] - Vertices[AuxIndicesVector[2]][2]), 2)
-            );
-
-
-            // If distance 1 is largest
-            if((Distance_1 >= Distance_2) && (Distance_1 >= Distance_3))
-            {
-                // Find the index of edge 2.
-                for(int i = 0; i < FaceEdges.size();)
-                {   
-                    if(AuxIndicesVector[2] == FaceEdges.at(i))
-                    {
-                        // Push this edge to the ptr.
-                        IndicesPtr->push_back(AuxIndicesVector[2]);
-
-                        // Remove edge 2.
-                        FaceEdges.erase(FaceEdges.begin()+i);
-                    }
-                    i++;
-                }
-            }
-
-            // If distance 2 is largest
-            else if((Distance_2 >= Distance_1) && (Distance_2 >= Distance_3))
-            {
-                // Find the index of edge 1.
-                for(int i = 0; i < FaceEdges.size();)
-                {   
-                    if(AuxIndicesVector[1] == FaceEdges.at(i))
-                    {
-                        // Push this edge to the ptr.
-                        IndicesPtr->push_back(AuxIndicesVector[1]);
-
-                        // Remove edge 1.
-                        FaceEdges.erase(FaceEdges.begin()+i);
-                    }
-                    i++;
-                }
-            }
-
-            // If distance 3 is largest
-            else if((Distance_3 >= Distance_1) && (Distance_3 >= Distance_2))
-            {
-                // Find the index of edge 0.
-                for(int i = 0; i < FaceEdges.size();)
-                {   
-                    if(AuxIndicesVector[0] == FaceEdges.at(i))
-                    {
-                        // Push this edge to the ptr.
-                        IndicesPtr->push_back(AuxIndicesVector[0]);
-
-                        // Remove edge 0 from input.
-                        FaceEdges.erase(FaceEdges.begin()+i);
-                    }
-                    i++;
-                }
-            }
-
-            // Clear the vector so it can be used for the next 3 random indexes.
-            AuxIndicesVector.clear();
-        }
-
-        return;
-    }
-    else if(FaceSize == 3)
-    {   
-        // If the face consists of 3 edges, set these to indices.
-        *IndicesPtr = FaceEdges;
-        return;
-    }
-    else
-    {
-        throw invalid_argument("A Face must contain 3 or more edges, this face contains "+to_string(FaceSize)+" edges.");
-    }
-}
-
 
 void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
 {

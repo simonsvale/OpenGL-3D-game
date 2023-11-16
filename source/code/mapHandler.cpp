@@ -207,7 +207,6 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
 {
     // Wavefront .obj
     string ObjLine;
-
 	vector<string> ObjLineVector;
 
     // Open File
@@ -223,8 +222,6 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
     // Close file
     ReadSpriteFile.close();
 
-    vector<int> AuxIndicesVector;
-
     vector<string> SplitObjLineVector;
     vector<string> SplitIndicesVector;
     string AuxString;
@@ -234,17 +231,16 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
         // Check if it is vertices
         if((ObjLineVector[Index][0] == 'v'))
         {   
-            if(ObjLineVector[Index][1] == ' ')
+            if(ObjLineVector[Index][1] == 0x20) // Hex code for space.
             {
                 SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
 
                 // add the vertecies to the struct.
                 for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
                 {
-                    ModelRef.Vertices[Index].push_back(atof(SplitObjLineVector[Index_3].c_str()));
+                    ModelRef.Vertices.push_back( atof(SplitObjLineVector[Index_3].c_str()) );
                     Index_3++;
                 }
-
             }
 
             // Check if it is texture coordinates
@@ -255,12 +251,10 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
                 // add the vertecies to the struct.
                 for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
                 {
-                    ModelRef.TextureVertices.push_back(atof(SplitObjLineVector[Index_3].c_str()));
+                    ModelRef.TextureVertices.push_back( atof(SplitObjLineVector[Index_3].c_str()) );
                     Index_3++;
                 }
             }
-
-            SplitObjLineVector.clear();
         }
 
         // Check if it is indices.
@@ -274,39 +268,29 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
                 AuxString = SplitObjLineVector[Index_2];
                 SplitByDelimiter(AuxString, &SplitIndicesVector, '/', -1);
 
-                AuxIndicesVector.push_back(atoi(SplitIndicesVector[0].c_str()));
-
-                // ########################################
-                // CREATE triangle fication function, converting any face consisting of n vertices to x indices for triangles opengl can render.
+                ModelRef.Indices.push_back(atoi(SplitIndicesVector[0].c_str()));
 
                 SplitIndicesVector.clear();
                 Index_2++;
             }
-
-            // Push the indices of the single face.
-            ModelRef.Indices.push_back(AuxIndicesVector);
-
-            AuxIndicesVector.clear();
-            SplitObjLineVector.clear();
         }
 
+        SplitObjLineVector.clear();
         Index++;
     }
 
-    for(int i = 0; i < ModelRef.Indices.size();)
+    cout << "\nFace:" << ModelRef.Indices.size() << endl;
+    for(int n = 0; n < ModelRef.Indices.size();)
     {
-        cout << "\nFace:" << endl;
-        for(int n = 0; n < ModelRef.Indices[i].size();)
-        {
-            cout << ModelRef.Indices[i][n] << ", ";
-            n++;
-        }
-        i++;
+        cout << ModelRef.Indices[n] << ", ";
+        n++;
     }
+
+    cout << "\n" << endl;
+
+
 
     // f is the face structured v/t/n
     // We need the v in the face to create the indecies and a bit of geometry.
-
-
 
 }

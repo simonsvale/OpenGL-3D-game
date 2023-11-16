@@ -77,7 +77,6 @@ vector<int> GetKeyValue_intvector(string Key, vector<string> StringVector, vecto
 bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
 
 // .OBJ wavefront specific.
-void FaceEdgesToIndices(vector<int> FaceEdges, vector<vector<float> > Vertices, vector<int>*IndicesPtr);
 void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *SplitObjLineVector);
 
 
