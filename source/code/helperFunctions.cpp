@@ -563,6 +563,47 @@ void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<flo
     throw invalid_argument("Key: "+string(Key)+" does not exist in "+FilePath);
 }
 
+
+void GetKeyValue_uintvector(string Key, vector<string> StringVector, vector<unsigned int> *VectorPtr, string FilePath)
+{
+    string ArrayString;
+    vector<string> AuxuintVector;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                // Create a new substring consisting of all floats in the string array.
+                ArrayString = StringVector[StrNum].substr(Key.length()+2, StringVector[StrNum].length()-(Key.length()+3));
+
+                SplitByDelimiter(ArrayString, &AuxuintVector, ',', -1);
+                try
+                {
+                    for(int Index = 0; Index < AuxuintVector.size();)
+                    {
+                        VectorPtr->push_back(stoi(AuxuintVector[Index]));
+                        Index++;
+                    }
+                }
+                catch(...)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s values are not of type usigned int, at: "+FilePath);
+                }
+
+                return;
+            }
+        }
+        StrNum++;
+    }
+
+    // If no key was found throw error to avoid confusion.
+    throw invalid_argument("Key: "+string(Key)+" does not exist in "+FilePath);
+}
+
 // Function for getting a key from a vector of strings.
 void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr, string FilePath)
 {

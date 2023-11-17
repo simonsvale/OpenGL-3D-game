@@ -123,11 +123,9 @@ int main(int argc, char **argv)
         projection = Controls.ProjectionMatrix;
         view = Controls.ViewMatrix;
 
-        
         // background color. Should be a seperate function.
         glClearColor(0.766f, 0.922f, 0.970f, 1.0f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
 
         // Render Everything.
         RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, window);

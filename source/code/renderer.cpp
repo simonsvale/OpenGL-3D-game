@@ -67,6 +67,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
 
+        // Bind the EBO, for setting indices.
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->EBO);
+
         // Draw GameElement array.
         glDrawArrays(GL_TRIANGLES, 0, GameElementVector[GameElementNumber]->GLArraySize);
 

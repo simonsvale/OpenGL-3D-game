@@ -9,7 +9,7 @@
 using namespace std;
 
 // WIP
-void Graphics::SetVBO(float Vertecies[], int VertSize)
+void Graphics::SetVBO(float Vertices[], int VertSize)
 {
     GLuint VBO;
     // Initialize VBO (Vertex Buffer Object)
@@ -20,7 +20,7 @@ void Graphics::SetVBO(float Vertecies[], int VertSize)
 
     // Write the data that the VBO should contain
     // @Note: Parameter 2 is the Size of array * reference to the array that have decayed into a pointer i.e. &Vertecies[0]
-    glBufferData(GL_ARRAY_BUFFER, VertSize*sizeof(&Vertecies[0]), Vertecies, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, VertSize*sizeof(&Vertices[0]), Vertices, GL_STATIC_DRAW);
 }
 
 
@@ -41,6 +41,16 @@ void Graphics::SetVAO()
     // Tell OpenGL, that the next 2 indexes of a row is the texture mapping, give it the ID 2 and enable it.
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6* sizeof(float)));
     glEnableVertexAttribArray(2);
+}
+
+void Graphics::SetEBO(unsigned int indices[], int IndiSize)
+{
+    // Initialize EBO (Element Buffer Object)
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+    // EBO's can be used to make complex structures from vertecies, here we use the indicies list to store a square, created from 2 triangles.
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices[0], GL_STATIC_DRAW); // DrawFlag
 }
 
 

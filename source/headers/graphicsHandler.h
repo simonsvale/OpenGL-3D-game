@@ -16,10 +16,14 @@ class Graphics
     public:
 
         GLuint VAO;     // Vertex Array Object
+        GLuint EBO;
 
         // Since C style arrays decays to pointers, we need to pass the size in too.
-        void SetVBO(float Vertecies[], int VertSize);
+        void SetVBO(float Vertices[], int VertSize);
         void SetVAO();
+
+        // For creating EBO from indices.
+        void SetEBO(unsigned int indices[], int IndiSize);
 
         void LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
 

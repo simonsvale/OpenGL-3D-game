@@ -76,6 +76,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
     vector<string> ArrmapAttributeVector;
 
     vector<float> VertexVec;
+    vector<unsigned int> IndicesVec;
 
     // Path of a texture and shaders
     string TexturePath;
@@ -110,8 +111,11 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
         GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
-        GetKeyValue_floatvector("VERTECIES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
-        
+        GetKeyValue_floatvector("VERTICES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+
+        // Get indices:
+        GetKeyValue_uintvector("INDICES", SingleGeometryVector, &IndicesVec, ArrmapFilePath);
+
         GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("ROTATION", SingleGeometryVector, GameElementVector[0][Index]->Rotation, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("SCALE", SingleGeometryVector, GameElementVector[0][Index]->Scale, &PositionArrSize, ArrmapFilePath);
@@ -120,7 +124,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         // Load vertecies into VBO and set VAO.
         GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         GameElementVector[0][Index]->SetVAO();
-
+        GameElementVector[0][Index]->SetEBO(&IndicesVec[0], IndicesVec.size());
         // Set drawarraysize
         GameElementVector[0][Index]->GLArraySize = VertexVec.size()/8;
 
@@ -138,10 +142,11 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
             &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
             TexturePath.c_str()
         );
-
+        
         // Clear vector
         SingleGeometryVector.clear();
         VertexVec.clear();
+        IndicesVec.clear();
 
         Index++;
     }
