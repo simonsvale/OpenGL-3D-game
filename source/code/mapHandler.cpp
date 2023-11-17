@@ -273,7 +273,9 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
                 AuxString = SplitObjLineVector[Index_2];
                 SplitByDelimiter(AuxString, &SplitIndicesVector, '/', -1);
 
-                ModelRef.Indices.push_back(atoi(SplitIndicesVector[0].c_str()));
+                ModelRef.Indices.push_back( atoi(SplitIndicesVector[0].c_str()) - 1);
+
+                ModelRef.TextureIndices.push_back( atoi(SplitIndicesVector[1].c_str()) - 1);
 
                 SplitIndicesVector.clear();
                 Index_2++;
@@ -284,11 +286,31 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
         Index++;
     }
 
-    cout << "\nFace:" << ModelRef.Indices.size() << endl;
-    for(int n = 0; n < ModelRef.Indices.size();)
+    cout << "\n" << endl;
+
+    // TEST
+    cout << "test" << endl;
+
+    int n = 0;
+
+    int y = 0;
+
+    cout << "TI size:" << ModelRef.TextureIndices.size() << endl; 
+    cout << "TV:" << ModelRef.TextureVertices.size() << endl; 
+    cout << "V:" << ModelRef.Vertices.size() << endl; 
+
+
+    while(n < ModelRef.Indices.size())
     {
-        cout << ModelRef.Indices[n] << ", ";
-        n++;
+        cout << ModelRef.Vertices[ModelRef.Indices[n]*3] << ", " << ModelRef.Vertices[ModelRef.Indices[n]*3+1] << ", " << ModelRef.Vertices[ModelRef.Indices[n]*3+2] << ", ";
+        cout << "1, 0, 1, ";
+        
+        if(y < ModelRef.TextureIndices.size())
+        {
+            cout << ModelRef.TextureVertices[ModelRef.TextureIndices[y]*2] << ", " << ModelRef.TextureVertices[ModelRef.TextureIndices[y]*2+1] << "," << endl;;
+            y++;
+        }   
+        n++;;
     }
 
     cout << "\n" << endl;

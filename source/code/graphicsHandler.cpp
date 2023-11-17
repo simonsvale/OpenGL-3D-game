@@ -20,7 +20,7 @@ void Graphics::SetVBO(float Vertices[], int VertSize)
 
     // Write the data that the VBO should contain
     // @Note: Parameter 2 is the Size of array * reference to the array that have decayed into a pointer i.e. &Vertecies[0]
-    glBufferData(GL_ARRAY_BUFFER, VertSize*sizeof(&Vertices[0]), Vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, VertSize*sizeof( float ), Vertices, GL_STATIC_DRAW);
 }
 
 
@@ -43,14 +43,14 @@ void Graphics::SetVAO()
     glEnableVertexAttribArray(2);
 }
 
-void Graphics::SetEBO(unsigned int indices[], int IndiSize)
+void Graphics::SetEBO(unsigned int Indices[], int IndiSize)
 {
     // Initialize EBO (Element Buffer Object)
     glGenBuffers(1, &EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
     // EBO's can be used to make complex structures from vertecies, here we use the indicies list to store a square, created from 2 triangles.
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices[0], GL_STATIC_DRAW); // DrawFlag
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, IndiSize*sizeof( unsigned int ), Indices, GL_STATIC_DRAW); // DrawFlag
 }
 
 
