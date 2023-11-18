@@ -16,11 +16,13 @@ class Graphics
     public:
 
         GLuint VAO;     // Vertex Array Object
-        GLuint EBO;
+        GLuint IBO;
 
         // Since C style arrays decays to pointers, we need to pass the size in too.
         void SetVBO(float Vertices[], int VertSize);
-        void SetVAO();
+        void SetVAO(int VertSize, int NormalSize, int TextCoSize);
+
+        void SetVBOSubData(float Vertices[], int VertSize, float Normals[], int NormalSize, float TextureCoords[], int TextCoSize, unsigned int Indices[], int IndiSize);
 
         // For creating EBO from indices.
         void SetEBO(unsigned int Indices[], int IndiSize);

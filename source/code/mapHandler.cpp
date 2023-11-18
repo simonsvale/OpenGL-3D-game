@@ -76,6 +76,8 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
     vector<string> ArrmapAttributeVector;
 
     vector<float> VertexVec;
+    vector<float> NormalsVec;
+    vector<float> TexVec;
     vector<unsigned int> IndicesVec;
 
     // Path of a texture and shaders
@@ -111,10 +113,13 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
         GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
+        // The important information:
         GetKeyValue_floatvector("VERTICES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+        GetKeyValue_floatvector("NORMALS", SingleGeometryVector, &NormalsVec, ArrmapFilePath);
+        GetKeyValue_floatvector("TEXTURE_COORDS", SingleGeometryVector, &TexVec, ArrmapFilePath);
 
-        // Get indices:
         GetKeyValue_uintvector("INDICES", SingleGeometryVector, &IndicesVec, ArrmapFilePath);
+
 
         GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("ROTATION", SingleGeometryVector, GameElementVector[0][Index]->Rotation, &PositionArrSize, ArrmapFilePath);
@@ -122,11 +127,16 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
 
         // Load vertecies into VBO and set VAO.
-        GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
-        GameElementVector[0][Index]->SetVAO();
-        GameElementVector[0][Index]->SetEBO(&IndicesVec[0], IndicesVec.size());
+        GameElementVector[0][Index]->SetVBOSubData(&VertexVec[0], VertexVec.size(), 
+                                                   &NormalsVec[0], NormalsVec.size(), 
+                                                   &TexVec[0], TexVec.size(),
+                                                   &IndicesVec[0], IndicesVec.size());
+        GameElementVector[0][Index]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());  
+        //GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
+        //GameElementVector[0][Index]->SetVAO();
+        //GameElementVector[0][Index]->SetEBO(&IndicesVec[0], IndicesVec.size());
         // Set drawarraysize
-        GameElementVector[0][Index]->GLArraySize = VertexVec.size()/8;
+        GameElementVector[0][Index]->GLArraySize = VertexVec.size()/3;
 
 
         array<string, 2> VertFragPair = {VertexShaderPath, FragmentShaderPath};
@@ -256,7 +266,20 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
                 // add the vertecies to the struct.
                 for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
                 {
-                    ModelRef.TextureVertices.push_back( atof(SplitObjLineVector[Index_3].c_str()) );
+                    ModelRef.TexCoords.push_back( atof(SplitObjLineVector[Index_3].c_str()) );
+                    Index_3++;
+                }
+            }
+
+            // Check if it is normals
+            if(ObjLineVector[Index][1] == 'n')
+            {
+                SplitBySpace(Index, ObjLineVector, &SplitObjLineVector);
+
+                // add the vertecies to the struct.
+                for(int Index_3 = 1; Index_3 < SplitObjLineVector.size();)
+                {
+                    ModelRef.Normals.push_back( atof(SplitObjLineVector[Index_3].c_str()) );
                     Index_3++;
                 }
             }
@@ -274,8 +297,8 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
                 SplitByDelimiter(AuxString, &SplitIndicesVector, '/', -1);
 
                 ModelRef.Indices.push_back( atoi(SplitIndicesVector[0].c_str()) - 1);
-
                 ModelRef.TextureIndices.push_back( atoi(SplitIndicesVector[1].c_str()) - 1);
+                ModelRef.NormalsIndices.push_back( atoi(SplitIndicesVector[2].c_str()) - 1);
 
                 SplitIndicesVector.clear();
                 Index_2++;
@@ -286,14 +309,104 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
         Index++;
     }
 
+    // The correctly configured vectors.
+    vector<float> FinalVertices;
+    vector<float> FinalNormals;
+    vector<float> FinalTexCoords;
+
+    int Index;
+
+    cout << "test" << endl;
+    // vertices indices / vertices texture coords / vertices normals
+    for(int i = 0; i < ModelRef.Vertices.size()/3;)
+    {   
+        FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 ] );
+        FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 1 ] );
+        FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 2 ] );
+
+        FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 ] );
+        FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 + 1 ] );
+
+        FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 ] );
+        FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 + 1 ]  );
+        FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 + 2 ]  );
+
+        i++;
+    }
+
+    cout << "VERTICES = {";
+    for(int i = 0; i < FinalVertices.size();)
+    {
+        cout << FinalVertices[i];
+        if(i < (FinalVertices.size()-1))
+        {
+            cout << ", ";
+        }
+        i++;
+    }
+    cout << "}," << endl;
+
+
+    cout << "NORMALS = {";
+    for(int i = 0; i < FinalNormals.size();)
+    {
+        cout << FinalNormals[i];
+        if(i < (FinalNormals.size()-1))
+        {
+            cout << ", ";
+        }
+        i++;
+    }
+    cout << "}," << endl;
+
+
+    cout << "TEXTURE_COORDS = {";
+    for(int i = 0; i < FinalTexCoords.size();)
+    {
+        cout << FinalTexCoords[i];
+        if(i < (FinalTexCoords.size()-1))
+        {
+            cout << ", ";
+        }
+        i++;
+    }
+    cout << "}," << endl;
+
+    cout << "INDICES = {";
+    for(int i = 0; i < ModelRef.Indices.size();)
+    {
+        cout << ModelRef.Indices[i];
+        if(i < (ModelRef.Indices.size() - 1))
+        {
+            cout << ", ";
+        }
+        i++;
+    }
+    cout << "}" << endl;
+
+    cout << "Vsize:" << FinalVertices.size() << endl;
+    cout << "Nsize:" << FinalNormals.size() << endl;
+    cout << "Tsize:" << FinalTexCoords.size() << endl;
+    cout << "Isize:" << ModelRef.Indices.size() << endl;
+
+
+    /*
     cout << "\n" << endl;
 
     // TEST
     cout << "test" << endl;
 
     int n = 0;
-
     int y = 0;
+
+    cout << "Indices: " << endl; 
+    for(int i = 0; i < ModelRef.Indices.size();)
+    {
+        cout << ModelRef.Indices[i] << ", "; 
+        i++;
+    }
+    cout << endl;
+
 
     cout << "TI size:" << ModelRef.TextureIndices.size() << endl; 
     cout << "TV:" << ModelRef.TextureVertices.size() << endl; 
@@ -314,10 +427,7 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
     }
 
     cout << "\n" << endl;
+    */
 
-
-
-    // f is the face structured v/t/n
-    // We need the v in the face to create the indecies and a bit of geometry.
 
 }

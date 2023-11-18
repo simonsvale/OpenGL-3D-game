@@ -11,9 +11,12 @@ using namespace std;
 struct ObjModel
 {
     vector<float> Vertices;
+    vector<float> TexCoords;
+    vector<float> Normals;
+
     vector<int> Indices;
-    vector<float> TextureVertices;
     vector<int> TextureIndices;
+    vector<int> NormalsIndices;
 };
 
 #endif
