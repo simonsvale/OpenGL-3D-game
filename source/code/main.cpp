@@ -40,10 +40,6 @@ int main(int argc, char **argv)
     Controls Controls;
     ArrayLevelMap Arraymap;
     Renderer RenderObj;
-
-    // !!!
-    struct ObjModel OModel;
-    Arraymap.LoadObjFile("source/models/cy.obj", OModel);
     
     // Create a vector to contain GameElement objects.
     vector< unique_ptr<GameElement> > GameElementVector;

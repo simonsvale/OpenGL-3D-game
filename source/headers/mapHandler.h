@@ -33,9 +33,6 @@ class ArrayLevelMap
 
         // Required a possible fragment and vertex shader pair and returns an index to the compiled shaderprogram.
         int CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair);
-
-		// Loads an .obj file.
-		void LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef);
 };
 
 
