@@ -5,14 +5,10 @@
 #include <string>
 #include <memory>   // For smart pointer (unique_ptr<>).
 
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <spriteHandler.h>
-
-#include "mapHandler.h"
 #include "shaderHandler.h"
 #include "gameElementHandler.h"
 
@@ -35,10 +31,6 @@ class Renderer
         */
         void RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, SDL_Window *window);
         
-        void LoadArrmapFile(string ArrmapFilePath, ArrayLevelMap *ArrmapObj, vector< unique_ptr<Shader> > *ShaderObjectVector, vector<unique_ptr<GameElement> > *GameElementVector);
-
-        // Required a possible fragment and vertex shader pair and returns an index to the compiled shaderprogram.
-        int CompileRequiredShaders(vector< unique_ptr<Shader> > *ShaderObjectVector, vector< array<string, 2> > &UniquePairVector, array<string, 2> VertexFragmentPair);
 };
 
 #endif

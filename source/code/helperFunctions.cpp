@@ -5,6 +5,10 @@
 
 #include "helperFunctions.h"
 
+
+#include <random>
+#include <cmath>
+
 using namespace std;
 
 
@@ -29,6 +33,28 @@ string RemoveChar(string String, char Char)
     return ReturnString;
 }
 
+// ONLY FOR PARSING .OBJ WAVEFRONT FILES.
+void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *SplitObjLineVector)
+{
+    // Loop through all characters in that vector index.
+    for(int Index2 = 0; Index2 < ObjLineVector[Index].size();)
+    {   
+        // If the space delimiter is found, split the string.
+        if(ObjLineVector[Index][Index2] == 0x20)    // Hex code for "space" in ASCII
+        {
+            // Pushback the up until the delimiter space.
+            SplitObjLineVector->push_back(ObjLineVector[Index].substr(0, Index2));
+            
+            // Create a new substring excluding the split off part of the string and set index 2 to zero.
+            ObjLineVector[Index] = ObjLineVector[Index].substr(Index2+1, ObjLineVector.size()-(Index2+1));
+            Index2 = 0;
+        }
+        Index2++;
+    }
+
+    // Push the last bit of the vector.
+    SplitObjLineVector->push_back(ObjLineVector[Index]);
+}
 
 void SplitByDelimiter(string String, vector<string> *SplitStrVecPtr, char Delimiter, int DelimiterAmount)
 {
@@ -525,6 +551,47 @@ void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<flo
                 catch(...)
                 {
                     throw invalid_argument("Key: "+string(Key)+"'s values are not of type float, at: "+FilePath);
+                }
+
+                return;
+            }
+        }
+        StrNum++;
+    }
+
+    // If no key was found throw error to avoid confusion.
+    throw invalid_argument("Key: "+string(Key)+" does not exist in "+FilePath);
+}
+
+
+void GetKeyValue_uintvector(string Key, vector<string> StringVector, vector<unsigned int> *VectorPtr, string FilePath)
+{
+    string ArrayString;
+    vector<string> AuxuintVector;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                // Create a new substring consisting of all floats in the string array.
+                ArrayString = StringVector[StrNum].substr(Key.length()+2, StringVector[StrNum].length()-(Key.length()+3));
+
+                SplitByDelimiter(ArrayString, &AuxuintVector, ',', -1);
+                try
+                {
+                    for(int Index = 0; Index < AuxuintVector.size();)
+                    {
+                        VectorPtr->push_back(stoi(AuxuintVector[Index]));
+                        Index++;
+                    }
+                }
+                catch(...)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s values are not of type usigned int, at: "+FilePath);
                 }
 
                 return;

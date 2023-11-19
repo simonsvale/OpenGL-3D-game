@@ -63,6 +63,7 @@ void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *Arra
 
 void GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector);
 void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath);
+void GetKeyValue_uintvector(string Key, vector<string> StringVector, vector<unsigned int> *VectorPtr, string FilePath);
 
 void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr, string FilePath);
 
@@ -75,6 +76,9 @@ vector<int> GetKeyValue_intvector(string Key, vector<string> StringVector, vecto
 
 // A function for getting a value from a given key string from an .atris file for bool.
 bool GetKeyValue_bool(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath);
-        
+
+// .OBJ wavefront specific.
+void SplitBySpace(int Index, vector<string> ObjLineVector, vector<string> *SplitObjLineVector);
+
 
 #endif
