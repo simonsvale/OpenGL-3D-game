@@ -53,7 +53,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
             GameElementVector[GameElementNumber]->Scale[2]
         ));
         
-
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -64,13 +63,14 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
 
         // Bind IBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
-        
-        //glDrawArrays(GL_TRIANGLES, 0, GameElementVector[GameElementNumber]->GLArraySize);
+
+        // Draw the VBO stored in the VAO, by using the IBO.
         glDrawElements(GL_TRIANGLES, GameElementVector[GameElementNumber]->IndicesSize, GL_UNSIGNED_INT, 0);
 
         GameElementNumber++;
