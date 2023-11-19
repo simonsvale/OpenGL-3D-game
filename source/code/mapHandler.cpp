@@ -12,6 +12,8 @@
 #include <array>
 #include <memory>
 
+#include <algorithm>
+
 #include "renderer.h"
 #include "helperFunctions.h"
 #include "mapHandler.h"
@@ -127,17 +129,22 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
 
         // Load vertecies into VBO and set VAO.
-        GameElementVector[0][Index]->SetVBOSubData(&VertexVec[0], VertexVec.size(), 
-                                                   &NormalsVec[0], NormalsVec.size(), 
-                                                   &TexVec[0], TexVec.size(),
-                                                   &IndicesVec[0], IndicesVec.size());
+        GameElementVector[0][Index]->SetVBOSubData(
+            &VertexVec[0], VertexVec.size(), 
+            &NormalsVec[0], NormalsVec.size(), 
+            &TexVec[0], TexVec.size(),
+            &IndicesVec[0], IndicesVec.size()
+        );
+
         GameElementVector[0][Index]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());  
+
         //GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         //GameElementVector[0][Index]->SetVAO();
         //GameElementVector[0][Index]->SetEBO(&IndicesVec[0], IndicesVec.size());
-        // Set drawarraysize
-        GameElementVector[0][Index]->GLArraySize = VertexVec.size()/3;
 
+        // Set Indices array size!
+        GameElementVector[0][Index]->IndicesSize = IndicesVec.size();
+        
 
         array<string, 2> VertFragPair = {VertexShaderPath, FragmentShaderPath};
 
@@ -314,25 +321,47 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
     vector<float> FinalNormals;
     vector<float> FinalTexCoords;
 
-    int Index;
+    vector<int> IndicesTest;
+
+    vector<unsigned int> FinalIndices;
+
+    vector<int>::iterator FoundIndex;
+
+    int counter = 0;
+
 
     cout << "test" << endl;
     // vertices indices / vertices texture coords / vertices normals
-    for(int i = 0; i < ModelRef.Vertices.size()/3;)
+    for(int i = 0; i < ModelRef.Indices.size();)
     {   
-        FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 ] );
-        FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 1 ] );
-        FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 2 ] );
+        FoundIndex = find(IndicesTest.begin(), IndicesTest.end(), ModelRef.Indices[i]);
 
-        FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 ] );
-        FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 + 1 ] );
+        if(FoundIndex == IndicesTest.end())
+        {   
+            // If not found
+            FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 ] );
+            FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 1 ] );
+            FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 2 ] );
 
-        FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 ] );
-        FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 + 1 ]  );
-        FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 + 2 ]  );
+            FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 ] );
+            FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 + 1 ] );
 
+            FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 ] );
+            FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 + 1 ]  );
+            FinalNormals.push_back( ModelRef.Normals[ ModelRef.NormalsIndices[i] * 3 + 2 ]  );
+
+            FinalIndices.push_back(counter);
+            IndicesTest.push_back(ModelRef.Indices[i]);
+            counter++;
+        }
+        else
+        {
+            // if found
+            FinalIndices.push_back(FoundIndex - IndicesTest.begin());
+        }
         i++;
     }
+
 
     cout << "VERTICES = {";
     for(int i = 0; i < FinalVertices.size();)
@@ -372,11 +401,12 @@ void ArrayLevelMap::LoadObjFile(string ObjFilePath, struct ObjModel &ModelRef)
     }
     cout << "}," << endl;
 
+
     cout << "INDICES = {";
-    for(int i = 0; i < ModelRef.Indices.size();)
+    for(int i = 0; i < FinalIndices.size();)
     {
-        cout << ModelRef.Indices[i];
-        if(i < (ModelRef.Indices.size() - 1))
+        cout << FinalIndices[i];
+        if(i < (FinalIndices.size() - 1))
         {
             cout << ", ";
         }

@@ -71,7 +71,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
         
         //glDrawArrays(GL_TRIANGLES, 0, GameElementVector[GameElementNumber]->GLArraySize);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, GameElementVector[GameElementNumber]->IndicesSize, GL_UNSIGNED_INT, 0);
 
         // Draw GameElement array.
         // SHOULD BE DRAW ELEMENTS!!!

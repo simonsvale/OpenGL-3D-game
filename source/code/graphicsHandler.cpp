@@ -32,6 +32,7 @@ void Graphics::SetVBOSubData(float Vertices[], int VertSize, float Normals[], in
 
     // Bind the VBO to an OpenGL array Buffer.
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
     glBufferData(GL_ARRAY_BUFFER, VertSize*sizeof(float) + NormalSize*sizeof(float) + TextCoSize*sizeof(float), 0, GL_STATIC_DRAW);
 
     // Buffer subdata.
@@ -64,6 +65,7 @@ void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
     glEnableVertexAttribArray(2);
 }
 
+// Deprecated (again)
 void Graphics::SetEBO(unsigned int Indices[], int IndiSize)
 {
     // Initialize EBO (Element Buffer Object)

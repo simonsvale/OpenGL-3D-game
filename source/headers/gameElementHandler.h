@@ -13,6 +13,7 @@ class GameElement: public Graphics
         int Type;
         int ShaderProgramIndex;
         int GLArraySize;
+        int IndicesSize;
 
         float WorldPosition[3];
         float Scale[3];
