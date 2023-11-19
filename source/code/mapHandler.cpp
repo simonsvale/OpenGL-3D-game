@@ -119,9 +119,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         GetKeyValue_floatvector("VERTICES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
         GetKeyValue_floatvector("NORMALS", SingleGeometryVector, &NormalsVec, ArrmapFilePath);
         GetKeyValue_floatvector("TEXTURE_COORDS", SingleGeometryVector, &TexVec, ArrmapFilePath);
-
         GetKeyValue_uintvector("INDICES", SingleGeometryVector, &IndicesVec, ArrmapFilePath);
-
 
         GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("ROTATION", SingleGeometryVector, GameElementVector[0][Index]->Rotation, &PositionArrSize, ArrmapFilePath);
@@ -144,7 +142,6 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
         // Set Indices array size!
         GameElementVector[0][Index]->IndicesSize = IndicesVec.size();
-        
 
         array<string, 2> VertFragPair = {VertexShaderPath, FragmentShaderPath};
 
@@ -160,9 +157,12 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
             TexturePath.c_str()
         );
         
-        // Clear vector
+        // Clear vectors
         SingleGeometryVector.clear();
+
         VertexVec.clear();
+        NormalsVec.clear();
+        TexVec.clear();
         IndicesVec.clear();
 
         Index++;
