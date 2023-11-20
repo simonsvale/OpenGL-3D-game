@@ -25,8 +25,6 @@ void Graphics::SetVBO(float Vertices[], int VertSize)
 
 void Graphics::SetVBOSubData(float Vertices[], int VertSize, float Normals[], int NormalSize, float TextureCoords[], int TextCoSize, unsigned int Indices[], int IndiSize)
 {
-    GLuint VBO;
-
     // Initialize VBO and IBO.
     glGenBuffers(1, &VBO);
 
@@ -46,24 +44,45 @@ void Graphics::SetVBOSubData(float Vertices[], int VertSize, float Normals[], in
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, IndiSize*sizeof(unsigned int), Indices, GL_STATIC_DRAW);
 }
 
+
 void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
 {
     // Initialize VAO (Vertex Array Object)
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-  
-    // Tell OpenGL, that the first 3 indexes of a row is vertex positions, give it the ID 0 and enable it.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    
+    // Vertices
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
 
-    // Tell OpenGL, that the next 3 indexes of a row is RGB colors, give it the ID 1 and enable it.
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(VertSize*sizeof(float)));
+    // VAO Normals attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // Tell OpenGL, that the next 2 indexes of a row is the texture mapping, give it the ID 2 and enable it.
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(VertSize*sizeof(float) + NormalSize*sizeof(float)));
+    // VAO Texture coords attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float) + NormalSize*sizeof(float)));
     glEnableVertexAttribArray(2);
+
+    // VAO color attribute
+    //glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float) + NormalSize*sizeof(float) + TextCoSize*sizeof(float)));
+    //glEnableVertexAttribArray(3);
 }
+
+void Graphics::SetLightVAO()
+{   
+    // Should be defined in class !
+    GLuint LightVAO;
+    glGenVertexArrays(1, &LightVAO);
+    glBindVertexArray(LightVAO);
+
+    // Bind to object vao.
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // pass vbo
+
+    // Set attribute pointer
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+}
+
 
 // Deprecated (again)
 void Graphics::SetEBO(unsigned int Indices[], int IndiSize)
