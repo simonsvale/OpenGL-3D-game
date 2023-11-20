@@ -127,7 +127,7 @@ void LoadObjFile(string ObjFilePath, string ObjOutputFilePath)
             FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 ] );
             FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 1 ] );
             FinalVertices.push_back( ModelRef.Vertices[ ModelRef.Indices[i] * 3 + 2 ] );
-
+            
             FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 ] );
             FinalTexCoords.push_back( ModelRef.TexCoords[ ModelRef.TextureIndices[i] * 2 + 1 ] );
 
@@ -147,6 +147,7 @@ void LoadObjFile(string ObjFilePath, string ObjOutputFilePath)
         i++;
     }
 
+    // Write to arrobj file.
     ofstream ArrmapModelFile(ObjOutputFilePath);
 
     ArrmapModelFile << "VERTICES = {";
@@ -202,11 +203,12 @@ void LoadObjFile(string ObjFilePath, string ObjOutputFilePath)
 
     ArrmapModelFile.close();
 
-    cout << "Finished writing to file!" << endl;
+    cout << "Finished writing to ARROBJ file, " << ObjOutputFilePath << "!" << endl;
     cout << "Vsize:" << FinalVertices.size() << endl;
     cout << "Nsize:" << FinalNormals.size() << endl;
     cout << "Tsize:" << FinalTexCoords.size() << endl;
     cout << "Isize:" << ModelRef.Indices.size() << endl;
+    cout << "Triangle amount: " << ModelRef.Indices.size()/3 << endl;
 }
 
 
