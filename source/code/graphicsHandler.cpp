@@ -70,8 +70,7 @@ void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
 
 void Graphics::SetLightVAO()
 {   
-    // Should be defined in class !
-    GLuint LightVAO;
+    // Generate a VAO used for lighting.
     glGenVertexArrays(1, &LightVAO);
     glBindVertexArray(LightVAO);
 

@@ -10,7 +10,7 @@ class GameElement: public Graphics
 {
     public:
         // All variables that need to be set using the .arrmap file.
-        int Type;
+        int GameElementType = -1;
         int ShaderProgramIndex;
         int GLArraySize;
         int IndicesSize;

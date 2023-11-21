@@ -52,7 +52,15 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
             GameElementVector[GameElementNumber]->Scale[1], 
             GameElementVector[GameElementNumber]->Scale[2]
         ));
-        
+           
+        float ObjectC[] = {1.0f, 0.5f, 0.31f};
+        int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
+        glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
+
+        float LightC[] = {1.0f, 0.5f, 0.31f};
+        int LightColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightColor");
+        glUniform3f(LightColorLoc, LightC[0], LightC[1], LightC[2]);
+      
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -63,9 +71,17 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        // Bind GameElement VAO.
-        glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
-
+        // Bind if light enabled.
+        if(GameElementVector[GameElementNumber]->GameElementType == 1)
+        {
+            glBindVertexArray(GameElementVector[GameElementNumber]->LightVAO);
+        }
+        else
+        {
+            // Bind GameElement VAO.
+            glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
+        }
+        
         // Bind IBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
 

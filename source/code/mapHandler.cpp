@@ -102,20 +102,15 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
         SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
-        /*
-        for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
-        {   
-            cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
-            ArrmapAttributeNumber++;
-        }
-        */
         
         // Get values contained in the .arrmap file.
         GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
         GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
         GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
-        // The important information:
+        GetKeyValue_int32("TYPE", SingleGeometryVector, &GameElementVector[0][Index]->GameElementType, ArrmapFilePath);
+
+        // The geometry information.
         GetKeyValue_floatvector("VERTICES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
         GetKeyValue_floatvector("NORMALS", SingleGeometryVector, &NormalsVec, ArrmapFilePath);
         GetKeyValue_floatvector("TEXTURE_COORDS", SingleGeometryVector, &TexVec, ArrmapFilePath);
@@ -134,8 +129,13 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
             &IndicesVec[0], IndicesVec.size()
         );
 
+        if(GameElementVector[0][Index]->GameElementType == 1)
+        {
+            GameElementVector[0][Index]->SetLightVAO();
+        }
+      
         GameElementVector[0][Index]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());  
-
+     
         //GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         //GameElementVector[0][Index]->SetVAO();
         //GameElementVector[0][Index]->SetEBO(&IndicesVec[0], IndicesVec.size());
@@ -150,8 +150,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
    
-        GameElementVector[0][Index]->LoadTexture
-        (
+        GameElementVector[0][Index]->LoadTexture(
             &GameElementVector[0][Index]->Texture, 
             &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
             TexturePath.c_str()

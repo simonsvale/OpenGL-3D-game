@@ -259,6 +259,39 @@ void SplitByDelimiterAndBraces(string String, vector<string> *SplitStrVecPtr, ch
     }
 }
 
+void GetKeyValue_int32(string Key, vector<string> StringVector, int *IntPtr, string FilePath)
+{
+    string KeyString;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
+
+                try
+                {   
+                    // Get value from key
+                    *IntPtr = stoi(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
+                }
+                catch(invalid_argument)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type int32, at: "+FilePath);
+                }
+
+                return;
+            }
+        }
+        StrNum++;
+    }
+}
+
+
+
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
 If the key is not found, returns -1, if out of range of uint8_t throw exception. */
 int GetKeyValue_uint8_t(string Key, vector<string> StringVector, vector<string> *StringPtr, string FilePath)
