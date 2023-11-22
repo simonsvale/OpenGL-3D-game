@@ -63,13 +63,14 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+
         // Object base color, should be texture.
-        float ObjectC[] = {1.0f, 0.5f, 0.31f};
+        float ObjectC[] = {0.737f, 0.812f, 0.859f};
         int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
         glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
 
         // Light color
-        float LightC[] = {1.0f, 0.5f, 0.31f};
+        float LightC[] = {1.0f, 1.0f, 1.0f};
         int LightColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightColor");
         glUniform3f(LightColorLoc, LightC[0], LightC[1], LightC[2]);
 
@@ -77,6 +78,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightPos");
         glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
 
+        // Player position for calculating specular.
         int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
         glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
 
@@ -84,7 +86,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
 
-        
         // Bind IBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
 
