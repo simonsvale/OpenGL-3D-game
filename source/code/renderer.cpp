@@ -12,7 +12,7 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, SDL_Window *window)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window)
 {   
     int ShaderIndex;
 
@@ -63,11 +63,12 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-
+        // Object base color, should be texture.
         float ObjectC[] = {1.0f, 0.5f, 0.31f};
         int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
         glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
 
+        // Light color
         float LightC[] = {1.0f, 0.5f, 0.31f};
         int LightColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightColor");
         glUniform3f(LightColorLoc, LightC[0], LightC[1], LightC[2]);
@@ -75,6 +76,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Light position.
         int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightPos");
         glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
+
+        int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
+        glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
 
         // Bind if light enabled.
         if(GameElementVector[GameElementNumber]->GameElementType == 1)

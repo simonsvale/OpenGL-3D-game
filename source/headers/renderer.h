@@ -29,7 +29,14 @@ class Renderer
         *
         *  @return void
         */
-        void RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, SDL_Window *window);
+        void RenderEverything(
+            vector<unique_ptr<GameElement> > &GameElementVector, 
+            vector< unique_ptr<Shader> > &ShaderObjectVector, 
+            glm::mat4 projection, 
+            glm::mat4 view,
+            glm::vec3 CameraPosition,
+            SDL_Window *window
+        );
         
 };
 
