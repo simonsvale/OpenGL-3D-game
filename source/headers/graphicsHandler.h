@@ -25,7 +25,7 @@ class Graphics
         void SetVBO(float Vertices[], int VertSize);
         void SetVAO(int VertSize, int NormalSize, int TextCoSize);
 
-        void SetLightVAO();
+        void SetLightVAO(int VertSize);
 
         void SetVBOSubData(float Vertices[], int VertSize, float Normals[], int NormalSize, float TextureCoords[], int TextCoSize, unsigned int Indices[], int IndiSize);
 

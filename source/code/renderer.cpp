@@ -52,14 +52,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
             GameElementVector[GameElementNumber]->Scale[1], 
             GameElementVector[GameElementNumber]->Scale[2]
         ));
-           
-        float ObjectC[] = {1.0f, 0.5f, 0.31f};
-        int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
-        glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
-
-        float LightC[] = {1.0f, 0.5f, 0.31f};
-        int LightColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightColor");
-        glUniform3f(LightColorLoc, LightC[0], LightC[1], LightC[2]);
       
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
@@ -70,6 +62,19 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+        float ObjectC[] = {1.0f, 0.5f, 0.31f};
+        int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
+        glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
+
+        float LightC[] = {1.0f, 0.5f, 0.31f};
+        int LightColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightColor");
+        glUniform3f(LightColorLoc, LightC[0], LightC[1], LightC[2]);
+
+        // Light position.
+        int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightPos");
+        glUniform3f(LightPosLoc, -1, 8, 4);
 
         // Bind if light enabled.
         if(GameElementVector[GameElementNumber]->GameElementType == 1)

@@ -68,7 +68,7 @@ void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
     //glEnableVertexAttribArray(3);
 }
 
-void Graphics::SetLightVAO()
+void Graphics::SetLightVAO(int VertSize)
 {   
     // Generate a VAO used for lighting.
     glGenVertexArrays(1, &LightVAO);
@@ -77,9 +77,12 @@ void Graphics::SetLightVAO()
     // Bind to object vao.
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // pass vbo
 
-    // Set attribute pointer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // Set attribute pointer for color and normals
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float)));
+    glEnableVertexAttribArray(1);
 }
 
 
