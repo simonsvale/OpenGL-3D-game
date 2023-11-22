@@ -74,7 +74,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         // Light position.
         int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightPos");
-        glUniform3f(LightPosLoc, -1, 8, 4);
+        glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
 
         // Bind if light enabled.
         if(GameElementVector[GameElementNumber]->GameElementType == 1)
