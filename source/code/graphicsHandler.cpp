@@ -71,8 +71,8 @@ void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
 void Graphics::SetLightVAO(int VertSize)
 {   
     // Generate a VAO used for lighting.
-    glGenVertexArrays(1, &LightVAO);
-    glBindVertexArray(LightVAO);
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
     // Bind to object vao.
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // pass vbo

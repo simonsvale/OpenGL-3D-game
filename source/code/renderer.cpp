@@ -80,16 +80,10 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
         glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
 
-        // Bind if light enabled.
-        if(GameElementVector[GameElementNumber]->GameElementType == 1)
-        {
-            glBindVertexArray(GameElementVector[GameElementNumber]->LightVAO);
-        }
-        else
-        {
-            // Bind GameElement VAO.
-            glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
-        }
+
+        // Bind GameElement VAO.
+        glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
+
         
         // Bind IBO
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);

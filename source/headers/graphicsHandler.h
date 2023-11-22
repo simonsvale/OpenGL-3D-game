@@ -16,7 +16,6 @@ class Graphics
     public:
 
         GLuint VAO;     // Vertex Array Object
-        GLuint LightVAO;
 
         GLuint IBO;
         GLuint VBO;

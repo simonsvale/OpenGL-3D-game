@@ -133,8 +133,10 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         {
             GameElementVector[0][Index]->SetLightVAO(VertexVec.size());
         }
-      
-        GameElementVector[0][Index]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());  
+        else
+        {
+            GameElementVector[0][Index]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());
+        }
      
         //GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         //GameElementVector[0][Index]->SetVAO();
