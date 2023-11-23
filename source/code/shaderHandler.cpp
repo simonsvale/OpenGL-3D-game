@@ -4,7 +4,6 @@
 
 void Shader::LoadShaderFile(string GLSLFilePath, string *GLSLCode)
 {
-    short LineNum = 0;
     string GLSLFileLine;
 
     // Open GLSL File

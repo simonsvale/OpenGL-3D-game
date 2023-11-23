@@ -64,6 +64,25 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
+        // Set material strength attributes for the shader.
+        int AmbientLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.AmbientStrength");
+        glUniform3f(AmbientLoc, GameElementVector[GameElementNumber]->Material.AmbientStrength[0], 
+                                GameElementVector[GameElementNumber]->Material.AmbientStrength[1], 
+                                GameElementVector[GameElementNumber]->Material.AmbientStrength[2]
+        );
+
+        int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.DiffuseStrength");
+        glUniform3f(DiffuseLoc, GameElementVector[GameElementNumber]->Material.DiffuseStrength[0], 
+                                GameElementVector[GameElementNumber]->Material.DiffuseStrength[1], 
+                                GameElementVector[GameElementNumber]->Material.DiffuseStrength[2]
+        );
+
+        int SpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.SpecularStrength");
+        glUniform3f(SpecularLoc, GameElementVector[GameElementNumber]->Material.SpecularStrength[0], 
+                                 GameElementVector[GameElementNumber]->Material.SpecularStrength[1], 
+                                 GameElementVector[GameElementNumber]->Material.SpecularStrength[2]
+        );
+
         // Object base color, should be texture.
         float ObjectC[] = {0.737f, 0.812f, 0.859f};
         int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");

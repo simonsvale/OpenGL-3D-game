@@ -6,6 +6,15 @@
 #include <graphicsHandler.h>
 
 
+struct GameElementMaterial
+{
+    float AmbientStrength[3];
+    float DiffuseStrength[3];
+    float SpecularStrength[3];
+    float ShineValue;
+};
+
+
 class GameElement: public Graphics
 {
     public:
@@ -18,6 +27,10 @@ class GameElement: public Graphics
         float WorldPosition[3];
         float Scale[3];
         float Rotation[3];
+
+        // Material values.
+        GameElementMaterial Material;
+
 
         // Only here to allow change of shaders on the fly.
         string VertexShaderPath = "NULL";
