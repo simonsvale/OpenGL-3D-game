@@ -83,6 +83,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
                                  GameElementVector[GameElementNumber]->Material.SpecularStrength[2]
         );
 
+        int ShineLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.ShineValue");
+        glUniform1f(ShineLoc, GameElementVector[GameElementNumber]->Material.ShineValue);
+
         // Object base color, should be texture.
         float ObjectC[] = {0.737f, 0.812f, 0.859f};
         int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");

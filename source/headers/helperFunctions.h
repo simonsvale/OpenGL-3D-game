@@ -64,8 +64,9 @@ void GetKeyValue_floatarray(string Key, vector<string> StringVector, float *Arra
 void GetKeyValue_strvector(string Key, vector<string> StringVector, vector<string> *NestedStringVector);
 void GetKeyValue_floatvector(string Key, vector<string> StringVector, vector<float> *VectorPtr, string FilePath);
 void GetKeyValue_uintvector(string Key, vector<string> StringVector, vector<unsigned int> *VectorPtr, string FilePath);
-void GetKeyValue_int32(string Key, vector<string> StringVector, int *IntPtr, string FilePath);
 
+void GetKeyValue_int32(string Key, vector<string> StringVector, int *IntPtr, string FilePath);
+void GetKeyValue_float(string Key, vector<string> StringVector, float *FloatPtr, string FilePath);
 void GetKeyValue_str(string Key, vector<string> StringVector, string *StringPtr, string FilePath);
 
 

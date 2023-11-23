@@ -119,8 +119,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         GetKeyValue_floatarray("AMBIENT_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.AmbientStrength, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("DIFFUSE_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.DiffuseStrength, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("SPECULAR_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.SpecularStrength, &PositionArrSize, ArrmapFilePath);
-        
-        //GetKeyValue_floatarray("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][Index]->Material.ShineValue, ArrmapFilePath);
+        GetKeyValue_float("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][Index]->Material.ShineValue, ArrmapFilePath);
 
 
         GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &PositionArrSize, ArrmapFilePath);

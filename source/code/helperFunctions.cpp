@@ -290,6 +290,38 @@ void GetKeyValue_int32(string Key, vector<string> StringVector, int *IntPtr, str
     }
 }
 
+// For passing floats
+void GetKeyValue_float(string Key, vector<string> StringVector, float *FloatPtr, string FilePath)
+{
+    string KeyString;
+
+    // Iterate through all strings in the vector.
+    for(int StrNum = 0; StrNum < StringVector.size();)
+    {   
+        if(StringVector[StrNum].length() >= Key.length())
+        {
+            // Check for key in string
+            if((StringVector[StrNum].find(Key) != string::npos) == true)
+            {   
+                KeyString = StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1);
+
+                try
+                {   
+                    // Get value from key
+                    *FloatPtr = stof(StringVector[StrNum].substr(Key.length()+1, StringVector[StrNum].length()-1));
+                }
+                catch(invalid_argument)
+                {
+                    throw invalid_argument("Key: "+string(Key)+"'s value is not of type float, at: "+FilePath);
+                }
+
+                return;
+            }
+        }
+        StrNum++;
+    }
+}
+
 
 
 /* Given a key of type string and a vector containing the string, the function will return the value of the key. 
