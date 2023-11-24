@@ -85,7 +85,7 @@ int main(int argc, char **argv)
     }
 
     // !!! Load map and create all vertecies and textures.
-    Arraymap.LoadArrmapFile("source/maps/TestMap.arrmap", &ShaderObjectVector, &GameElementVector);
+    Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
 
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  

@@ -52,16 +52,36 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
             GameElementVector[GameElementNumber]->Scale[1], 
             GameElementVector[GameElementNumber]->Scale[2]
         ));
-      
-        // Assign new values to vertex shader.
-        int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        int viewLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        /*
+        // Object base color, should be texture.
+        float ObjectC[] = {0.737f, 0.812f, 0.859f};
+        int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
+        glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
+        */
 
-        int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+        // Light position.
+        int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
+        glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
+
+        // Player position for calculating specular.
+        int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
+        glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
+
+
+        // Light ambient color
+        float LightC[] = {0.2f, 0.2f, 0.2f};
+        int LightAmbientLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.ambient");
+        glUniform3f(LightAmbientLoc, LightC[0], LightC[1], LightC[2]);
+
+        // Light Diffuse.
+        int LightDiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.diffuse");
+        glUniform3f(LightDiffuseLoc, 0.5f, 0.5f, 0.5f);
+
+        // Light specular.
+        int LightSpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.specular");
+        glUniform3f(LightSpecularLoc, 1.0f, 1.0f, 1.0f);
 
 
         // Set material strength attributes for the shader.
@@ -85,24 +105,17 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         int ShineLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.ShineValue");
         glUniform1f(ShineLoc, GameElementVector[GameElementNumber]->Material.ShineValue);
+        
 
-        // Object base color, should be texture.
-        float ObjectC[] = {0.737f, 0.812f, 0.859f};
-        int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
-        glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
+        // Assign new values to vertex shader.
+        int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        // Light color
-        float LightC[] = {1.0f, 1.0f, 1.0f};
-        int LightColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightColor");
-        glUniform3f(LightColorLoc, LightC[0], LightC[1], LightC[2]);
+        int viewLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-        // Light position.
-        int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightPos");
-        glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
-
-        // Player position for calculating specular.
-        int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
-        glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
+        int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
         // Bind GameElement VAO.

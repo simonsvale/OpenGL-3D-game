@@ -115,13 +115,6 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         GetKeyValue_floatvector("TEXTURE_COORDS", SingleGeometryVector, &TexVec, ArrmapFilePath);
         GetKeyValue_uintvector("INDICES", SingleGeometryVector, &IndicesVec, ArrmapFilePath);
 
-        // Materials.
-        GetKeyValue_floatarray("AMBIENT_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.AmbientStrength, &PositionArrSize, ArrmapFilePath);
-        GetKeyValue_floatarray("DIFFUSE_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.DiffuseStrength, &PositionArrSize, ArrmapFilePath);
-        GetKeyValue_floatarray("SPECULAR_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.SpecularStrength, &PositionArrSize, ArrmapFilePath);
-        GetKeyValue_float("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][Index]->Material.ShineValue, ArrmapFilePath);
-
-
         GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][Index]->WorldPosition, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("ROTATION", SingleGeometryVector, GameElementVector[0][Index]->Rotation, &PositionArrSize, ArrmapFilePath);
         GetKeyValue_floatarray("SCALE", SingleGeometryVector, GameElementVector[0][Index]->Scale, &PositionArrSize, ArrmapFilePath);
@@ -137,6 +130,12 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
         if(GameElementVector[0][Index]->GameElementType == 1)
         {
+            // Materials.
+            GetKeyValue_floatarray("AMBIENT_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.AmbientStrength, &PositionArrSize, ArrmapFilePath);
+            GetKeyValue_floatarray("DIFFUSE_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.DiffuseStrength, &PositionArrSize, ArrmapFilePath);
+            GetKeyValue_floatarray("SPECULAR_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.SpecularStrength, &PositionArrSize, ArrmapFilePath);
+            GetKeyValue_float("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][Index]->Material.ShineValue, ArrmapFilePath);
+
             GameElementVector[0][Index]->SetLightVAO(VertexVec.size());
         }
         else

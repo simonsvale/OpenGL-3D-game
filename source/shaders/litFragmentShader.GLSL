@@ -1,52 +1,46 @@
 // Fragment shader // Rework later
 #version 410 core
+out vec4 FragColor;
 
-out vec4 FragColor;  
-
-in vec2 texCoord;
-in vec3 Normal;
-in vec3 FragPos;
-
-uniform vec3 objectColor;
-uniform vec3 lightColor;
-uniform vec3 lightPos;  
-uniform vec3 viewPos;
-
-uniform sampler2D tex0;
-
-// Struct for material attributes.
-struct Material
-{
+struct Material {
     vec3 AmbientStrength;
     vec3 DiffuseStrength;
     vec3 SpecularStrength;
     float ShineValue;
 };
 
-// Init struct
-uniform Material material;
 
+struct Light {
+    vec3 position;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+in vec3 FragPos;  
+in vec3 Normal;  
+  
+uniform vec3 viewPos;
+uniform Material material;
+uniform Light light;
 
 void main()
 {
     // ambient
-    vec3 ambient = material.AmbientStrength * lightColor;
+    vec3 ambient = light.ambient * material.AmbientStrength;
   	
     // diffuse 
     vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(lightPos - FragPos);
-
+    vec3 lightDir = normalize(light.position - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * material.DiffuseStrength * lightColor;
+    vec3 diffuse = light.diffuse * (diff * material.DiffuseStrength);
     
     // specular
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);  
-
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.ShineValue); 
-    vec3 specular = material.SpecularStrength * spec * lightColor;  
-
-    // Final
-    vec3 result = (ambient + diffuse + specular) * objectColor;
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.ShineValue);
+    vec3 specular = light.specular * (spec * material.SpecularStrength);  
+        
+    vec3 result = ambient + diffuse + specular;
     FragColor = vec4(result, 1.0);
-}  
+} 
