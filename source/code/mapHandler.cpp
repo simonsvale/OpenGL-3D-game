@@ -131,12 +131,10 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         if(GameElementVector[0][Index]->GameElementType == 1)
         {
             // Materials.
-            GetKeyValue_floatarray("AMBIENT_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.AmbientStrength, &PositionArrSize, ArrmapFilePath);
-            GetKeyValue_floatarray("DIFFUSE_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.DiffuseStrength, &PositionArrSize, ArrmapFilePath);
             GetKeyValue_floatarray("SPECULAR_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.SpecularStrength, &PositionArrSize, ArrmapFilePath);
             GetKeyValue_float("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][Index]->Material.ShineValue, ArrmapFilePath);
 
-            GameElementVector[0][Index]->SetLightVAO(VertexVec.size());
+            GameElementVector[0][Index]->SetLightVAO(VertexVec.size(), NormalsVec.size());
         }
         else
         {

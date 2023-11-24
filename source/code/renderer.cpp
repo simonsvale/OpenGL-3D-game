@@ -31,6 +31,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->Texture);
         glUseProgram(ShaderObjectVector[GameElementVector[GameElementNumber]->ShaderProgramIndex]->ShaderProgram);
 
+        int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.DiffuseStrength");
+        glUniform1i(DiffuseLoc, 0);
+
         // If(GameElementVector[GameElementNumber]->Type != STATIC)
         // #define STATIC 1
         
@@ -52,13 +55,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
             GameElementVector[GameElementNumber]->Scale[1], 
             GameElementVector[GameElementNumber]->Scale[2]
         ));
-
-        /*
-        // Object base color, should be texture.
-        float ObjectC[] = {0.737f, 0.812f, 0.859f};
-        int ObjectColorLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "objectColor");
-        glUniform3f(ObjectColorLoc, ObjectC[0], ObjectC[1], ObjectC[2]);
-        */
 
 
         // Light position.
@@ -83,20 +79,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int LightSpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.specular");
         glUniform3f(LightSpecularLoc, 1.0f, 1.0f, 1.0f);
 
-
-        // Set material strength attributes for the shader.
-        int AmbientLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.AmbientStrength");
-        glUniform3f(AmbientLoc, GameElementVector[GameElementNumber]->Material.AmbientStrength[0], 
-                                GameElementVector[GameElementNumber]->Material.AmbientStrength[1], 
-                                GameElementVector[GameElementNumber]->Material.AmbientStrength[2]
-        );
-
-        int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.DiffuseStrength");
-        glUniform3f(DiffuseLoc, GameElementVector[GameElementNumber]->Material.DiffuseStrength[0], 
-                                GameElementVector[GameElementNumber]->Material.DiffuseStrength[1], 
-                                GameElementVector[GameElementNumber]->Material.DiffuseStrength[2]
-        );
-
         int SpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.SpecularStrength");
         glUniform3f(SpecularLoc, GameElementVector[GameElementNumber]->Material.SpecularStrength[0], 
                                  GameElementVector[GameElementNumber]->Material.SpecularStrength[1], 
@@ -105,7 +87,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         int ShineLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.ShineValue");
         glUniform1f(ShineLoc, GameElementVector[GameElementNumber]->Material.ShineValue);
-        
+
 
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
