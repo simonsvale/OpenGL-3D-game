@@ -8,7 +8,6 @@
 
 struct GameElementMaterial
 {
-    float DiffuseStrength[3];
     float SpecularStrength[3];
     float ShineValue;
 };
