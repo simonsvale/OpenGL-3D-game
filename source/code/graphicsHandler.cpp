@@ -113,7 +113,6 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     unsigned char* bytes = stbi_load(TexturePath, &widthImg, &heightImg, &numColCh, 0);
 
     glGenTextures(1, Texture);
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, *Texture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -122,14 +121,7 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
 
     stbi_image_free(bytes);
+    
     glBindTexture(GL_TEXTURE_2D, 0);
-
-
-    // ------------------------------- The rest should probably be new method, in the shader class.
-
-    // Needs to be a parameter "tex0"
-    GLuint tex0Uni = glGetUniformLocation(*ShaderProgramPtr, "tex0");
     glLinkProgram(*ShaderProgramPtr);
-
-    glUniform1i(tex0Uni, 0);
 }

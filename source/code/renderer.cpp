@@ -27,12 +27,26 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Get GameElement's shaderprogram index.
         ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
 
-        // New element
-        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->Texture);
+        // Bind diffuse and specular textures.
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->SpecularTexture);
+
+        // Set shader program
         glUseProgram(ShaderObjectVector[GameElementVector[GameElementNumber]->ShaderProgramIndex]->ShaderProgram);
 
-        int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.DiffuseStrength");
+        // Send the diffuse and specular map to the fragment shader.
+        int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.DiffuseMap");
         glUniform1i(DiffuseLoc, 0);
+
+        int SpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.SpecularMap");
+        glUniform1i(SpecularLoc, 1);
+
+        // Set material shine value.
+        int ShineLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.ShineValue");
+        glUniform1f(ShineLoc, GameElementVector[GameElementNumber]->Material.ShineValue);
 
         // If(GameElementVector[GameElementNumber]->Type != STATIC)
         // #define STATIC 1
@@ -57,14 +71,14 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         ));
 
 
-        // Light position.
-        int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
-        glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
-
         // Player position for calculating specular.
         int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
         glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
 
+
+        // Light position.
+        int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
+        glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
 
         // Light ambient color
         float LightC[] = {0.2f, 0.2f, 0.2f};
@@ -78,15 +92,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Light specular.
         int LightSpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.specular");
         glUniform3f(LightSpecularLoc, 1.0f, 1.0f, 1.0f);
-
-        int SpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.SpecularStrength");
-        glUniform3f(SpecularLoc, GameElementVector[GameElementNumber]->Material.SpecularStrength[0], 
-                                 GameElementVector[GameElementNumber]->Material.SpecularStrength[1], 
-                                 GameElementVector[GameElementNumber]->Material.SpecularStrength[2]
-        );
-
-        int ShineLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.ShineValue");
-        glUniform1f(ShineLoc, GameElementVector[GameElementNumber]->Material.ShineValue);
 
 
         // Assign new values to vertex shader.

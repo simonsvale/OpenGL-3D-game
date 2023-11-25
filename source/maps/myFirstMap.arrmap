@@ -8,7 +8,7 @@ MAP_GEOMETRY =
 {   
     // Light
     {TYPE = 1,
-    TEXTURE_PATH = "source/textures/debug2.png",
+    DIFFUSE_TEXTURE_PATH = "source/textures/debug2.png",
     VERTEX_SHADER_PATH = "source/shaders/lightVertexShader.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/lightFragmentShader.glsl",
     DRAW_TYPE = w,
@@ -23,8 +23,9 @@ MAP_GEOMETRY =
     SHINE_VALUE = 32.0f},
 
     // Lit cube
-   {TYPE = 1,
-    TEXTURE_PATH = "source/textures/mars_sand.png",
+   {TYPE = 2,
+    DIFFUSE_TEXTURE_PATH = "source/textures/mars_sand.png",
+    SPECULAR_TEXTURE_PATH = "source/textures/mars_sand_specular.png",
     VERTEX_SHADER_PATH = "source/shaders/lightVertexShader.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/litFragmentShader.glsl",
     DRAW_TYPE = w,
@@ -40,7 +41,7 @@ MAP_GEOMETRY =
 
     // Normal cube
     {TYPE = 1,
-    TEXTURE_PATH = "source/textures/metal.png",
+    DIFFUSE_TEXTURE_PATH = "source/textures/metal.png",
     VERTEX_SHADER_PATH = "source/shaders/lightVertexShader.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/litFragmentShader.glsl",
     DRAW_TYPE = w,
@@ -57,7 +58,7 @@ MAP_GEOMETRY =
     
     // HD cylinder
     {TYPE = 1,
-    TEXTURE_PATH = "source/textures/debug3.png",
+    DIFFUSE_TEXTURE_PATH = "source/textures/debug3.png",
     VERTEX_SHADER_PATH = "source/shaders/lightVertexShader.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/litFragmentShader.glsl",
     DRAW_TYPE = w,
@@ -73,7 +74,7 @@ MAP_GEOMETRY =
 
     // HD TORUS
     {TYPE = 1,
-    TEXTURE_PATH = "source/textures/mars_sand.png",
+    DIFFUSE_TEXTURE_PATH = "source/textures/mars_sand.png",
     VERTEX_SHADER_PATH = "source/shaders/lightVertexShader.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/litFragmentShader.glsl",
     DRAW_TYPE = w,
@@ -89,7 +90,7 @@ MAP_GEOMETRY =
 
     // Blender monkey
     {TYPE = 1,
-    TEXTURE_PATH = "source/textures/debug3.png",
+    DIFFUSE_TEXTURE_PATH = "source/textures/debug3.png",
     VERTEX_SHADER_PATH = "source/shaders/lightVertexShader.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/litFragmentShader.glsl",
     DRAW_TYPE = w,

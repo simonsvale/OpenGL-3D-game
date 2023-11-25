@@ -8,7 +8,6 @@
 
 struct GameElementMaterial
 {
-    float SpecularStrength[3];
     float ShineValue;
 };
 
@@ -35,7 +34,8 @@ class GameElement: public Graphics
         string FragmentShaderPath = "NULL";
 
         // Texture
-        GLuint Texture;
+        GLuint DiffuseTexture;
+        GLuint SpecularTexture;
 };
 
 #endif

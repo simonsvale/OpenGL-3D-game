@@ -84,6 +84,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
     // Path of a texture and shaders
     string TexturePath;
+    string SpecularPath;
     string VertexShaderPath;
     string FragmentShaderPath;
 
@@ -101,9 +102,8 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
         SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
-        
         // Get values contained in the .arrmap file.
-        GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
+        GetKeyValue_str("DIFFUSE_TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
         GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
         GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
@@ -128,10 +128,9 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
             &IndicesVec[0], IndicesVec.size()
         );
 
-        if(GameElementVector[0][Index]->GameElementType == 1)
+        if(GameElementVector[0][Index]->GameElementType >= 1)
         {
             // Materials.
-            GetKeyValue_floatarray("SPECULAR_STRENGTH", SingleGeometryVector, GameElementVector[0][Index]->Material.SpecularStrength, &PositionArrSize, ArrmapFilePath);
             GetKeyValue_float("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][Index]->Material.ShineValue, ArrmapFilePath);
 
             GameElementVector[0][Index]->SetLightVAO(VertexVec.size(), NormalsVec.size());
@@ -156,10 +155,22 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
    
         GameElementVector[0][Index]->LoadTexture(
-            &GameElementVector[0][Index]->Texture, 
+            &GameElementVector[0][Index]->DiffuseTexture, 
             &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
             TexturePath.c_str()
         );
+
+        // Load specular map if set.
+        if(GameElementVector[0][Index]->GameElementType == 2)
+        {
+            GetKeyValue_str("SPECULAR_TEXTURE_PATH", SingleGeometryVector, &SpecularPath, ArrmapFilePath);
+
+            GameElementVector[0][Index]->LoadTexture(
+                &GameElementVector[0][Index]->SpecularTexture, 
+                &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
+                SpecularPath.c_str()
+            );
+        }
         
         // Clear vectors
         SingleGeometryVector.clear();

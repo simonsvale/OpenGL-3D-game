@@ -120,7 +120,7 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // background color. Should be a seperate function.
-        glClearColor(0.766f, 0.922f, 0.970f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // Render Everything.
