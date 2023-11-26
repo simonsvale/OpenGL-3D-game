@@ -74,24 +74,33 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Player position for calculating specular.
         int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
         glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
-
+        
+        float time  = (SDL_GetTicks()/3500.0);
 
         // Light position.
-        int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
-        glUniform3f(LightPosLoc, 3.5f, 4.0f, 4.3f);
+        int LightDirLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
+        glUniform3f(LightDirLoc, 10.0f, 15.0f * sin(time), 20.0f * cos(time)); // The direction the light is pointing. (The sun)
+
+        int ConstantLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.constant");
+        int LinearLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.linear");
+        int QuadraticLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.quadratic");
+
+        glUniform1f(ConstantLoc, 1.0f);
+        glUniform1f(LinearLoc, 0.022f);
+        glUniform1f(QuadraticLoc, 0.0019f);
 
         // Light ambient color
-        float LightC[] = {0.2f, 0.2f, 0.2f};
+        float LightC[] = {0.08, 0.04, 0.008};
         int LightAmbientLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.ambient");
         glUniform3f(LightAmbientLoc, LightC[0], LightC[1], LightC[2]);
 
         // Light Diffuse.
         int LightDiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.diffuse");
-        glUniform3f(LightDiffuseLoc, 0.5f, 0.5f, 0.5f);
+        glUniform3f(LightDiffuseLoc, 0.812, 0.404 * sin(time), 0.082 + 0.3 * sin(time));
 
         // Light specular.
         int LightSpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.specular");
-        glUniform3f(LightSpecularLoc, 1.0f, 1.0f, 1.0f);
+        glUniform3f(LightSpecularLoc, 0.812, 0.404, 0.082);
 
 
         // Assign new values to vertex shader.
