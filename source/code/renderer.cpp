@@ -77,10 +77,23 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         
         float time  = (SDL_GetTicks()/3500.0);
 
-        // Light position.
-        int LightDirLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
-        glUniform3f(LightDirLoc, 10.0f, 15.0f * sin(time), 20.0f * cos(time)); // The direction the light is pointing. (The sun)
+        int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
+        glUniform3f(LightPosLoc, -8.0f, 4.0f, 4.0f);
+        
+        // For direction global illumination light and spotlight
+        int LightDirLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.direction");
+        glUniform3f(LightDirLoc, 10.0f, 0.0f, 0.0f);
+        //glUniform3f(LightDirLoc, -10.0f, -15.0f * sin(time), -20.0f * cos(time)); // The direction the light is pointing. (The sun)
 
+        // For spotlight
+        int CutoffLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.cutOff");
+        int OuterCutoffLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.outerCutOff");
+
+        glUniform1f(CutoffLoc, glm::cos(glm::radians(12.5f)));
+        glUniform1f(OuterCutoffLoc, glm::cos(glm::radians(17.5f)));
+
+
+        // For point light, with light value falloff
         int ConstantLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.constant");
         int LinearLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.linear");
         int QuadraticLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.quadratic");
@@ -89,6 +102,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glUniform1f(LinearLoc, 0.022f);
         glUniform1f(QuadraticLoc, 0.0019f);
 
+
         // Light ambient color
         float LightC[] = {0.08, 0.04, 0.008};
         int LightAmbientLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.ambient");
@@ -96,7 +110,8 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         // Light Diffuse.
         int LightDiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.diffuse");
-        glUniform3f(LightDiffuseLoc, 0.812, 0.404 * sin(time), 0.082 + 0.3 * sin(time));
+        //glUniform3f(LightDiffuseLoc, 0.812, 0.404 * sin(time), 0.082 + 0.3 * sin(time));
+        glUniform3f(LightDiffuseLoc, 0.812, 0.404, 0.382);
 
         // Light specular.
         int LightSpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.specular");
