@@ -78,11 +78,11 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         float time  = (SDL_GetTicks()/3500.0);
 
         int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
-        glUniform3f(LightPosLoc, -8.0f, 4.0f, 4.0f);
+        glUniform3f(LightPosLoc, -8.0f, 2.0f, 4.0f);
         
         // For direction global illumination light and spotlight
         int LightDirLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.direction");
-        glUniform3f(LightDirLoc, 10.0f, 0.0f, 0.0f);
+        glUniform3f(LightDirLoc, 1.0f, 0.0f, 0.0f);
         //glUniform3f(LightDirLoc, -10.0f, -15.0f * sin(time), -20.0f * cos(time)); // The direction the light is pointing. (The sun)
 
         // For spotlight
@@ -90,7 +90,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int OuterCutoffLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.outerCutOff");
 
         glUniform1f(CutoffLoc, glm::cos(glm::radians(12.5f)));
-        glUniform1f(OuterCutoffLoc, glm::cos(glm::radians(17.5f)));
+        glUniform1f(OuterCutoffLoc, glm::cos(glm::radians(25.5f)));
 
 
         // For point light, with light value falloff
