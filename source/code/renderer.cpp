@@ -77,6 +77,62 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         
         float time  = (SDL_GetTicks()/3500.0);
 
+        // Pointlight number 1:
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].position"), -8.0f, 2.0f, 4.0f);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].ambient"), 0.02, 0.06, 0.1);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].diffuse"), 0.14, 0.4, 0.7);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].specular"), 0.1, 0.3, 0.5);
+
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].constant"), 1.0f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].linear"), 0.022f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].quadratic"), 0.0019f);
+        // End 1;
+
+        // Pointlight number 2:
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].position"), 1.0f, 1.0f, 1.0f);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].ambient"), 0.07, 0.12, 0.06);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].diffuse"), 0.49, 0.7, 0.42);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].specular"), 0.4, 0.5, 0.3);
+
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].constant"), 1.0f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].linear"), 0.022f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].quadratic"), 0.0019f);
+        // End 2;
+
+
+        // Spotlight number 1:
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].position"), 5.0f, 8.0f, 15.0f);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].ambient"), 0.02, 0.08, 0.03);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].diffuse"), 0.2, 0.9, 0.4);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].specular"), 0.4, 0.5, 0.3);
+
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].direction"), 0.0, -1.0, 0.0);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].cutOff"), glm::cos(glm::radians(12.5f)));
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].outerCutOff"), glm::cos(glm::radians(25.5f)));
+
+
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].constant"), 1.0f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].linear"), 0.022f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[0].quadratic"), 0.0019f);
+        // End 1;
+        
+        // Spotlight number 2:
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].position"), 10.0f, 6.0f, -10.0f);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].ambient"), 0.075, 0.04, 0.05);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].diffuse"), 0.5, 0.3, 0.4);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].specular"), 0.75, 0.4, 0.5);
+
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].direction"), 0.0, -1.0, -1.0);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].cutOff"), glm::cos(glm::radians(7.5f)));
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].outerCutOff"), glm::cos(glm::radians(35.5f)));
+
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].constant"), 1.0f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].linear"), 0.022f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].quadratic"), 0.0019f);
+
+        // End 2;
+
+        /*
         int LightPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.position");
         glUniform3f(LightPosLoc, -8.0f, 2.0f, 4.0f);
         
@@ -116,7 +172,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Light specular.
         int LightSpecularLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "light.specular");
         glUniform3f(LightSpecularLoc, 0.812, 0.404, 0.082);
-
+        */
 
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
