@@ -77,6 +77,13 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         
         float time  = (SDL_GetTicks()/3500.0);
 
+        // Global light:
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.direction"), 0.0f, -10.0f, -10.0f);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.ambient"), 0.08, 0.08, 0.05);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.diffuse"), 0.15, 0.16, 0.1);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.specular"), 0.15, 0.16, 0.1);
+        // Global light end;
+
         // Pointlight number 1:
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].position"), -8.0f, 2.0f, 4.0f);
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].ambient"), 0.02, 0.06, 0.1);

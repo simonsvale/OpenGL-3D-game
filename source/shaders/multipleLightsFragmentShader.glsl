@@ -74,7 +74,7 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // Define the output vec3 result.
-    vec3 result;
+    vec3 result = CalculateGlobalDirectionalLight( GlobalLight, norm, viewDir);
 
     // Calculate the values for all point lights.
     for(int PointLightNumber = 0; PointLightNumber < POINT_LIGHT_AMOUNT;)
