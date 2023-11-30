@@ -37,6 +37,8 @@ class Renderer
             glm::vec3 CameraPosition,
             SDL_Window *window
         );
+
+        // Remove test_shader soon
         
 };
 

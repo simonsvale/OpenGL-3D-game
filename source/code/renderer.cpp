@@ -22,6 +22,45 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {   
+        /*
+        glm::mat4 lightProjection, lightView;
+        glm::mat4 lightSpaceMatrix;
+
+        float near_plane = 1.0f, far_plane = 7.5f;
+        lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+        lightView = glm::lookAt( glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0) );
+        lightSpaceMatrix = lightProjection * lightView;
+
+        // render scene from light's point of view
+        glUseProgram(test_shader.ShaderProgram);
+        glUniformMatrix4fv( glGetUniformLocation(test_shader.ShaderProgram, "lightSpaceMatrix"), 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix) );
+
+        glViewport(0, 0, GameElementVector[GameElementNumber]->SHADOW_WIDTH, GameElementVector[GameElementNumber]->SHADOW_HEIGHT);
+        glBindFramebuffer(GL_FRAMEBUFFER, GameElementVector[GameElementNumber]->FBO);
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture); // TEST
+
+        // Assign new values to vertex shader.
+        int modelLoc2 = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc2, 1, GL_FALSE, glm::value_ptr(model));
+
+        // Bind GameElement VAO.
+        glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
+        // Bind IBO
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
+        // Draw the VBO stored in the VAO, by using the IBO.
+        glDrawElements(GL_TRIANGLES, GameElementVector[GameElementNumber]->IndicesSize, GL_UNSIGNED_INT, 0);
+
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+
+
+        // reset viewport // Should be configurable.
+        glViewport(0, 0, 1080, 720);
+        */
         glm::mat4 model = glm::mat4(1.0f);
 
         // Get GameElement's shaderprogram index.
