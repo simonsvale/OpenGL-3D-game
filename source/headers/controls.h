@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <glad/glad.h>
+#include <SDL2/SDL.h>
 
 #include "gameElementHandler.h"
 

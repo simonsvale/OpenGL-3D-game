@@ -25,8 +25,6 @@ void Graphics::SetVBO(float Vertices[], int VertSize)
 
 void Graphics::SetVBOSubData(float Vertices[], int VertSize, float Normals[], int NormalSize, float TextureCoords[], int TextCoSize, unsigned int Indices[], int IndiSize)
 {
-    GLuint VBO;
-
     // Initialize VBO and IBO.
     glGenBuffers(1, &VBO);
 
@@ -46,24 +44,75 @@ void Graphics::SetVBOSubData(float Vertices[], int VertSize, float Normals[], in
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, IndiSize*sizeof(unsigned int), Indices, GL_STATIC_DRAW);
 }
 
+
 void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
 {
     // Initialize VAO (Vertex Array Object)
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-  
-    // Tell OpenGL, that the first 3 indexes of a row is vertex positions, give it the ID 0 and enable it.
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    
+    // Vertices
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 );
     glEnableVertexAttribArray(0);
 
-    // Tell OpenGL, that the next 3 indexes of a row is RGB colors, give it the ID 1 and enable it.
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(VertSize*sizeof(float)));
+    // VAO Normals attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float)) );
     glEnableVertexAttribArray(1);
 
-    // Tell OpenGL, that the next 2 indexes of a row is the texture mapping, give it the ID 2 and enable it.
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(VertSize*sizeof(float) + NormalSize*sizeof(float)));
+    // VAO Texture coords attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float) + NormalSize*sizeof(float)) );
+    glEnableVertexAttribArray(2);
+
+    // VAO color attribute
+    //glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float) + NormalSize*sizeof(float) + TextCoSize*sizeof(float)));
+    //glEnableVertexAttribArray(3);
+}
+
+void Graphics::SetFBO()
+{
+
+    // Create the frame buffer object.
+    glGenFramebuffers(1, &FBO);
+
+    // create depth texture
+    unsigned int depthMap;
+
+    glGenTextures(1, &depthMap);
+    glBindTexture(GL_TEXTURE_2D, depthMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // attach depth texture as FBO's depth buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Graphics::SetLightVAO(int VertSize, int NormalSize)
+{   
+    // Generate a VAO used for lighting.
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    // Bind to object vao.
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); // pass vbo
+
+    // Set attribute pointer for normals
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 );
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float)) );
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(VertSize*sizeof(float) + NormalSize*sizeof(float)) );
     glEnableVertexAttribArray(2);
 }
+
 
 // Deprecated (again)
 void Graphics::SetEBO(unsigned int Indices[], int IndiSize)
@@ -89,7 +138,6 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     unsigned char* bytes = stbi_load(TexturePath, &widthImg, &heightImg, &numColCh, 0);
 
     glGenTextures(1, Texture);
-    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, *Texture);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -98,14 +146,7 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
 
     stbi_image_free(bytes);
+    
     glBindTexture(GL_TEXTURE_2D, 0);
-
-
-    // ------------------------------- The rest should probably be new method, in the shader class.
-
-    // Needs to be a parameter "tex0"
-    GLuint tex0Uni = glGetUniformLocation(*ShaderProgramPtr, "tex0");
     glLinkProgram(*ShaderProgramPtr);
-
-    glUniform1i(tex0Uni, 0);
 }

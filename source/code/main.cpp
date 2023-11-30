@@ -87,9 +87,13 @@ int main(int argc, char **argv)
     // !!! Load map and create all vertecies and textures.
     Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
 
-    // !!!
-    glEnable(GL_DEPTH_TEST);  
 
+    // Load depth test shader:
+    //Shader test_DepthShader("source/shaders/simpleDepthVertexShader.glsl", "source/shaders/simpleDepthFragmentShader.glsl");
+    
+    // Enable depth test and backface culling.
+    glEnable(GL_DEPTH_TEST);  
+    glEnable(GL_CULL_FACE);  
 
     // Setup variables for maintaining 60 fps
     int FrameTimeTotal;
@@ -120,11 +124,11 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // background color. Should be a seperate function.
-        glClearColor(0.766f, 0.922f, 0.970f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, window);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window);
 
 
         // Get the end time of the frame

@@ -6,11 +6,17 @@
 #include <graphicsHandler.h>
 
 
+struct GameElementMaterial
+{
+    float ShineValue;
+};
+
+
 class GameElement: public Graphics
 {
     public:
         // All variables that need to be set using the .arrmap file.
-        int Type;
+        int GameElementType = -1;
         int ShaderProgramIndex;
         int GLArraySize;
         int IndicesSize;
@@ -19,12 +25,17 @@ class GameElement: public Graphics
         float Scale[3];
         float Rotation[3];
 
+        // Material values.
+        GameElementMaterial Material;
+
+
         // Only here to allow change of shaders on the fly.
         string VertexShaderPath = "NULL";
         string FragmentShaderPath = "NULL";
 
         // Texture
-        GLuint Texture;
+        GLuint DiffuseTexture;
+        GLuint SpecularTexture;
 };
 
 #endif

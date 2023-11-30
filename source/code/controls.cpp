@@ -66,6 +66,16 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 
 void Controls::GetPlayerMovementInput(const Uint8 *keyArray)
 {	
+    if(keyArray[SDL_SCANCODE_LSHIFT])
+    {
+        // Triple speed
+        speed = 15.0f;
+    }
+    else
+    {
+        // default speed
+        speed = 3.0f;
+    }
 
     if(keyArray[SDL_SCANCODE_W])
     {

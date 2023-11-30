@@ -84,6 +84,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
     // Path of a texture and shaders
     string TexturePath;
+    string SpecularPath;
     string VertexShaderPath;
     string FragmentShaderPath;
 
@@ -93,7 +94,6 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
     vector<array<string, 2> > VertexFragmentVector;
     vector<GLuint> ProgramVector;
 
-
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)      
     {                                                 
@@ -102,20 +102,14 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
         SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');
 
-        /*
-        for(int ArrmapAttributeNumber = 0; ArrmapAttributeNumber < SingleGeometryVector.size();)
-        {   
-            cout << SingleGeometryVector[ArrmapAttributeNumber] << endl;
-            ArrmapAttributeNumber++;
-        }
-        */
-        
         // Get values contained in the .arrmap file.
-        GetKeyValue_str("TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
+        GetKeyValue_str("DIFFUSE_TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
         GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
         GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
 
-        // The important information:
+        GetKeyValue_int32("TYPE", SingleGeometryVector, &GameElementVector[0][Index]->GameElementType, ArrmapFilePath);
+
+        // The geometry information.
         GetKeyValue_floatvector("VERTICES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
         GetKeyValue_floatvector("NORMALS", SingleGeometryVector, &NormalsVec, ArrmapFilePath);
         GetKeyValue_floatvector("TEXTURE_COORDS", SingleGeometryVector, &TexVec, ArrmapFilePath);
@@ -134,8 +128,18 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
             &IndicesVec[0], IndicesVec.size()
         );
 
-        GameElementVector[0][Index]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());  
+        if(GameElementVector[0][Index]->GameElementType >= 1)
+        {
+            // Materials.
+            GetKeyValue_float("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][Index]->Material.ShineValue, ArrmapFilePath);
 
+            GameElementVector[0][Index]->SetLightVAO(VertexVec.size(), NormalsVec.size());
+        }
+        else
+        {
+            GameElementVector[0][Index]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());
+        }
+     
         //GameElementVector[0][Index]->SetVBO(&VertexVec[0], VertexVec.size());
         //GameElementVector[0][Index]->SetVAO();
         //GameElementVector[0][Index]->SetEBO(&IndicesVec[0], IndicesVec.size());
@@ -150,12 +154,23 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
         // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
    
-        GameElementVector[0][Index]->LoadTexture
-        (
-            &GameElementVector[0][Index]->Texture, 
+        GameElementVector[0][Index]->LoadTexture(
+            &GameElementVector[0][Index]->DiffuseTexture, 
             &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
             TexturePath.c_str()
         );
+
+        // Load specular map if set.
+        if(GameElementVector[0][Index]->GameElementType == 2)
+        {
+            GetKeyValue_str("SPECULAR_TEXTURE_PATH", SingleGeometryVector, &SpecularPath, ArrmapFilePath);
+
+            GameElementVector[0][Index]->LoadTexture(
+                &GameElementVector[0][Index]->SpecularTexture, 
+                &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
+                SpecularPath.c_str()
+            );
+        }
         
         // Clear vectors
         SingleGeometryVector.clear();
