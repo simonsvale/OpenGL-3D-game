@@ -246,3 +246,15 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     // Draw everything onto the program.
     SDL_GL_SwapWindow(window);
 }
+
+void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &Cubemap)
+{
+    for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+
+        // Set cubemap shader.
+        int modelLoc = glGetUniformLocation(Cubemap.ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    }
+}

@@ -21,11 +21,7 @@ class Graphics
         GLuint VBO;
 
         GLuint FBO; // Framebuffer for shadow mapping
-
-        // Should be configurable!
-        const unsigned int SHADOW_WIDTH = 1024;
-        const unsigned int SHADOW_HEIGHT = 1024;
-
+        
         // Since C style arrays decays to pointers, we need to pass the size in too.
         void SetVBO(float Vertices[], int VertSize);
         void SetVAO(int VertSize, int NormalSize, int TextCoSize);

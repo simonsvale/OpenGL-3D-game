@@ -38,7 +38,8 @@ class Renderer
             SDL_Window *window
         );
 
-        // Remove test_shader soon
+        // Method for rendering cubemaps for shadow mapping.
+        void RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &CubemapShader);
         
 };
 
