@@ -20,6 +20,10 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     // Need a function call that sets static geometry, since most things do not need to get rotated, scaled and get a position each frame.
     // Use EBO again!
 
+    // Take screen size instead.
+    glViewport(0, 0, 1080, 720);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {   
         /*
@@ -248,7 +252,33 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 }
 
 void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &Cubemap)
-{
+{   
+    // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
+    glm::vec3 lightPos =  glm::vec3(-8.0f, 2.0f, 4.0f);
+
+    // Distance
+    float near_plane = 1.0f;
+    float far_plane  = 25.0f;
+
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)1024 / (float)1024, near_plane, far_plane);
+    std::vector<glm::mat4> shadowTransforms;
+
+    // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+
+
+    glViewport(0, 0, 1024, 1024);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(Cubemap.ShaderProgram);
+    
+
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {
         glm::mat4 model = glm::mat4(1.0f);
