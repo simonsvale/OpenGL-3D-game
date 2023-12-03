@@ -88,8 +88,13 @@ int main(int argc, char **argv)
     Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
 
 
-    // Load depth test shader:
-    //Shader test_DepthShader("source/shaders/simpleDepthVertexShader.glsl", "source/shaders/simpleDepthFragmentShader.glsl");
+    // Load depth test shader, NEEDS GEOMETRY SHADER!!!!
+    Shader DepthShader("source/shaders/simpleDepthVertexShader.glsl", "source/shaders/simpleDepthFragmentShader.glsl");
+
+    // !!!
+    GameElement FBODummy;
+    FBODummy.SetFBO();
+
     
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
@@ -126,6 +131,9 @@ int main(int argc, char **argv)
         // background color. Should be a seperate function.
         glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+        // !!!
+        RenderObj.RenderCubemaps(GameElementVector, DepthShader, FBODummy);
 
         // Render Everything.
         RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window);

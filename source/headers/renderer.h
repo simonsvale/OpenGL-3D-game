@@ -39,7 +39,7 @@ class Renderer
         );
 
         // Method for rendering cubemaps for shadow mapping.
-        void RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &CubemapShader);
+        void RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &CubemapShader, GameElement FBODummy);
         
 };
 

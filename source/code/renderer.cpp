@@ -251,7 +251,8 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     SDL_GL_SwapWindow(window);
 }
 
-void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &Cubemap)
+
+void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &Cubemap, GameElement FBODummy)
 {   
     // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
     glm::vec3 lightPos =  glm::vec3(-8.0f, 2.0f, 4.0f);
@@ -261,7 +262,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     float far_plane  = 25.0f;
 
     glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)1024 / (float)1024, near_plane, far_plane);
-    std::vector<glm::mat4> shadowTransforms;
+    vector<glm::mat4> shadowTransforms;
 
     // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
     shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
@@ -271,14 +272,27 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
     shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
 
-
+    
+    // Create the cubemap(s).
     glViewport(0, 0, 1024, 1024);
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBODummy.FBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(Cubemap.ShaderProgram);
-    
 
+    string name;
+    for (unsigned int i = 0; i < 6;)
+    {
+        name = "shadowMatrices[" + std::to_string(i) + "]";
+        glUniformMatrix4fv( glGetUniformLocation(Cubemap.ShaderProgram, name.c_str()), 1, GL_FALSE, &shadowTransforms[i][0][0]);
+        i++;
+    }
+
+    glUniform1f( glGetUniformLocation(Cubemap.ShaderProgram, "far_plane"), far_plane );
+    glUniform3f( glGetUniformLocation(Cubemap.ShaderProgram, "lightPos"), lightPos[0], lightPos[1], lightPos[2]);
+
+    
+    // Render the scene
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {
         glm::mat4 model = glm::mat4(1.0f);
@@ -286,5 +300,8 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
         // Set cubemap shader.
         int modelLoc = glGetUniformLocation(Cubemap.ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        GameElementNumber++;
     }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

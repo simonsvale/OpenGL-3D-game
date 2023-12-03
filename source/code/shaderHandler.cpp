@@ -45,6 +45,18 @@ void Shader::CreateVertexShader(const char *ShaderCode)
     glCompileShader(VertexShader);
 }
 
+
+void Shader::CreateGeometryShader(const char *ShaderCode)
+{
+    // Tell the variable that it is a vertex shader.
+    GeometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+
+    // Give the vertex shader a pointer to the GLSL code.
+    glShaderSource(GeometryShader, 1, &ShaderCode, NULL);
+    glCompileShader(GeometryShader);
+}
+
+
 void Shader::AttachShader(GLuint *Program)
 {   
     // Tell the GLuint that it is a shader program.
@@ -53,5 +65,10 @@ void Shader::AttachShader(GLuint *Program)
     // Attach the vertex and fragment shader to the shader program.
     glAttachShader(*Program, FragmentShader);
     glAttachShader(*Program, VertexShader);
+    
+    if(GeometryShader != -1)
+    {
+        glAttachShader(*Program, GeometryShader);
+    }
 }
 
