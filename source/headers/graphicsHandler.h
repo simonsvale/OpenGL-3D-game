@@ -21,6 +21,7 @@ class Graphics
         GLuint VBO;
 
         GLuint FBO; // Framebuffer for shadow mapping
+        unsigned int depthCubemap;
         
         // Since C style arrays decays to pointers, we need to pass the size in too.
         void SetVBO(float Vertices[], int VertSize);

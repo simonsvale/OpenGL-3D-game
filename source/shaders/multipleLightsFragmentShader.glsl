@@ -45,8 +45,6 @@ struct GlobalDirectionalLight {
 };
 
 // Should be a uniform passed to the shader, change later...
-//#define PointLightAmount 2
-//#define SpotLightAmount 2
 
 in vec3 FragPos;
 in vec3 Normal;
@@ -54,19 +52,19 @@ in vec2 TexCoords;
 
 uniform vec3 viewPos;
 
-#define POINT_LIGHT_AMOUNT 2
-#define SPOT_LIGHT_AMOUNT 2
+#define POINT_LIGHT_AMOUNT 1
+//#define SPOT_LIGHT_AMOUNT 1
 
 uniform PointLight PointLightArr[POINT_LIGHT_AMOUNT];
-uniform SpotLight SpotLightArr[SPOT_LIGHT_AMOUNT];
+//uniform SpotLight SpotLightArr[SPOT_LIGHT_AMOUNT];
 
-uniform GlobalDirectionalLight GlobalLight;
+//uniform GlobalDirectionalLight GlobalLight;
 uniform Material material;
 
 // Define functions:
-vec3 CalculateGlobalDirectionalLight(GlobalDirectionalLight light, vec3 normal, vec3 viewDir);
+//vec3 CalculateGlobalDirectionalLight(GlobalDirectionalLight light, vec3 normal, vec3 viewDir);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+//vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {    
@@ -74,26 +72,33 @@ void main()
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // Define the output vec3 result.
-    vec3 result = CalculateGlobalDirectionalLight( GlobalLight, norm, viewDir);
+    //vec3 result = CalculateGlobalDirectionalLight( GlobalLight, norm, viewDir);
+    
+    vec3 result = CalculatePointLight( PointLightArr[0], norm, FragPos, viewDir );
 
-    // Calculate the values for all point lights.
+    /*
+    //Calculate the values for all point lights.
     for(int PointLightNumber = 0; PointLightNumber < POINT_LIGHT_AMOUNT;)
     {
         result += CalculatePointLight( PointLightArr[PointLightNumber], norm, FragPos, viewDir );    
         PointLightNumber++;
     }
+    */
 
+    /*
     // Calculate the values for all spot lights.
     for(int SpotLightNumber = 0; SpotLightNumber < SPOT_LIGHT_AMOUNT;)
     {
         result += CalculateSpotLight( SpotLightArr[SpotLightNumber], norm, FragPos, viewDir ); 
         SpotLightNumber++;
     }
+    */
     
     // return the frag color of the shader.
     FragColor = vec4(result, 1.0);
 }
 
+/*
 // Done, make better later
 vec3 CalculateGlobalDirectionalLight(GlobalDirectionalLight light, vec3 normal, vec3 viewDir)
 {
@@ -112,6 +117,7 @@ vec3 CalculateGlobalDirectionalLight(GlobalDirectionalLight light, vec3 normal, 
         
     return (ambient + diffuse + specular);
 }
+*/
 
 // Calculates light values for the point light.
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
@@ -139,6 +145,7 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
     return (ambient + diffuse + specular);
 }
 
+/*
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     // ambient
@@ -168,3 +175,4 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
         
     return (ambient + diffuse + specular);
 }
+*/

@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 
 
     // Load depth test shader, NEEDS GEOMETRY SHADER!!!!
-    Shader DepthShader("source/shaders/simpleDepthVertexShader.glsl", "source/shaders/simpleDepthFragmentShader.glsl");
+    Shader DepthShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl");
 
     // !!!
     GameElement FBODummy;
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
         RenderObj.RenderCubemaps(GameElementVector, DepthShader, FBODummy);
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, FBODummy);
 
 
         // Get the end time of the frame

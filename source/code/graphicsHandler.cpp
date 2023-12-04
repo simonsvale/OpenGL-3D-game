@@ -70,9 +70,6 @@ void Graphics::SetFBO()
     // Create the frame buffer object.
     glGenFramebuffers(1, &FBO);
 
-    // create depth texture
-    unsigned int depthCubemap;
-
     glGenTextures(1, &depthCubemap);
     const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
     glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);

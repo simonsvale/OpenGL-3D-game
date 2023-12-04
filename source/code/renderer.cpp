@@ -12,13 +12,15 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, GameElement FBODummy)
 {   
     int ShaderIndex;
 
     // ################################################################################
     // Need a function call that sets static geometry, since most things do not need to get rotated, scaled and get a position each frame.
     // Use EBO again!
+
+    float far_plane  = 25.0f;
 
     // Take screen size instead.
     glViewport(0, 0, 1080, 720);
@@ -70,16 +72,10 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Get GameElement's shaderprogram index.
         ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
 
-        // Bind diffuse and specular textures.
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->SpecularTexture);
-
         // Set shader program
         glUseProgram(ShaderObjectVector[GameElementVector[GameElementNumber]->ShaderProgramIndex]->ShaderProgram);
 
+        /*
         // Send the diffuse and specular map to the fragment shader.
         int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.DiffuseMap");
         glUniform1i(DiffuseLoc, 0);
@@ -90,7 +86,12 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Set material shine value.
         int ShineLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "material.ShineValue");
         glUniform1f(ShineLoc, GameElementVector[GameElementNumber]->Material.ShineValue);
+        */
 
+        // Send the diffuse and specular map to the fragment shader.
+        int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "diffuseTexture");
+        glUniform1i(DiffuseLoc, 0);
+        
         // If(GameElementVector[GameElementNumber]->Type != STATIC)
         // #define STATIC 1
         
@@ -113,20 +114,19 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
             GameElementVector[GameElementNumber]->Scale[2]
         ));
 
-
-        // Player position for calculating specular.
-        int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
-        glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
         
-        float time  = (SDL_GetTicks()/3500.0);
+        //float time  = (SDL_GetTicks()/3500.0);
 
+        /*
         // Global light:
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.direction"), 0.0f, -10.0f, -10.0f);
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.ambient"), 0.08, 0.08, 0.05);
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.diffuse"), 0.15, 0.16, 0.1);
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "GlobalLight.specular"), 0.15, 0.16, 0.1);
         // Global light end;
+        */
 
+        /*
         // Pointlight number 1:
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].position"), -8.0f, 2.0f, 4.0f);
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].ambient"), 0.02, 0.06, 0.1);
@@ -137,7 +137,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].linear"), 0.022f);
         glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[0].quadratic"), 0.0019f);
         // End 1;
+        */
 
+        /*
         // Pointlight number 2:
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].position"), 1.0f, 1.0f, 1.0f);
         glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "PointLightArr[1].ambient"), 0.07, 0.12, 0.06);
@@ -179,7 +181,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].constant"), 1.0f);
         glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].linear"), 0.022f);
         glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "SpotLightArr[1].quadratic"), 0.0019f);
-
+        */
         // End 2;
 
         /*
@@ -224,6 +226,11 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glUniform3f(LightSpecularLoc, 0.812, 0.404, 0.082);
         */
 
+
+        // Player position for calculating specular.
+        int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
+        glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
+
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -234,6 +241,20 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int projectionLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+
+        // set lighting uniforms
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "lightPos"), -8.0f, 2.0f, 4.0f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "shadows"), 1.0f);
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "far_plane"), far_plane);
+
+        
+        // Bind diffuse and specular textures.
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
+
+        glActiveTexture(GL_TEXTURE1);
+        //glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->SpecularTexture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, FBODummy.depthCubemap);
 
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
@@ -254,6 +275,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
 void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &Cubemap, GameElement FBODummy)
 {   
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
     glm::vec3 lightPos =  glm::vec3(-8.0f, 2.0f, 4.0f);
 
@@ -290,12 +314,18 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     glUniform1f( glGetUniformLocation(Cubemap.ShaderProgram, "far_plane"), far_plane );
     glUniform3f( glGetUniformLocation(Cubemap.ShaderProgram, "lightPos"), lightPos[0], lightPos[1], lightPos[2]);
-
+    
     
     // Render the scene
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {
         glm::mat4 model = glm::mat4(1.0f);
+
+        model = glm::translate(model, glm::vec3(
+            GameElementVector[GameElementNumber]->WorldPosition[0], 
+            GameElementVector[GameElementNumber]->WorldPosition[1], 
+            GameElementVector[GameElementNumber]->WorldPosition[2]
+        ));
 
         // Set cubemap shader.
         int modelLoc = glGetUniformLocation(Cubemap.ShaderProgram, "model");
