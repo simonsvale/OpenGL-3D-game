@@ -132,11 +132,8 @@ int main(int argc, char **argv)
         glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        // !!!
-        RenderObj.RenderCubemaps(GameElementVector, DepthShader, FBODummy);
-
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, FBODummy);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, FBODummy, DepthShader);
 
 
         // Get the end time of the frame

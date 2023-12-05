@@ -36,11 +36,12 @@ class Renderer
             glm::mat4 view,
             glm::vec3 CameraPosition,
             SDL_Window *window,
-            GameElement FBODummy
+            GameElement &FBODummy,
+            Shader &CubemapShader
         );
 
         // Method for rendering cubemaps for shadow mapping.
-        void RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &CubemapShader, GameElement FBODummy);
+        void RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &CubemapShader, GameElement &FBODummy);
         
 };
 
