@@ -31,6 +31,8 @@ class Shader
             LoadShaderFile(FragmentShaderFilePath, &GLSLCode);
             CreateFragmentShader(GLSLCode.c_str());
 
+            GLSLCode.clear();
+
             // Check if the string is a nullptr aka. not set.
             if(GeometryShaderFilePath != "-")
             {

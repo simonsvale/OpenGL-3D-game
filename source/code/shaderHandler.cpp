@@ -67,7 +67,7 @@ void Shader::AttachShader(GLuint *Program)
     glAttachShader(*Program, VertexShader);
     
     if(GeometryShader != -1)
-    {
+    {   
         glAttachShader(*Program, GeometryShader);
     }
 }

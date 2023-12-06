@@ -18,24 +18,24 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
     // ################################################################################
     // Need a function call that sets static geometry, since most things do not need to get rotated, scaled and get a position each frame.
-    // Use EBO again!
 
     // Send the diffuse and specular map to the fragment shader.
-    glUseProgram(ShaderObjectVector[1]->ShaderProgram);
+    glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
-    int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[1]->ShaderProgram, "diffuseTexture");
+    int DiffuseLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "diffuseTexture");
     glUniform1i(DiffuseLoc, 0);
 
-    int DepthLoc = glGetUniformLocation(ShaderObjectVector[1]->ShaderProgram, "depthMap");
+    int DepthLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "depthMap");
     glUniform1i(DepthLoc, 1);
 
     RenderCubemaps(GameElementVector, CubemapShader, FBODummy);
 
-    float far_plane  = 25.0f;
-
+    
     // Take screen size instead.
     glViewport(0, 0, 1080, 720);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    float far_plane  = 25.0f;
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {   
@@ -83,7 +83,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Get GameElement's shaderprogram index.
         ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
 
-        glUseProgram(ShaderObjectVector[ShaderIndex]->ShaderProgram);
         // Set shader program
 
         /*
@@ -249,7 +248,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "viewPos");
         glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
         
-        glUniform1i( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "shadows"), 1);
+        glUniform1i( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "shadows"), true);
         glUniform1f( glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "far_plane"), far_plane);
 
         
@@ -306,7 +305,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
-    glm::vec3 lightPos =  glm::vec3(2.0f, 4.0f, 4.0f);
+    glm::vec3 lightPos(2.0f, 4.0f, 4.0f);
 
     // Distance
     float near_plane = 1.0f;
@@ -331,11 +330,9 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     glUseProgram(Cubemap.ShaderProgram);
 
-    string name;
     for (unsigned int i = 0; i < 6;)
     {
-        name = "shadowMatrices[" + std::to_string(i) + "]";
-        glUniformMatrix4fv( glGetUniformLocation(Cubemap.ShaderProgram, name.c_str()), 1, GL_FALSE, &shadowTransforms[i][0][0]);
+        glUniformMatrix4fv( glGetUniformLocation(Cubemap.ShaderProgram, ("shadowMatrices[" + std::to_string(i) + "]").c_str()), 1, GL_FALSE, &shadowTransforms[i][0][0]);
         i++;
     }
 
@@ -353,17 +350,28 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
             GameElementVector[GameElementNumber]->WorldPosition[1], 
             GameElementVector[GameElementNumber]->WorldPosition[2]
         ));
+
+        // Set GameElement model rotation around x, y, z, in degrees.
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[0]), glm::vec3(1, 0, 0));
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[1]), glm::vec3(0, 1, 0));
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[2]), glm::vec3(0, 0, 1));
+
+        // Set GameElement model scale.
+        model = glm::scale(model, glm::vec3(
+            GameElementVector[GameElementNumber]->Scale[0], 
+            GameElementVector[GameElementNumber]->Scale[1], 
+            GameElementVector[GameElementNumber]->Scale[2]
+        ));
         
 
         // Set cubemap shader.
         int modelLoc = glGetUniformLocation(Cubemap.ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        
-
         // bind and draw
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
+
         glDrawElements(GL_TRIANGLES, GameElementVector[GameElementNumber]->IndicesSize, GL_UNSIGNED_INT, 0);
 
         GameElementNumber++;
