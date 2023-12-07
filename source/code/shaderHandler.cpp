@@ -69,6 +69,7 @@ void Shader::AttachShader(GLuint *Program)
     if(GeometryShader != -1)
     {   
         glAttachShader(*Program, GeometryShader);
+        glLinkProgram(*Program);
     }
 }
 
