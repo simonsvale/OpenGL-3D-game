@@ -32,7 +32,13 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     glViewport(0, 0, 1080, 720);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // How tf did i miss this...
+    glUseProgram(ShaderObjectVector[0]->ShaderProgram);
+
     float far_plane  = 25.0f;
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, FBODummy.depthCubemap);
 
     int viewLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "view");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -44,7 +50,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     // set lighting uniforms
     glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "lightPos"), 2.0f, 4.0f, 4.0f);
     
-    // Player position for calculating specular.
     int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "viewPos");
     glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
     
@@ -63,10 +68,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Bind diffuse and specular textures.
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, FBODummy.depthCubemap);
-        //glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->SpecularTexture);
 
         model = glm::translate(model, glm::vec3(
             GameElementVector[GameElementNumber]->WorldPosition[0], 
@@ -136,7 +137,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(Cubemap.ShaderProgram); // Something must be wrong with this since gray is rendered no matter what.
+    glUseProgram(Cubemap.ShaderProgram);
 
     
     string matrix;
@@ -150,10 +151,11 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     glUniform1f( glGetUniformLocation(Cubemap.ShaderProgram, "far_plane"), far_plane );
     glUniform3f( glGetUniformLocation(Cubemap.ShaderProgram, "lightPos"), lightPos[0], lightPos[1], lightPos[2]);
     
+    glm::mat4 model = glm::mat4(1.0f);
+
     // Render the scene
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {
-        glm::mat4 model = glm::mat4(1.0f);
 
         model = glm::translate(model, glm::vec3(
             GameElementVector[GameElementNumber]->WorldPosition[0], 
