@@ -48,7 +48,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
 
     // set lighting uniforms
-    glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "lightPos"), 2.0f, 4.0f, 4.0f);
+    glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "lightPos"), -4.0f, 2.0f, 4.0f);
     
     int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "viewPos");
     glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
@@ -63,11 +63,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         // Get GameElement's shaderprogram index.
         ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
-
-
-        // Bind diffuse and specular textures.
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
 
         model = glm::translate(model, glm::vec3(
             GameElementVector[GameElementNumber]->WorldPosition[0], 
@@ -90,6 +85,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         // Assign new values to vertex shader.
         int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
 
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
@@ -114,7 +112,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
-    glm::vec3 lightPos(2.0f, 4.0f, 4.0f);
+    glm::vec3 lightPos(-4.0f, 2.0f, 4.0f);
 
     // Distance
     float near_plane = 1.0f;
@@ -139,7 +137,6 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     glUseProgram(Cubemap.ShaderProgram);
 
-    
     string matrix;
     for (unsigned int i = 0; i < 6;)
     {
@@ -150,12 +147,11 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     glUniform1f( glGetUniformLocation(Cubemap.ShaderProgram, "far_plane"), far_plane );
     glUniform3f( glGetUniformLocation(Cubemap.ShaderProgram, "lightPos"), lightPos[0], lightPos[1], lightPos[2]);
-    
-    glm::mat4 model = glm::mat4(1.0f);
 
     // Render the scene
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {
+        glm::mat4 model = glm::mat4(1.0f);
 
         model = glm::translate(model, glm::vec3(
             GameElementVector[GameElementNumber]->WorldPosition[0], 
@@ -184,6 +180,8 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
         glDrawElements(GL_TRIANGLES, GameElementVector[GameElementNumber]->IndicesSize, GL_UNSIGNED_INT, 0);
+
+        glBindVertexArray(0);
 
         GameElementNumber++;
     }
