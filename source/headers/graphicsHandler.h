@@ -36,7 +36,7 @@ class Graphics
         // For creating EBO from indices.
         void SetEBO(unsigned int Indices[], int IndiSize);
 
-        void LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath);
+        void LoadTexture(GLuint *Texture, const char *TexturePath);
 
 };
 

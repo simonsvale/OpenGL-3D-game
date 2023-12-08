@@ -156,7 +156,6 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
    
         GameElementVector[0][Index]->LoadTexture(
             &GameElementVector[0][Index]->DiffuseTexture, 
-            &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
             TexturePath.c_str()
         );
 
@@ -166,8 +165,7 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
             GetKeyValue_str("SPECULAR_TEXTURE_PATH", SingleGeometryVector, &SpecularPath, ArrmapFilePath);
 
             GameElementVector[0][Index]->LoadTexture(
-                &GameElementVector[0][Index]->SpecularTexture, 
-                &ShaderObjectVector[0][GameElementVector[0][Index]->ShaderProgramIndex]->ShaderProgram, 
+                &GameElementVector[0][Index]->SpecularTexture,  
                 SpecularPath.c_str()
             );
         }

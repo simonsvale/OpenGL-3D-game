@@ -84,14 +84,14 @@ int main(int argc, char **argv)
         return 1; 
     }
 
+    // !!! Load map and create all vertecies and textures.
+    Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
+
     // Load depth test shader, NEEDS GEOMETRY SHADER!!!!
     Shader DepthShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl");
 
     GameElement FBODummy;
     FBODummy.SetFBO();
-
-    // !!! Load map and create all vertecies and textures.
-    Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
     
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
         Controls.ComputeMouseInput(window);
         projection = Controls.ProjectionMatrix;
         view = Controls.ViewMatrix;
-
+        
         // Render Everything.
         RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, FBODummy, DepthShader);
 

@@ -68,30 +68,28 @@ void Graphics::SetFBO()
 {
     const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 
+    glGenFramebuffers(1, &FBO);
+    // create depth cubemap texture
+
     glGenTextures(1, &depthCubemap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    for (unsigned int i = 0; i < 6;)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        i++;
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); 
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    // Assign the depthmap texture to all 6 faces of the cubemap.
-    for (unsigned int i = 0; i < 6; ++i)
-    {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); 
-    } 
-
-    // Create the frame buffer object.
-    glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
+
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
-    
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);  
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Graphics::SetLightVAO(int VertSize, int NormalSize)
@@ -128,7 +126,7 @@ void Graphics::SetEBO(unsigned int Indices[], int IndiSize)
 
 
 // Currently a working, but unfinished function, may need to take more parameters.
-void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char *TexturePath)
+void Graphics::LoadTexture(GLuint *Texture, const char *TexturePath)
 {
     // Set textures:
     int widthImg, heightImg, numColCh;
@@ -149,5 +147,4 @@ void Graphics::LoadTexture(GLuint *Texture, GLuint *ShaderProgramPtr, const char
     stbi_image_free(bytes);
     
     glBindTexture(GL_TEXTURE_2D, 0);
-    glLinkProgram(*ShaderProgramPtr);
 }

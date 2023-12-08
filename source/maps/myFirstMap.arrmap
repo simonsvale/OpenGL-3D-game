@@ -126,7 +126,7 @@ MAP_GEOMETRY =
     SHINE_VALUE = 128.0f},
 
     // HD TORUS
-    {TYPE = 2,
+    {TYPE = 0,
     DIFFUSE_TEXTURE_PATH = "source/textures/mars_sand.png",
     SPECULAR_TEXTURE_PATH = "source/textures/mars_sand_spec3.png",
     VERTEX_SHADER_PATH = "source/shaders/depthVert.glsl",
