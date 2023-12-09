@@ -90,8 +90,8 @@ int main(int argc, char **argv)
     // Load depth test shader, NEEDS GEOMETRY SHADER!!!!
     Shader DepthShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl");
 
-    GameElement FBODummy;
-    FBODummy.SetFBO();
+    GameElement DepthFBO;
+    DepthFBO.SetFBO();
     
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
@@ -124,9 +124,9 @@ int main(int argc, char **argv)
         Controls.ComputeMouseInput(window);
         projection = Controls.ProjectionMatrix;
         view = Controls.ViewMatrix;
-        
+
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, FBODummy, DepthShader);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthFBO, DepthShader);
 
 
         // Get the end time of the frame

@@ -12,7 +12,7 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, GameElement &FBODummy, Shader &CubemapShader)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, GameElement &DepthFBO, Shader &CubemapShader)
 {   
     int ShaderIndex;
 
@@ -25,7 +25,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     glUniform1i( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "diffuseTexture"), 0);
     glUniform1i( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "depthMap"), 1);
 
-    RenderCubemaps(GameElementVector, CubemapShader, FBODummy);
+    RenderCubemaps(GameElementVector, CubemapShader, DepthFBO);
 
     
     // Take screen size instead.
@@ -38,7 +38,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     float far_plane  = 25.0f;
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, FBODummy.depthCubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, DepthFBO.depthCubemap);
 
     int viewLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "view");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -106,7 +106,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 }
 
 
-void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &Cubemap, GameElement &FBODummy)
+void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &Cubemap, GameElement &DepthFBO)
 {   
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -131,7 +131,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     // Create the cubemap(s).
     glViewport(0, 0, 1024, 1024);
-    glBindFramebuffer(GL_FRAMEBUFFER, FBODummy.FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, DepthFBO.FBO);
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
