@@ -25,32 +25,9 @@ vec3 gridSamplingDisk[20] = vec3[]
    vec3(0, 1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0, 1, -1)
 );
 
-float ShadowCalculation(vec3 fragPos)
-{
-    // get vector between fragment position and light position
-    vec3 fragToLight = fragPos - lightPos;
 
-    float currentDepth = length(fragToLight);
-
-    float shadow = 0.0;
-    float bias = 0.20;
-    int samples = 10;
-    float viewDistance = length(viewPos - fragPos);
-    float diskRadius = (1.0 + (viewDistance / far_plane)) / 25.0;
-    for(int i = 0; i < samples; ++i)
-    {
-        float closestDepth = texture(depthMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-        closestDepth *= far_plane;   // undo mapping [0;1]
-        if(currentDepth - bias > closestDepth)
-            shadow += 1.0;
-    }
-    shadow /= float(samples);
-        
-    // display closestDepth as debug (to visualize depth cubemap)
-    //FragColor = vec4(vec3(closestDepth / far_plane), 1.0);    
-        
-    return shadow;
-}
+// Define functions:
+float ShadowCalculation(vec3 fragPos, float DistanceFromLight);
 
 // main
 void main()
@@ -84,8 +61,42 @@ void main()
     specular *= attenuation;
 
     // calculate shadow
-    float shadow = ShadowCalculation(fs_in.FragPos);                      
+    float shadow = ShadowCalculation(fs_in.FragPos, distance);                      
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * texture(diffuseTexture, fs_in.TexCoords).rgb;    
     
     FragColor = vec4(lighting, 1.0);
+}
+
+
+// Calculate shadows
+float ShadowCalculation(vec3 fragPos, float DistanceFromLight)
+{
+    // get vector between fragment position and light position
+    vec3 fragToLight = fragPos - lightPos;
+
+    float currentDepth = length(fragToLight);
+
+    float shadow = 0.0;
+    float bias = 0.20;
+    int samples = 10;
+
+    // How fuzzy the edges of the shadow should be, higher value = less fuzzy.
+    float ShadowFuzzyValue = 60.0;
+
+
+    float viewDistance = length(viewPos - fragPos);
+    float diskRadius = (1.0 + (viewDistance / far_plane)) / (ShadowFuzzyValue / (DistanceFromLight * 0.2) );
+    for(int i = 0; i < samples; ++i)
+    {
+        float closestDepth = texture(depthMap, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= far_plane;   // undo mapping [0;1]
+        if(currentDepth - bias > closestDepth)
+            shadow += 1.0;
+    }
+    shadow /= float(samples);
+        
+    // display closestDepth as debug (to visualize depth cubemap)
+    //FragColor = vec4(vec3(closestDepth / far_plane), 1.0);    
+        
+    return shadow;
 }

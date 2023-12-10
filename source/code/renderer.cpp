@@ -48,12 +48,11 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
 
     // set lighting uniforms
-    glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "lightPos"), -4.0f, 2.0f, 4.0f);
+    glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "lightPos"), 3.7f, 7.0f, 2.0f);
     
     int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "viewPos");
     glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
     
-    glUniform1i( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "shadows"), 1);
     glUniform1f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "far_plane"), far_plane);
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
@@ -112,7 +111,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
-    glm::vec3 lightPos(-4.0f, 2.0f, 4.0f);
+    glm::vec3 lightPos(3.7f, 7.0f, 2.0f);
 
     // Distance
     float near_plane = 1.0f;
