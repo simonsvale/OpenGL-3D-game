@@ -30,7 +30,7 @@ MAP_GEOMETRY =
     VERTEX_SHADER_PATH = "source/shaders/depthVert.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/game/LightShader.glsl",
     DRAW_TYPE = w,
-    WORLD_POSITION = {2.0f, 2.0f, 4.0f},
+    WORLD_POSITION = {2.0f, 2.5f, 4.0f},
     SCALE = {1.0f, 1.0f, 1.0f},
     ROTATION = {0.0f, 0.0f, 0.0f},
     VERTICES = {-1, 1, -1, 1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1, 1, 1, -1, -1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1},
@@ -42,7 +42,7 @@ MAP_GEOMETRY =
 
    // Mars sand floor
    {TYPE = 0,
-    DIFFUSE_TEXTURE_PATH = "source/textures/bushes.png",
+    DIFFUSE_TEXTURE_PATH = "source/textures/mars_sand.png",
     SPECULAR_TEXTURE_PATH = "source/textures/mars_sand_spec3.png",
     VERTEX_SHADER_PATH = "source/shaders/depthVert.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/game/LightShader.glsl",
@@ -81,7 +81,7 @@ MAP_GEOMETRY =
     VERTEX_SHADER_PATH = "source/shaders/depthVert.glsl",
     FRAGMENT_SHADER_PATH = "source/shaders/game/LightShader.glsl",
     DRAW_TYPE = w,
-    WORLD_POSITION = {4.0f, 2.0f, 5.0f},
+    WORLD_POSITION = {4.0f, 2.3f, 5.0f},
     SCALE = {1.0f, 1.0f, 1.0f},
     ROTATION = {0.0f, 0.0f, 0.0f},
     VERTICES = {-1, 1, -1, 1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1, 1, 1, -1, -1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1},
@@ -108,7 +108,7 @@ MAP_GEOMETRY =
     SPECULAR_STRENGTH = {0.5f, 0.5f, 0.5f},
     SHINE_VALUE = 32.0f},
 
-    // Blender monkey
+    // Test model Suzanne
     {TYPE = 0,
     DIFFUSE_TEXTURE_PATH = "source/textures/debug3.png",
     VERTEX_SHADER_PATH = "source/shaders/depthVert.glsl",
