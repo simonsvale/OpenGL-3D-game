@@ -52,10 +52,11 @@ void main()
 
     // specular
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
-    vec3 reflectDir = reflect(-lightDir, normal);
+    
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     float spec = pow(max(dot(normal, halfwayDir), 0.0), 128.0);
     vec3 specular = spec * LightColor;  
+
 
     diffuse *= attenuation;
     specular *= attenuation;

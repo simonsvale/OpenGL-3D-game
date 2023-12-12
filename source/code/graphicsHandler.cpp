@@ -148,3 +148,4 @@ void Graphics::LoadTexture(GLuint *Texture, const char *TexturePath)
     
     glBindTexture(GL_TEXTURE_2D, 0);
 }
+

@@ -30,6 +30,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     
     // Take screen size instead.
     glViewport(0, 0, 1080, 720);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // How tf did i miss this...
