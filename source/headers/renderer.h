@@ -12,6 +12,8 @@
 #include "shaderHandler.h"
 #include "gameElementHandler.h"
 
+#include "cubemaps.h"
+
 using namespace std;
 
 // Does everything related to the graphics
@@ -37,7 +39,8 @@ class Renderer
             glm::vec3 CameraPosition,
             SDL_Window *window,
             GameElement &FBODummy,
-            Shader &CubemapShader
+            Shader &CubemapShader,
+            Skybox Sky
         );
 
         // Method for rendering cubemaps for shadow mapping.

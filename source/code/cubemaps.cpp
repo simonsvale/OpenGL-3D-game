@@ -30,6 +30,38 @@ void Cubemap::create_reflection_cubemap(void)
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
+void Cubemap::load_cubemap(void)
+{
+    // Generate the framebuffer and the cubemap texture.
+    glGenTextures(1, &Texture);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, Texture);
+
+    int ImageWidth;
+    int ImageHeight;
+    int Channels;
+
+    // Assign a 2d texture to each side of the cubemap.
+    for (unsigned int i = 0; i < 6;)
+    {   
+        unsigned char* ImageData = stbi_load(CubemapPath[i].c_str(), &ImageWidth, &ImageHeight, &Channels, 0);
+
+        // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, ImageData);
+
+        stbi_image_free(ImageData);
+        i++;
+    }
+    
+    // Setup parameters
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
+
+
 void Cubemap::render_reflection_framebuffer(Shader ReflectionShader)
 {   
     // Set the viewport size the framebuffer should render to.
@@ -72,33 +104,26 @@ void Cubemap::render_reflection_framebuffer(Shader ReflectionShader)
 }
 
 
-void Cubemap::load_cubemap(void)
+void Skybox::render_skybox(glm::mat4 *ViewMatrix, glm::mat4 *ProjectionMatrix)
 {
-    // Generate the framebuffer and the cubemap texture.
-    glGenTextures(1, &Texture);
+    //glDepthMask(GL_FALSE);
+    glDepthFunc(GL_LEQUAL);
+    glUseProgram(SkyboxShader.ShaderProgram);
 
+    *ViewMatrix = glm::mat4( glm::mat3(*ViewMatrix) );
+
+    // Set view matrix and projection matrix for skybox.
+    glUniformMatrix4fv( glGetUniformLocation(SkyboxShader.ShaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(*ViewMatrix) );
+    glUniformMatrix4fv( glGetUniformLocation(SkyboxShader.ShaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(*ProjectionMatrix) );
+
+
+    // skybox cube
+    glBindVertexArray(SkyboxVAO);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, Texture);
 
-    int ImageWidth;
-    int ImageHeight;
-    int Channels;
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    // Assign a 2d texture to each side of the cubemap.
-    for (unsigned int i = 0; i < 6;)
-    {   
-        unsigned char* ImageData = stbi_load(CubemapPath[i].c_str(), &ImageWidth, &ImageHeight, &Channels, 0);
-
-        // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, ImageData);
-
-        stbi_image_free(ImageData);
-        i++;
-    }
-    
-    // Setup parameters
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glBindVertexArray(0);
+    glDepthFunc(GL_LESS); // set depth function back to default
 }

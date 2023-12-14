@@ -12,7 +12,7 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, GameElement &DepthFBO, Shader &CubemapShader)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, GameElement &DepthFBO, Shader &CubemapShader, Skybox Sky)
 {   
     int ShaderIndex;
 
@@ -100,6 +100,9 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         GameElementNumber++;
     }
+
+    // Render skybox
+    Sky.render_skybox(&view, &projection);
 
     // Draw everything onto the program.
     SDL_GL_SwapWindow(window);

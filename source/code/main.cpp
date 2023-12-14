@@ -25,6 +25,7 @@
 #include "structures.h"
 
 #include "gameElementHandler.h"
+#include "cubemaps.h"
 
 #include "controls.h"
 
@@ -92,6 +93,9 @@ int main(int argc, char **argv)
 
     GameElement DepthFBO;
     DepthFBO.SetFBO();
+
+    // Create skybox:
+    Skybox Sky;
     
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
@@ -126,7 +130,7 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthFBO, DepthShader);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthFBO, DepthShader, Sky);
 
 
         // Get the end time of the frame
