@@ -22,8 +22,10 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     // Send the diffuse and specular map to the fragment shader.
     glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
+    // Set texture location / the uniform sampler
     glUniform1i( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "diffuseTexture"), 0);
     glUniform1i( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "depthMap"), 1);
+    glUniform1i( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "skybox"), 2);
 
     RenderCubemaps(GameElementVector, CubemapShader, DepthFBO);
 
@@ -88,6 +90,10 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
+
+        // Set reflection
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, Sky.CubemapTexture);
 
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);

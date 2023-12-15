@@ -122,10 +122,14 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
     glUniformMatrix4fv( glGetUniformLocation(SkyboxShader.ShaderProgram, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0] );
 
     glBindVertexArray(SkyboxVAO);
+
+    // Bind skybox cubemap texture.
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
+
+    // Draw the skybox and unbind the skybox VAO.
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
-
+   
     glDepthFunc(GL_LESS);
 }

@@ -10,6 +10,9 @@ in VS_OUT {
 uniform sampler2D diffuseTexture;
 uniform samplerCube depthMap;
 
+// For reflections
+uniform samplerCube skybox;
+
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 
@@ -57,15 +60,19 @@ void main()
     float spec = pow(max(dot(normal, halfwayDir), 0.0), 128.0);
     vec3 specular = spec * LightColor;  
 
-
     diffuse *= attenuation;
     specular *= attenuation;
 
+    vec3 R = reflect(-viewDir, normalize(fs_in.Normal));
+
     // calculate shadow
-    float shadow = ShadowCalculation(fs_in.FragPos, LightDistance);                      
-    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * texture(diffuseTexture, fs_in.TexCoords).rgb;    
+    float shadow = ShadowCalculation(fs_in.FragPos, LightDistance);   
+    vec3 light = ambient + (1.0 - shadow) * (diffuse + specular);
+
+    vec4 environment = vec4( light * texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0);   
+    vec4 reflection = vec4( light * texture(skybox, R).rgb, 1.0); 
     
-    FragColor = vec4(lighting, 1.0);
+    FragColor = mix(environment, reflection, 0.8);
 }
 
 
