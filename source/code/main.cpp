@@ -25,6 +25,7 @@
 #include "structures.h"
 
 #include "gameElementHandler.h"
+#include "cubemaps.h"
 
 #include "controls.h"
 
@@ -87,10 +88,30 @@ int main(int argc, char **argv)
     // !!! Load map and create all vertecies and textures.
     Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
 
+    // Load depth test shader, NEEDS GEOMETRY SHADER!!!!
+    Shader DepthShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl");
 
-    // Load depth test shader:
-    //Shader test_DepthShader("source/shaders/simpleDepthVertexShader.glsl", "source/shaders/simpleDepthFragmentShader.glsl");
+    GameElement DepthFBO;
+    DepthFBO.SetFBO();
+
+
+    // Create skybox:
+    Skybox Sky;
+    Sky.CubemapPath = {
+        "source/textures/skybox/treatmentLF.png", 
+        "source/textures/skybox/treatmentRT.png", 
+        "source/textures/skybox/treatmentUP.png", 
+        "source/textures/skybox/treatmentDN.png", 
+        "source/textures/skybox/treatmentFT.png", 
+        "source/textures/skybox/treatmentBK.png"
+    };
+    Sky.load_cubemap();
+
+    glUseProgram(Sky.SkyboxShader.ShaderProgram);
+    glUniform1i( glGetUniformLocation(Sky.SkyboxShader.ShaderProgram, "skybox"), 0);
+    glUseProgram(0);
     
+
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
     glEnable(GL_CULL_FACE);  
@@ -123,12 +144,8 @@ int main(int argc, char **argv)
         projection = Controls.ProjectionMatrix;
         view = Controls.ViewMatrix;
 
-        // background color. Should be a seperate function.
-        glClearColor(0.0f, 0.0f, 0.0f, 0.1f);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthFBO, DepthShader, Sky);
 
 
         // Get the end time of the frame

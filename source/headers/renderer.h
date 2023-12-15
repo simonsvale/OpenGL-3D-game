@@ -12,6 +12,8 @@
 #include "shaderHandler.h"
 #include "gameElementHandler.h"
 
+#include "cubemaps.h"
+
 using namespace std;
 
 // Does everything related to the graphics
@@ -35,10 +37,14 @@ class Renderer
             glm::mat4 projection, 
             glm::mat4 view,
             glm::vec3 CameraPosition,
-            SDL_Window *window
+            SDL_Window *window,
+            GameElement &FBODummy,
+            Shader &CubemapShader,
+            Skybox Sky
         );
 
-        // Remove test_shader soon
+        // Method for rendering cubemaps for shadow mapping.
+        void RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &CubemapShader, GameElement &FBODummy);
         
 };
 
