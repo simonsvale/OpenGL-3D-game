@@ -23,8 +23,8 @@ class Cubemap
         array<string, 6> CubemapPath;
         
         // Texture size of each face.
-        GLuint CUBEMAP_RES_W = 16;
-        GLuint CUBEMAP_RES_H = 16;
+        GLuint CUBEMAP_RES_W = 1024;
+        GLuint CUBEMAP_RES_H = 1024;
         
         // Position of the cubemap.
         glm::vec3 CubePos;
@@ -96,13 +96,14 @@ class Skybox: public Cubemap
                  1.0f, -1.0f,  1.0f
             };
 
-            glGenVertexArrays(1, &SkyboxVAO);
             glGenBuffers(1, &SkyboxVBO);
-            glBindVertexArray(SkyboxVAO);
             glBindBuffer(GL_ARRAY_BUFFER, SkyboxVBO);
             glBufferData(GL_ARRAY_BUFFER, sizeof(SkyboxVertices), &SkyboxVertices, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
+
+            glGenVertexArrays(1, &SkyboxVAO);
+            glBindVertexArray(SkyboxVAO);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(0);
         }
 
 };

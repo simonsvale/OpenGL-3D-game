@@ -147,5 +147,8 @@ void Graphics::LoadTexture(GLuint *Texture, const char *TexturePath)
     stbi_image_free(bytes);
     
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Reset stbi setting
+    stbi_set_flip_vertically_on_load(false);
 }
 
