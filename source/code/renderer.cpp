@@ -101,8 +101,11 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         GameElementNumber++;
     }
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
     // Render skybox
-    Sky.render_skybox(&view, &projection);
+    Sky.render_skybox(view, projection);
 
     // Draw everything onto the program.
     SDL_GL_SwapWindow(window);

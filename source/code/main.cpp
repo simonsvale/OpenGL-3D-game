@@ -94,9 +94,22 @@ int main(int argc, char **argv)
     GameElement DepthFBO;
     DepthFBO.SetFBO();
 
+
     // Create skybox:
     Skybox Sky;
-    
+    Sky.CubemapPath = {
+        "source/textures/skybox/skytest.png", 
+        "source/textures/skybox/skytest2.png", 
+        "source/textures/skybox/skytest3.png", 
+        "source/textures/skybox/skytest4.png", 
+        "source/textures/skybox/skytest5.png", 
+        "source/textures/skybox/skytest6.png"
+    };
+    Sky.load_cubemap();
+
+    glUseProgram(Sky.SkyboxShader.ShaderProgram);
+    glUniform1i( glGetUniformLocation(Sky.SkyboxShader.ShaderProgram, "skybox"), 0);
+
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
     glEnable(GL_CULL_FACE);  

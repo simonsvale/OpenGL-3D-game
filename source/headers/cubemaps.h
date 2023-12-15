@@ -17,14 +17,14 @@
 class Cubemap
 {
     public:
-        GLuint Texture;
+        GLuint CubemapTexture;
         GLuint FBO;
 
         array<string, 6> CubemapPath;
         
         // Texture size of each face.
-        GLuint CUBEMAP_RES_W = 1024;
-        GLuint CUBEMAP_RES_H = 1024;
+        GLuint CUBEMAP_RES_W = 16;
+        GLuint CUBEMAP_RES_H = 16;
         
         // Position of the cubemap.
         glm::vec3 CubePos;
@@ -43,51 +43,67 @@ class Skybox: public Cubemap
     public:
         Shader SkyboxShader;
 
-        void render_skybox(glm::mat4 *ViewMatrix, glm::mat4 *ProjectionMatrix);
+        GLuint SkyboxVAO;
+        GLuint SkyboxVBO;
+
+        void render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix);
 
         Skybox(): SkyboxShader("source/shaders/game/skybox/SkyboxVertexShader.glsl", "source/shaders/game/skybox/SkyboxFragmentShader.glsl")
         {               
-            // Rework into function
+            GLuint SkyboxVBO;
+
+            float SkyboxVertices[] = {  
+                -1.0f,  1.0f, -1.0f,
+                -1.0f, -1.0f, -1.0f,
+                 1.0f, -1.0f, -1.0f,
+                 1.0f, -1.0f, -1.0f,
+                 1.0f,  1.0f, -1.0f,
+                -1.0f,  1.0f, -1.0f,
+
+                -1.0f, -1.0f,  1.0f,
+                -1.0f, -1.0f, -1.0f,
+                -1.0f,  1.0f, -1.0f,
+                -1.0f,  1.0f, -1.0f,
+                -1.0f,  1.0f,  1.0f,
+                -1.0f, -1.0f,  1.0f,
+
+                 1.0f, -1.0f, -1.0f,
+                 1.0f, -1.0f,  1.0f,
+                 1.0f,  1.0f,  1.0f,
+                 1.0f,  1.0f,  1.0f,
+                 1.0f,  1.0f, -1.0f,
+                 1.0f, -1.0f, -1.0f,
+
+                -1.0f, -1.0f,  1.0f,
+                -1.0f,  1.0f,  1.0f,
+                 1.0f,  1.0f,  1.0f,
+                 1.0f,  1.0f,  1.0f,
+                 1.0f, -1.0f,  1.0f,
+                -1.0f, -1.0f,  1.0f,
+
+                -1.0f,  1.0f, -1.0f,
+                 1.0f,  1.0f, -1.0f,
+                 1.0f,  1.0f,  1.0f,
+                 1.0f,  1.0f,  1.0f,
+                -1.0f,  1.0f,  1.0f,
+                -1.0f,  1.0f, -1.0f,
+
+                -1.0f, -1.0f, -1.0f,
+                -1.0f, -1.0f,  1.0f,
+                 1.0f, -1.0f, -1.0f,
+                 1.0f, -1.0f, -1.0f,
+                -1.0f, -1.0f,  1.0f,
+                 1.0f, -1.0f,  1.0f
+            };
+
             glGenVertexArrays(1, &SkyboxVAO);
-            glBindVertexArray(SkyboxVAO);
-            
-            // Vertices
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0 );
-            glEnableVertexAttribArray(0);
-            
-            // VAO Texture coords attribute
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)(48*sizeof(float)) );
-            glEnableVertexAttribArray(1);
-
-
-            float SkyboxVertices[72] = {-1, 1, -1, 1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1, 1, 1, -1, -1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, 1, -1, -1, -1, -1, -1, -1, 1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, 1, 1, 1, 1, 1, -1};
-            float SkyboxTextureCoords[48] = {1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-            float SkyboxIndices[36] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 0, 18, 1, 3, 19, 4, 6, 20, 7, 9, 21, 10, 12, 22, 13, 15, 23, 16};
-
-
-            // Initialize VBO and IBO.
             glGenBuffers(1, &SkyboxVBO);
-
-            // Bind the VBO to an OpenGL array Buffer.
+            glBindVertexArray(SkyboxVAO);
             glBindBuffer(GL_ARRAY_BUFFER, SkyboxVBO);
-
-            glBufferData(GL_ARRAY_BUFFER, 72*sizeof(float) + 48*sizeof(float), 0, GL_STATIC_DRAW);
-
-            // Buffer subdata.
-            glBufferSubData(GL_ARRAY_BUFFER, 0, 72*sizeof(float), SkyboxVertices);
-            glBufferSubData(GL_ARRAY_BUFFER, 72*sizeof(float), 48*sizeof(float), SkyboxTextureCoords);
-
-            // IBO
-            glGenBuffers(1, &SkyboxIBO);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, SkyboxIBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36*sizeof(unsigned int), SkyboxIndices, GL_STATIC_DRAW);
-
+            glBufferData(GL_ARRAY_BUFFER, sizeof(SkyboxVertices), &SkyboxVertices, GL_STATIC_DRAW);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         }
-
-    private:
-        GLuint SkyboxVAO;
-        GLuint SkyboxVBO;
-        GLuint SkyboxIBO;
 
 };
 
