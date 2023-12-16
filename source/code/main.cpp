@@ -97,19 +97,15 @@ int main(int argc, char **argv)
 
     // Create skybox:
     Skybox Sky;
-    Sky.CubemapPath = {
+    Sky.load_cubemap({
         "source/textures/skybox/treatmentLF.png", 
         "source/textures/skybox/treatmentRT.png", 
         "source/textures/skybox/treatmentUP.png", 
         "source/textures/skybox/treatmentDN.png", 
         "source/textures/skybox/treatmentFT.png", 
         "source/textures/skybox/treatmentBK.png"
-    };
-    Sky.load_cubemap();
-
-    glUseProgram(Sky.SkyboxShader.ShaderProgram);
-    glUniform1i( glGetUniformLocation(Sky.SkyboxShader.ShaderProgram, "skybox"), 0);
-    glUseProgram(0);
+    });
+    Sky.set_shader_texture(0);
     
 
     // Enable depth test and backface culling.

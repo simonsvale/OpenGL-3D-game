@@ -13,7 +13,7 @@ void Cubemap::create_reflection_cubemap(void)
     for (unsigned int i = 0; i < 6;)
     {
         // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         i++;
     }
 
@@ -30,8 +30,17 @@ void Cubemap::create_reflection_cubemap(void)
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
+void Skybox::set_shader_texture(int GLTextureSpace)
+{
+    glUseProgram(SkyboxShader.ShaderProgram);
 
-void Cubemap::load_cubemap(void)
+    // Set texture space, ex. GL_TEXTURE0.
+    glUniform1i( glGetUniformLocation(SkyboxShader.ShaderProgram, "skybox"), GLTextureSpace);
+    glUseProgram(0);
+}
+
+
+void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
 {
     // Generate the framebuffer and the cubemap texture.
     glGenTextures(1, &CubemapTexture);
@@ -44,11 +53,11 @@ void Cubemap::load_cubemap(void)
     // Assign a 2d texture to each side of the cubemap.
     for (unsigned int i = 0; i < 6;)
     {   
-        unsigned char* ImageData = stbi_load(CubemapPath[i].c_str(), &ImageWidth, &ImageHeight, &Channels, 0);
+        unsigned char* ImageData = stbi_load(CubemapSidesPath[i].c_str(), &ImageWidth, &ImageHeight, &Channels, 0);
         if (ImageData)
         {
             // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageData);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, ImageWidth, ImageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageData);
         }
         else
         {
@@ -58,6 +67,10 @@ void Cubemap::load_cubemap(void)
         stbi_image_free(ImageData);
         i++;
     }
+
+    // Set cubemap variables.
+    CUBEMAP_RES_W = ImageWidth;
+    CUBEMAP_RES_W = ImageHeight;
     
     // Setup parameters
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -71,7 +84,7 @@ void Cubemap::load_cubemap(void)
 void Cubemap::render_reflection_framebuffer(Shader ReflectionShader)
 {   
     // Set the viewport size the framebuffer should render to.
-    glViewport(0, 0, CUBEMAP_RES_H, CUBEMAP_RES_W);
+    glViewport(0, 0, 12, 12);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

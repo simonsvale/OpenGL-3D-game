@@ -72,7 +72,7 @@ void main()
     vec4 environment = vec4( light * texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0);   
     vec4 reflection = vec4( light * texture(skybox, R).rgb, 1.0); 
     
-    FragColor = mix(environment, reflection, 0.8);
+    FragColor = mix(environment, reflection, 0.6);
 }
 
 

@@ -19,12 +19,10 @@ class Cubemap
     public:
         GLuint CubemapTexture;
         GLuint FBO;
-
-        array<string, 6> CubemapPath;
         
         // Texture size of each face.
-        GLuint CUBEMAP_RES_W = 1024;
-        GLuint CUBEMAP_RES_H = 1024;
+        GLuint CUBEMAP_RES_W = 0;
+        GLuint CUBEMAP_RES_H = 0;
         
         // Position of the cubemap.
         glm::vec3 CubePos;
@@ -33,7 +31,7 @@ class Cubemap
         void create_reflection_cubemap(void);
         void render_reflection_framebuffer(Shader ReflectionShader);
 
-        void load_cubemap(void);
+        void load_cubemap(array<string, 6> CubemapSidesPath);
 };
 
 
@@ -43,6 +41,7 @@ class Skybox: public Cubemap
     public:
         // Functions
         void render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix);
+        void set_shader_texture(int texture);
 
         // Variables
         GLuint SkyboxVAO;
@@ -87,7 +86,6 @@ class Skybox: public Cubemap
             glDeleteBuffers(1, &SkyboxVBO);
         }
 };
-
 
 
 
