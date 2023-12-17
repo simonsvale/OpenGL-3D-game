@@ -20,7 +20,7 @@ class Cubemap
         void load_cubemap(array<string, 6> CubemapSidesPath);
 
         // Sets the active opengl texture, int is the GL_TEXTUREX
-        void set_active_texture(int GLTextureSpace);
+        void bind_active_texture(int GLTextureSpace);
 
         GLuint CubemapTexture;
         GLuint FBO;
@@ -45,7 +45,6 @@ class Skybox: public Cubemap
     public:
         // Functions
         void render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix);
-        void set_shader_texture(int texture);
 
         // Variables
         GLuint SkyboxVAO;

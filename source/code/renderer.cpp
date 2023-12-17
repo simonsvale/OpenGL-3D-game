@@ -91,9 +91,8 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
 
-        // Set reflection
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, Sky.CubemapTexture);
+        // Set reflection texture
+        Sky.bind_active_texture(2);
 
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);

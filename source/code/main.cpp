@@ -105,9 +105,8 @@ int main(int argc, char **argv)
         "source/textures/skybox/treatmentFT.png", 
         "source/textures/skybox/treatmentBK.png"
     });
-    Sky.set_shader_texture(0);
+    Sky.SkyboxShader.set_shader_texture(0, "skybox");
     
-
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
     glEnable(GL_CULL_FACE);  
