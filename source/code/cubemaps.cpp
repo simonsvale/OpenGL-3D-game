@@ -30,15 +30,6 @@ void Cubemap::create_reflection_cubemap(void)
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
-void Skybox::set_shader_texture(int GLTextureSpace)
-{
-    glUseProgram(SkyboxShader.ShaderProgram);
-
-    // Set texture space, ex. GL_TEXTURE0.
-    glUniform1i( glGetUniformLocation(SkyboxShader.ShaderProgram, "skybox"), GLTextureSpace);
-    glUseProgram(0);
-}
-
 
 void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
 {
@@ -80,6 +71,25 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
+void Cubemap::set_active_texture(int GLTextureSpace)
+{   
+    // Works because
+    glActiveTexture(GL_TEXTURE0 + GLTextureSpace);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
+}
+
+
+
+
+
+void Skybox::set_shader_texture(int GLTextureSpace)
+{
+    glUseProgram(SkyboxShader.ShaderProgram);
+
+    // Set texture space, ex. GL_TEXTURE0.
+    glUniform1i( glGetUniformLocation(SkyboxShader.ShaderProgram, "skybox"), GLTextureSpace);
+    glUseProgram(0);
+}
 
 void Cubemap::render_reflection_framebuffer(Shader ReflectionShader)
 {   
@@ -136,9 +146,7 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
 
     glBindVertexArray(SkyboxVAO);
 
-    // Bind skybox cubemap texture.
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
+    set_active_texture(0);
 
     // Draw the skybox and unbind the skybox VAO.
     glDrawArrays(GL_TRIANGLES, 0, 36);
