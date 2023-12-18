@@ -26,7 +26,7 @@ class Shader
         // Attach the shaders to a shaderprogram
         void AttachShader(GLuint *Program);
 
-        void set_shader_texture(int GLTextureSpace, string Sampler);
+        void set_shader_texture(GLuint GLTextureSpace, string Sampler);
 
 
         // Constructor

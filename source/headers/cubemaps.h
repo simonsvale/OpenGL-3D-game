@@ -11,16 +11,19 @@
 #include <vector>
 #include <string>
 #include <array>
+#include <memory> 
 
 #include "shaderHandler.h"
+#include "gameElementHandler.h"
 
+// Base cubemap class
 class Cubemap
 {
     public:
         void load_cubemap(array<string, 6> CubemapSidesPath);
 
         // Sets the active opengl texture, int is the GL_TEXTUREX
-        void bind_active_texture(int GLTextureSpace);
+        void bind_active_texture(GLuint GLTextureSpace);
 
         GLuint CubemapTexture;
         GLuint FBO;
@@ -88,6 +91,25 @@ class Skybox: public Cubemap
             // Free the memory for the skybox VBO, since it is now stored in the skybox VAO.
             glDeleteBuffers(1, &SkyboxVBO);
         }
+};
+
+
+class ShadowMap: public Cubemap
+{
+    public:
+        void render_depthmap(vector<unique_ptr<GameElement> > &GameElementVector);
+        void set_depth_FBO(void);
+
+        Shader DepthMapShader;
+
+        // Should be its own thing!
+        Graphics DepthFBO;
+
+        ShadowMap(): DepthMapShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl")
+        {
+            set_depth_FBO();
+        }
+
 };
 
 

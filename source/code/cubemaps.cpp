@@ -71,7 +71,7 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void Cubemap::bind_active_texture(int GLTextureSpace)
+void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 {   
     // Works because GL_TEXTUREX is hex and 1 apart.
     glActiveTexture(GL_TEXTURE0 + GLTextureSpace);
@@ -142,4 +142,117 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
     glBindVertexArray(0);
    
     glDepthFunc(GL_LESS);
+}
+
+
+void ShadowMap::set_depth_FBO(void)
+{
+    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
+    glGenFramebuffers(1, &FBO);
+    // create depth cubemap texture
+
+    glGenTextures(1, &CubemapTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
+    for (unsigned int i = 0; i < 6;)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        i++;
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, CubemapTexture, 0);
+
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+
+void ShadowMap::render_depthmap(vector<unique_ptr<GameElement> > &GameElementVector)
+{   
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
+    glm::vec3 lightPos(3.7f, 7.0f, 2.0f);
+
+    // Distance
+    float near_plane = 1.0f;
+    float far_plane  = 25.0f;
+
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)1024 / (float)1024, near_plane, far_plane);
+    vector<glm::mat4> shadowTransforms;
+
+    // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+
+    // Create the cubemap(s).
+    glViewport(0, 0, 1024, 1024);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(DepthMapShader.ShaderProgram);
+
+    string matrix;
+    for (unsigned int i = 0; i < 6;)
+    {
+        matrix = "shadowMatrices[" + std::to_string(i) + "]";
+        glUniformMatrix4fv( glGetUniformLocation(DepthMapShader.ShaderProgram, matrix.c_str()), 1, GL_FALSE, &shadowTransforms[i][0][0]);
+        i++;
+    }
+
+    glUniform1f( glGetUniformLocation(DepthMapShader.ShaderProgram, "far_plane"), far_plane );
+    glUniform3f( glGetUniformLocation(DepthMapShader.ShaderProgram, "lightPos"), lightPos[0], lightPos[1], lightPos[2]);
+
+    // Render the scene
+    for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+
+        model = glm::translate(model, glm::vec3(
+            GameElementVector[GameElementNumber]->WorldPosition[0], 
+            GameElementVector[GameElementNumber]->WorldPosition[1], 
+            GameElementVector[GameElementNumber]->WorldPosition[2]
+        ));
+
+        // Set GameElement model rotation around x, y, z, in degrees.
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[0]), glm::vec3(1, 0, 0));
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[1]), glm::vec3(0, 1, 0));
+        model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[2]), glm::vec3(0, 0, 1));
+
+        // Set GameElement model scale.
+        model = glm::scale(model, glm::vec3(
+            GameElementVector[GameElementNumber]->Scale[0], 
+            GameElementVector[GameElementNumber]->Scale[1], 
+            GameElementVector[GameElementNumber]->Scale[2]
+        ));
+        
+
+        // Set cubemap shader.
+        int modelLoc = glGetUniformLocation(DepthMapShader.ShaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        // bind and draw
+        glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
+        glDrawElements(GL_TRIANGLES, GameElementVector[GameElementNumber]->IndicesSize, GL_UNSIGNED_INT, 0);
+
+        glBindVertexArray(0);
+
+        GameElementNumber++;
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

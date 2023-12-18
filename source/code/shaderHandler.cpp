@@ -138,7 +138,7 @@ void Shader::AttachShader(GLuint *Program)
     
 }
 
-void Shader::set_shader_texture(int GLTextureSpace, string Sampler)
+void Shader::set_shader_texture(GLuint GLTextureSpace, string Sampler)
 {
     glUseProgram(ShaderProgram);
 

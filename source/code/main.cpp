@@ -88,12 +88,8 @@ int main(int argc, char **argv)
     // !!! Load map and create all vertecies and textures.
     Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
 
-    // Load depth test shader, NEEDS GEOMETRY SHADER!!!!
-    Shader DepthShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl");
-
-    GameElement DepthFBO;
-    DepthFBO.SetFBO();
-
+    // Create shadowmap to render shadows.
+    ShadowMap DepthMap;
 
     // Create skybox:
     Skybox Sky;
@@ -106,6 +102,9 @@ int main(int argc, char **argv)
         "source/textures/skybox/treatmentBK.png"
     });
     Sky.SkyboxShader.set_shader_texture(0, "skybox");
+
+    glm::mat4 view;
+    glm::mat4 projection;
     
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
@@ -131,16 +130,13 @@ int main(int argc, char **argv)
         // Run controls, does keystate and everthing
         Controls.RunControls();
 
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 projection;
-
         // Camera movement
         Controls.ComputeMouseInput(window);
         projection = Controls.ProjectionMatrix;
         view = Controls.ViewMatrix;
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthFBO, DepthShader, Sky);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky);
 
 
         // Get the end time of the frame
