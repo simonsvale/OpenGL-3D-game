@@ -102,9 +102,6 @@ class ShadowMap: public Cubemap
 
         Shader DepthMapShader;
 
-        // Should be its own thing!
-        Graphics DepthFBO;
-
         ShadowMap(): DepthMapShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl")
         {
             set_depth_FBO();
