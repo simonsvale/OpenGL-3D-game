@@ -26,7 +26,6 @@ class Cubemap
         void bind_active_texture(GLuint GLTextureSpace);
 
         GLuint CubemapTexture;
-        GLuint FBO;
         
         // Texture size of each face.
         GLuint CUBEMAP_RES_W = 0;
@@ -35,9 +34,6 @@ class Cubemap
         // Position of the cubemap.
         glm::vec3 CubePos;
 
-        // Should be classes for themselves
-        void create_reflection_cubemap(void);
-        void render_reflection_framebuffer(Shader ReflectionShader);
 
 };
 
@@ -101,11 +97,24 @@ class ShadowMap: public Cubemap
         void set_depth_FBO(void);
 
         Shader DepthMapShader;
+        GLuint DepthMapFBO;
 
-        ShadowMap(): DepthMapShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl")
+        ShadowMap(GLuint Width = 1024, GLuint Height = 1024): DepthMapShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl")
         {
+            CUBEMAP_RES_W = Width;
+            CUBEMAP_RES_H = Height;
             set_depth_FBO();
         }
+
+};
+
+
+class ReflectionMap: public Cubemap
+{
+    public:
+        // Should be classes for themselves
+        void create_reflection_cubemap(void);
+        void render_reflection_framebuffer(Shader ReflectionShader);
 
 };
 

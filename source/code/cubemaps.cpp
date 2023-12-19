@@ -2,34 +2,6 @@
 
 using namespace std;
 
-void Cubemap::create_reflection_cubemap(void)
-{
-    // Generate the framebuffer and the cubemap texture.
-    glGenTextures(1, &CubemapTexture);
-
-    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
-
-    // Assign a 2d texture to each side of the cubemap.
-    for (unsigned int i = 0; i < 6;)
-    {
-        // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-        i++;
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    // Bind the cubemap texture.
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubemapTexture, 0);
-
-    // Unbind the cubemap texture 
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-}
-
 
 void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
 {
@@ -80,8 +52,10 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 
 
 
-void Cubemap::render_reflection_framebuffer(Shader ReflectionShader)
+// WIP
+void ReflectionMap::render_reflection_framebuffer(Shader ReflectionShader)
 {   
+    GLuint FBO;
     // Set the viewport size the framebuffer should render to.
     glViewport(0, 0, 12, 12);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -122,6 +96,36 @@ void Cubemap::render_reflection_framebuffer(Shader ReflectionShader)
 }
 
 
+void ReflectionMap::create_reflection_cubemap(void)
+{
+    // Generate the framebuffer and the cubemap texture.
+    glGenTextures(1, &CubemapTexture);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
+
+    // Assign a 2d texture to each side of the cubemap.
+    for (unsigned int i = 0; i < 6;)
+    {
+        // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        i++;
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    // Bind the cubemap texture.
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubemapTexture, 0);
+
+    // Unbind the cubemap texture 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
+
+
 void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
 {
     glDepthFunc(GL_LEQUAL);
@@ -145,18 +149,17 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
 }
 
 
+
 void ShadowMap::set_depth_FBO(void)
 {
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-
-    glGenFramebuffers(1, &FBO);
+    glGenFramebuffers(1, &DepthMapFBO);
     // create depth cubemap texture
 
     glGenTextures(1, &CubemapTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
     for (unsigned int i = 0; i < 6;)
     {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
         i++;
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -165,7 +168,7 @@ void ShadowMap::set_depth_FBO(void)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, DepthMapFBO);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, CubemapTexture, 0);
 
     glDrawBuffer(GL_NONE);
@@ -176,7 +179,6 @@ void ShadowMap::set_depth_FBO(void)
 
 void ShadowMap::render_depthmap(vector<unique_ptr<GameElement> > &GameElementVector)
 {   
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // A single light, should be a vector containing n light positions, and then the create n cubemaps from these positions.
@@ -186,7 +188,7 @@ void ShadowMap::render_depthmap(vector<unique_ptr<GameElement> > &GameElementVec
     float near_plane = 1.0f;
     float far_plane  = 25.0f;
 
-    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)1024 / (float)1024, near_plane, far_plane);
+    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), (float)CUBEMAP_RES_W / (float)CUBEMAP_RES_H, near_plane, far_plane);
     vector<glm::mat4> shadowTransforms;
 
     // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
@@ -198,8 +200,8 @@ void ShadowMap::render_depthmap(vector<unique_ptr<GameElement> > &GameElementVec
     shadowTransforms.push_back(shadowProj * glm::lookAt(lightPos, lightPos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
 
     // Create the cubemap(s).
-    glViewport(0, 0, 1024, 1024);
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
+    glBindFramebuffer(GL_FRAMEBUFFER, DepthMapFBO);
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -241,8 +243,7 @@ void ShadowMap::render_depthmap(vector<unique_ptr<GameElement> > &GameElementVec
         
 
         // Set cubemap shader.
-        int modelLoc = glGetUniformLocation(DepthMapShader.ShaderProgram, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv( glGetUniformLocation(DepthMapShader.ShaderProgram, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
         // bind and draw
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
