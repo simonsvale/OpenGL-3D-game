@@ -109,12 +109,14 @@ class ShadowMap: public Cubemap
 };
 
 
-class ReflectionMap: public Cubemap
+class ReflectionProbe: public Cubemap
 {
     public:
         // Should be classes for themselves
-        void create_reflection_cubemap(void);
+        void set_reflection_FBO(void);
         void render_reflection_framebuffer(Shader ReflectionShader);
+
+        GLuint ReflectionMapFBO;
 
 };
 

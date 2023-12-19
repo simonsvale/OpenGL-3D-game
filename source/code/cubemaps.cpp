@@ -53,12 +53,11 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 
 
 // WIP
-void ReflectionMap::render_reflection_framebuffer(Shader ReflectionShader)
+void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
 {   
-    GLuint FBO;
     // Set the viewport size the framebuffer should render to.
     glViewport(0, 0, 12, 12);
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glUseProgram(ReflectionShader.ShaderProgram);
@@ -68,7 +67,7 @@ void ReflectionMap::render_reflection_framebuffer(Shader ReflectionShader)
 
     float CloseReflection = 0.1;
     float FarReflection = 25.0;
-    glm::mat4 Cubeprojection = glm::perspective(glm::radians(90.0f), (float)1024 / (float)1024, CloseReflection, FarReflection);
+    glm::mat4 Cubeprojection = glm::perspective(glm::radians(90.0f), (float)CUBEMAP_RES_W / (float)CUBEMAP_RES_H, CloseReflection, FarReflection);
 
     // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
@@ -96,7 +95,7 @@ void ReflectionMap::render_reflection_framebuffer(Shader ReflectionShader)
 }
 
 
-void ReflectionMap::create_reflection_cubemap(void)
+void ReflectionProbe::set_reflection_FBO(void)
 {
     // Generate the framebuffer and the cubemap texture.
     glGenTextures(1, &CubemapTexture);
@@ -107,7 +106,7 @@ void ReflectionMap::create_reflection_cubemap(void)
     for (unsigned int i = 0; i < 6;)
     {
         // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
         i++;
     }
 
