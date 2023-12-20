@@ -13,6 +13,8 @@
 #include <array>
 #include <memory> 
 
+#include <STB/stb_image_write.h>
+
 #include "shaderHandler.h"
 #include "gameElementHandler.h"
 

@@ -56,7 +56,7 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
 {   
     // Set the viewport size the framebuffer should render to.
-    glViewport(0, 0, 12, 12);
+    glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -65,7 +65,7 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
     vector<glm::mat4> CubeSides;
     CubeSides.reserve(6);
 
-    float CloseReflection = 0.1;
+    float CloseReflection = 10.0;
     float FarReflection = 25.0;
     glm::mat4 Cubeprojection = glm::perspective(glm::radians(90.0f), (float)CUBEMAP_RES_W / (float)CUBEMAP_RES_H, CloseReflection, FarReflection);
 
@@ -88,9 +88,26 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
     // Steps:
 
     // Precompute cubemaps as textures and store them somewhere.
-
+    
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+
+    // Create data buffer
+    unsigned char CubemapImageTexture[1024 * 1024 * 3 * sizeof(unsigned int)];
+
+    // Save cubemap to a temporary location, possibly by using ID's and only generating the cubemap if it does not already exist?
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, CubemapImageTexture);
+
+    //stbi_flip_vertically_on_write(true);
+    
+    // Write to image texture.
+    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, 3, CubemapImageTexture, CUBEMAP_RES_W * 3);
+    if (WriteStatus == 0)
+    {
+        cout << "Could not write to cubemap image with name: " << 1 << endl;
+    }
 
 }
 
