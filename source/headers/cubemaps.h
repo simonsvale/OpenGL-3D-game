@@ -117,6 +117,7 @@ class ReflectionProbe: public Cubemap
         // Should be classes for themselves
         void set_reflection_FBO(void);
         void render_reflection_framebuffer(Shader ReflectionShader);
+        void framebuffer_to_texture(void);
 
         GLuint ReflectionMapFBO;
 

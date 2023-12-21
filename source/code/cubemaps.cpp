@@ -85,14 +85,12 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
         i++;
     }
 
-    // Steps:
+    // Unbind after render
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 
-    // Precompute cubemaps as textures and store them somewhere.
-    
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    
-
+void ReflectionProbe::framebuffer_to_texture()
+{
     // Create data buffer
     unsigned char CubemapImageTexture[1024 * 1024 * 3 * sizeof(unsigned int)];
 
@@ -108,7 +106,6 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
     {
         cout << "Could not write to cubemap image with name: " << 1 << endl;
     }
-
 }
 
 

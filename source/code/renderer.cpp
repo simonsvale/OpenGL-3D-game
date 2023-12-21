@@ -56,6 +56,16 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     
     glUniform1f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "far_plane"), far_plane);
 
+    // Start capturing render for cubemap
+    bool RenderToTex = true;
+
+    // !!!
+    ReflectionProbe Rfprobe;
+    if(RenderToTex == true)
+    {
+        //Rfprobe.render_reflection_framebuffer();
+    }
+
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {   
         
@@ -106,6 +116,14 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+
+    // !!!
+    if(RenderToTex == true)
+    {
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        //Rfprobe.framebuffer_to_texture();
+    }
 
     // Render skybox
     Sky.render_skybox(view, projection);
