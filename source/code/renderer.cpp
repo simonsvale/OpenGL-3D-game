@@ -12,7 +12,7 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, ShadowMap DepthMap, Skybox Sky)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, ShadowMap DepthMap, Skybox Sky, bool RenderToTex)
 {   
     int ShaderIndex;
 
@@ -57,13 +57,17 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     glUniform1f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "far_plane"), far_plane);
 
     // Start capturing render for cubemap
-    bool RenderToTex = true;
-
     // !!!
     ReflectionProbe Rfprobe;
     if(RenderToTex == true)
-    {
-        //Rfprobe.render_reflection_framebuffer();
+    {   
+        Shader ReflectionShader(
+            "source/shaders/game/reflectionProbe/reflectionProbeVert.glsl", 
+            "source/shaders/game/reflectionProbe/reflectionProbeFrag.glsl", 
+            "source/shaders/game/reflectionProbe/reflectionProbeGeom.glsl"
+        );
+
+        //Rfprobe.render_reflection_framebuffer(ReflectionShader);
     }
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
@@ -120,9 +124,8 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     // !!!
     if(RenderToTex == true)
     {
-        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        //Rfprobe.framebuffer_to_texture();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        Rfprobe.framebuffer_to_texture();
     }
 
     // Render skybox

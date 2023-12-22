@@ -121,6 +121,14 @@ int main(int argc, char **argv)
     // Is needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
+
+    // Relfection probe test !!!
+    RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, true);
+
+    cout << "Cubemap created" << endl;
+
+
+
     // Window loop
     while(Controls.Running == true)
     {   
@@ -136,7 +144,7 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, false);
 
 
         // Get the end time of the frame

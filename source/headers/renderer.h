@@ -39,7 +39,8 @@ class Renderer
             glm::vec3 CameraPosition,
             SDL_Window *window,
             ShadowMap DepthMap,
-            Skybox Sky
+            Skybox Sky,
+            bool RenderToTex
         );
         
 };

@@ -84,9 +84,6 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
         glUniformMatrix4fv( glGetUniformLocation(ReflectionShader.ShaderProgram, ReflectionMatrix.c_str()), 1, GL_FALSE, &CubeSides[i][0][0]);
         i++;
     }
-
-    // Unbind after render
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void ReflectionProbe::framebuffer_to_texture()
@@ -96,7 +93,9 @@ void ReflectionProbe::framebuffer_to_texture()
 
     // Save cubemap to a temporary location, possibly by using ID's and only generating the cubemap if it does not already exist?
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, CubemapImageTexture);
+
+    // GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
+    glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, GL_UNSIGNED_BYTE, CubemapImageTexture);
 
     //stbi_flip_vertically_on_write(true);
     
