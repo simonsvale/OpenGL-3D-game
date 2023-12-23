@@ -40,7 +40,7 @@ class Renderer
             SDL_Window *window,
             ShadowMap DepthMap,
             Skybox Sky,
-            bool RenderToTex
+            ReflectionProbe Refl
         );
         
 };

@@ -103,6 +103,16 @@ int main(int argc, char **argv)
     });
     Sky.SkyboxShader.set_shader_texture(0, "skybox");
 
+    ReflectionProbe Refl;
+    Refl.load_cubemap({
+        "source/textures/bushes.png", 
+        "source/textures/bushes.png", 
+        "source/textures/bushes.png", 
+        "source/textures/bushes.png", 
+        "source/textures/bushes.png", 
+        "source/textures/bushes.png"
+    });
+
     glm::mat4 view;
     glm::mat4 projection;
     
@@ -123,7 +133,7 @@ int main(int argc, char **argv)
 
 
     // Relfection probe test !!!
-    RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, true);
+    RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
 
     cout << "Cubemap created" << endl;
 
@@ -144,7 +154,7 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, false);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
 
 
         // Get the end time of the frame

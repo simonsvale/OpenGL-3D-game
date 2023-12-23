@@ -120,6 +120,7 @@ class ReflectionProbe: public Cubemap
         void framebuffer_to_texture(void);
 
         GLuint ReflectionMapFBO;
+        GLuint RenderBuffer;
 
 };
 
