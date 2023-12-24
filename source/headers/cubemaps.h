@@ -18,7 +18,7 @@
 #include "shaderHandler.h"
 #include "gameElementHandler.h"
 
-// Base cubemap class
+// Cubemap super class
 class Cubemap
 {
     public:
@@ -35,8 +35,6 @@ class Cubemap
         
         // Position of the cubemap.
         glm::vec3 CubePos;
-
-
 };
 
 
@@ -95,7 +93,16 @@ class Skybox: public Cubemap
 class ShadowMap: public Cubemap
 {
     public:
+        /** Renders a depth map, using scene geometry, currently only from a single light source.
+         *  Sets a framebuffer containing the depth map to a variable `GLuint DepthMapFBO` by refrence.
+         * @param std::vector<std::unique_ptr<GameElement>> &GameElementVector, Models in the scene.
+         *  
+        **/
         void render_depthmap(vector<unique_ptr<GameElement> > &GameElementVector);
+
+        /** Create a framebuffer and a texture, and set the framebuffer to the 
+         *  variable `GLuint DepthMapFBO` and the texture to the variable `GLuint CubemapTexture`, by reference. 
+        **/
         void set_depth_FBO(void);
 
         Shader DepthMapShader;

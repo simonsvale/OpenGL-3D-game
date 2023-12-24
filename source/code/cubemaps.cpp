@@ -176,7 +176,6 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
 }
 
 
-
 void ShadowMap::set_depth_FBO(void)
 {
     glGenFramebuffers(1, &DepthMapFBO);
@@ -202,7 +201,6 @@ void ShadowMap::set_depth_FBO(void)
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
 
 void ShadowMap::render_depthmap(vector<unique_ptr<GameElement> > &GameElementVector)
 {   
