@@ -30,8 +30,9 @@ class Cubemap
         GLuint CubemapTexture;
         
         // Texture size of each face.
-        GLuint CUBEMAP_RES_W = 0;
-        GLuint CUBEMAP_RES_H = 0;
+        int CUBEMAP_RES_W = -1;
+        int CUBEMAP_RES_H = -1;
+        int CUBEMAP_CHANNELS = -1;
         
         // Position of the cubemap.
         glm::vec3 CubePos;
@@ -124,7 +125,7 @@ class ReflectionProbe: public Cubemap
         // Should be classes for themselves
         void set_reflection_FBO(void);
         void render_reflection_framebuffer(Shader ReflectionShader);
-        void framebuffer_to_texture(void);
+        void cubemap_to_texture(void);
 
         GLuint ReflectionMapFBO;
         GLuint RenderBuffer;

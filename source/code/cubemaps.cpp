@@ -9,18 +9,14 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     glGenTextures(1, &CubemapTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
 
-    int ImageWidth;
-    int ImageHeight;
-    int Channels;
-
     // Assign a 2d texture to each side of the cubemap.
     for (unsigned int i = 0; i < 6;)
     {   
-        unsigned char* ImageData = stbi_load(CubemapSidesPath[i].c_str(), &ImageWidth, &ImageHeight, &Channels, 0);
+        unsigned char* ImageData = stbi_load(CubemapSidesPath[i].c_str(), &CUBEMAP_RES_W, &CUBEMAP_RES_H, &CUBEMAP_CHANNELS, 0);
         if (ImageData)
         {
             // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, ImageWidth, ImageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageData);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageData);
         }
         else
         {
@@ -30,10 +26,6 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
         stbi_image_free(ImageData);
         i++;
     }
-
-    // Set cubemap variables.
-    CUBEMAP_RES_W = ImageWidth;
-    CUBEMAP_RES_W = ImageHeight;
     
     // Setup parameters
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -87,21 +79,17 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
     }
 }
 
-void ReflectionProbe::framebuffer_to_texture()
+void ReflectionProbe::cubemap_to_texture()
 {
     // Create data buffer
     unsigned char CubemapImageTexture[1024 * 1024 * 3 * sizeof(unsigned int)];
 
     // Save cubemap to a temporary location, possibly by using ID's and only generating the cubemap if it does not already exist?
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glReadPixels(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H, GL_RGBA, GL_UNSIGNED_BYTE, CubemapImageTexture);
 
-    // GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
-    glGetTexImage(GL_TEXTURE_CUBE_MAP, 0, GL_RGB, GL_UNSIGNED_BYTE, CubemapImageTexture);
-
-    //stbi_flip_vertically_on_write(true);
-    
     // Write to image texture.
-    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, 3, CubemapImageTexture, CUBEMAP_RES_W * 3);
+    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, CUBEMAP_CHANNELS, CubemapImageTexture, CUBEMAP_RES_W * CUBEMAP_CHANNELS);
     if (WriteStatus == 0)
     {
         cout << "Could not write to cubemap image with name: " << 1 << endl;
@@ -122,7 +110,7 @@ void ReflectionProbe::set_reflection_FBO(void)
     for (unsigned int i = 0; i < 6;)
     {
         // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         i++;
     }
 

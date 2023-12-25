@@ -103,7 +103,9 @@ int main(int argc, char **argv)
     });
     Sky.SkyboxShader.set_shader_texture(0, "skybox");
 
+    // Create reflection probe
     ReflectionProbe Refl;
+    Refl.set_reflection_FBO();
     Refl.load_cubemap({
         "source/textures/bushes.png", 
         "source/textures/bushes.png", 
@@ -112,6 +114,7 @@ int main(int argc, char **argv)
         "source/textures/bushes.png", 
         "source/textures/bushes.png"
     });
+    //Refl.cubemap_to_texture();
 
     glm::mat4 view;
     glm::mat4 projection;
