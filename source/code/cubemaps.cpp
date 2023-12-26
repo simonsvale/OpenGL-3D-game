@@ -79,17 +79,25 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
     }
 }
 
-void ReflectionProbe::cubemap_to_texture()
+void ReflectionProbe::cubemap_to_texture(void)
 {
     // Create data buffer
-    unsigned char CubemapImageTexture[1024 * 1024 * 3 * sizeof(unsigned int)];
+    string CubemapImageTexture;
 
     // Save cubemap to a temporary location, possibly by using ID's and only generating the cubemap if it does not already exist?
+    GLenum err;
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    glReadPixels(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H, GL_RGBA, GL_UNSIGNED_BYTE, CubemapImageTexture);
+
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H, GL_RGBA, GL_UNSIGNED_BYTE, &CubemapImageTexture[0]);
+
+    while ( (err = glGetError()) != GL_NO_ERROR)
+    {
+        cout << "OpenGL Error: " << err << endl;
+    }
 
     // Write to image texture.
-    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, CUBEMAP_CHANNELS, CubemapImageTexture, CUBEMAP_RES_W * CUBEMAP_CHANNELS);
+    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, CUBEMAP_CHANNELS, &CubemapImageTexture[0], CUBEMAP_RES_W * CUBEMAP_CHANNELS);
     if (WriteStatus == 0)
     {
         cout << "Could not write to cubemap image with name: " << 1 << endl;
