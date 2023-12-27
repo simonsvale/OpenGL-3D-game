@@ -106,15 +106,7 @@ int main(int argc, char **argv)
     // Create reflection probe
     ReflectionProbe Refl;
     Refl.set_reflection_FBO();
-    Refl.load_cubemap({
-        "source/textures/bushes.png", 
-        "source/textures/bushes.png", 
-        "source/textures/bushes.png", 
-        "source/textures/bushes.png", 
-        "source/textures/bushes.png", 
-        "source/textures/bushes.png"
-    });
-    //Refl.cubemap_to_texture();
+
 
     glm::mat4 view;
     glm::mat4 projection;
@@ -134,9 +126,17 @@ int main(int argc, char **argv)
     // Is needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
+    // !!!
+    // Run controls, does keystate and everything
+    Controls.RunControls();
 
-    // Relfection probe test !!!
-    RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
+    // Camera movement
+    Controls.ComputeMouseInput(window);
+    projection = Controls.ProjectionMatrix;
+    view = Controls.ViewMatrix;
+
+    // Render Everything.
+    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
 
     cout << "Cubemap created" << endl;
 
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
         
-        // Run controls, does keystate and everthing
+        // Run controls, does keystate and everything
         Controls.RunControls();
 
         // Camera movement

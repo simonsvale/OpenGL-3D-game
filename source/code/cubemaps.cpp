@@ -9,10 +9,12 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     glGenTextures(1, &CubemapTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
 
+    int Channels;
+
     // Assign a 2d texture to each side of the cubemap.
     for (unsigned int i = 0; i < 6;)
     {   
-        unsigned char* ImageData = stbi_load(CubemapSidesPath[i].c_str(), &CUBEMAP_RES_W, &CUBEMAP_RES_H, &CUBEMAP_CHANNELS, 0);
+        unsigned char* ImageData = stbi_load(CubemapSidesPath[i].c_str(), &CUBEMAP_RES_W, &CUBEMAP_RES_H, &Channels, 0);
         if (ImageData)
         {
             // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
@@ -45,7 +47,7 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 
 
 // WIP
-void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
+void ReflectionProbe::render_reflection_framebuffer()
 {   
     // Set the viewport size the framebuffer should render to.
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
@@ -80,16 +82,19 @@ void ReflectionProbe::render_reflection_framebuffer(Shader ReflectionShader)
 }
 
 void ReflectionProbe::cubemap_to_texture(void)
-{
-    // Create data buffer
-    string CubemapImageTexture;
+{   
+    cout << "what1" << endl;
+    // Allocate memory for the png data.
+    uint8_t *CubemapImageTexture = new uint8_t[CUBEMAP_RES_W * CUBEMAP_RES_H * 3];
+
+    cout << "what" << endl;
 
     // Save cubemap to a temporary location, possibly by using ID's and only generating the cubemap if it does not already exist?
     GLenum err;
     glReadBuffer(GL_COLOR_ATTACHMENT0);
 
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H, GL_RGBA, GL_UNSIGNED_BYTE, &CubemapImageTexture[0]);
+    glReadPixels(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H, GL_RGB, GL_UNSIGNED_BYTE, CubemapImageTexture);
 
     while ( (err = glGetError()) != GL_NO_ERROR)
     {
@@ -97,11 +102,16 @@ void ReflectionProbe::cubemap_to_texture(void)
     }
 
     // Write to image texture.
-    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, CUBEMAP_CHANNELS, &CubemapImageTexture[0], CUBEMAP_RES_W * CUBEMAP_CHANNELS);
+    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, 3, CubemapImageTexture, CUBEMAP_RES_W * 3);
     if (WriteStatus == 0)
     {
         cout << "Could not write to cubemap image with name: " << 1 << endl;
     }
+
+    cout << "freeing" << endl;
+
+    // Free memory
+    delete[] CubemapImageTexture;
 }
 
 
