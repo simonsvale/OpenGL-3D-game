@@ -121,10 +121,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl)
 {   
     int ShaderIndex;
-
-    // ################################################################################
-    // Need a function call that sets static geometry, since most things do not need to get rotated, scaled and get a position each frame.
-
+    
     // Send the diffuse and specular map to the fragment shader.
     glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
@@ -140,7 +137,6 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // How tf did i miss this...
     glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
     float far_plane  = 25.0f;
@@ -196,10 +192,6 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
 
-        // Set reflection texture
-        Sky.bind_active_texture(2);
-        //Refl.bind_active_texture(2);
-
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
@@ -210,16 +202,11 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
+    
     // Render skybox
     Sky.render_skybox(view, projection);
 
-    // Draw everything onto the program.
-    //SDL_GL_SwapWindow(window);
-
-
-    // Now create the cubemap ---------------------------------------------------------------
-
+    // Now render to the framebuffer for all cubemaps ---------------------------------------------------------------
     Refl.render_reflection_framebuffer();
 
     // Set texture location / the uniform sampler
@@ -234,7 +221,6 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
 
     projectionLoc = glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "projection");
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
 
     // set lighting uniforms
     glUniform3f( glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "lightPos"), 3.7f, 7.0f, 2.0f);
@@ -275,10 +261,6 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
 
-        // Set reflection texture
-        Sky.bind_active_texture(2);
-        //Refl.bind_active_texture(2);
-
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
 
@@ -291,6 +273,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
         GameElementNumber++;
     }
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

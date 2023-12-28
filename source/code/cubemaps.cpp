@@ -49,18 +49,12 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 // WIP
 void ReflectionProbe::render_reflection_framebuffer()
 {   
-    // Set the viewport size the framebuffer should render to.
-    glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
-    glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glUseProgram(ReflectionShader.ShaderProgram);
 
     vector<glm::mat4> CubeSides;
     CubeSides.reserve(6);
 
-    float CloseReflection = 10.0;
+    float CloseReflection = 1.0;
     float FarReflection = 25.0;
     glm::mat4 Cubeprojection = glm::perspective(glm::radians(90.0f), (float)CUBEMAP_RES_W / (float)CUBEMAP_RES_H, CloseReflection, FarReflection);
 
@@ -71,6 +65,15 @@ void ReflectionProbe::render_reflection_framebuffer()
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+
+
+    // Set the viewport size the framebuffer should render to.
+    glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
+    glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(ReflectionShader.ShaderProgram);
 
     string ReflectionMatrix;
     for (unsigned int i = 0; i < 6;)
@@ -83,11 +86,8 @@ void ReflectionProbe::render_reflection_framebuffer()
 
 void ReflectionProbe::cubemap_to_texture(void)
 {   
-    cout << "what1" << endl;
     // Allocate memory for the png data.
     uint8_t *CubemapImageTexture = new uint8_t[CUBEMAP_RES_W * CUBEMAP_RES_H * 3];
-
-    cout << "what" << endl;
 
     // Save cubemap to a temporary location, possibly by using ID's and only generating the cubemap if it does not already exist?
     GLenum err;
@@ -107,8 +107,6 @@ void ReflectionProbe::cubemap_to_texture(void)
     {
         cout << "Could not write to cubemap image with name: " << 1 << endl;
     }
-
-    cout << "freeing" << endl;
 
     // Free memory
     delete[] CubemapImageTexture;
@@ -138,18 +136,8 @@ void ReflectionProbe::set_reflection_FBO(void)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-    // Bind FBO and set the texture
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
-
-    // create the uniform depth buffer
-    glGenRenderbuffers(1, &RenderBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, RenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, CUBEMAP_RES_W, CUBEMAP_RES_H);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, ReflectionMapFBO);
-
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubemapTexture, 0);
 
     // Unbind the cubemap texture and FBO
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
