@@ -20,8 +20,8 @@ void main()
         for(int i = 0; i < 3; ++i) // for each triangle's vertices
         {
             GeomPos = gl_in[i].gl_Position;
-            gl_Position = CubeSides[face] * GeomPos;
             vs_out.FragPos = GeomPos.xyz;
+            gl_Position = CubeSides[face] * GeomPos;
             EmitVertex();
         }    
         EndPrimitive();

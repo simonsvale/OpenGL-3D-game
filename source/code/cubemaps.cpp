@@ -37,6 +37,41 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
+// Writes a cubemap texture to 6 image textures
+void Cubemap::cubemap_to_images(void)
+{   
+    // Allocate memory for the png data.
+    uint8_t *CubemapFacePixels = new uint8_t[CUBEMAP_RES_W * CUBEMAP_RES_H * 3];
+
+    // Bind to the cubemap's texture.
+    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    for(int FaceNumber = 0; FaceNumber < 6;)
+    {
+        glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + FaceNumber, 0, GL_RGB, GL_UNSIGNED_BYTE, CubemapFacePixels);
+
+        // Create a variable and set the different face names using sprintf, since cout did not work.
+        char Cube2DSide[34];
+        sprintf(Cube2DSide, "source/textures/cubemaps/Face%i.png", FaceNumber);
+
+        // Write to texture to image.
+        int WriteStatus = stbi_write_png(Cube2DSide, CUBEMAP_RES_W, CUBEMAP_RES_H, 3, CubemapFacePixels, CUBEMAP_RES_W * 3);
+        if (WriteStatus == 0)
+        {
+            cout << "Could not write 2D texture, for face: " << FaceNumber << endl;
+        }
+
+        FaceNumber++;
+    }
+
+    // Unbind the cubemap.
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    // Free memory
+    delete[] CubemapFacePixels;
+}
+
 void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 {   
     // Works because GL_TEXTUREX is hex and 1 apart.
@@ -49,8 +84,9 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 // WIP
 void ReflectionProbe::render_reflection_framebuffer()
 {   
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    /*
     vector<glm::mat4> CubeSides;
     CubeSides.reserve(6);
 
@@ -65,14 +101,13 @@ void ReflectionProbe::render_reflection_framebuffer()
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
-
+    */
 
     // Set the viewport size the framebuffer should render to.
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    /*
     glUseProgram(ReflectionShader.ShaderProgram);
 
     string ReflectionMatrix;
@@ -82,34 +117,7 @@ void ReflectionProbe::render_reflection_framebuffer()
         glUniformMatrix4fv( glGetUniformLocation(ReflectionShader.ShaderProgram, ReflectionMatrix.c_str()), 1, GL_FALSE, &CubeSides[i][0][0]);
         i++;
     }
-}
-
-void ReflectionProbe::cubemap_to_texture(void)
-{   
-    // Allocate memory for the png data.
-    uint8_t *CubemapImageTexture = new uint8_t[CUBEMAP_RES_W * CUBEMAP_RES_H * 3];
-
-    // Save cubemap to a temporary location, possibly by using ID's and only generating the cubemap if it does not already exist?
-    GLenum err;
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
-
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H, GL_RGB, GL_UNSIGNED_BYTE, CubemapImageTexture);
-
-    while ( (err = glGetError()) != GL_NO_ERROR)
-    {
-        cout << "OpenGL Error: " << err << endl;
-    }
-
-    // Write to image texture.
-    int WriteStatus = stbi_write_png("result.png", CUBEMAP_RES_W, CUBEMAP_RES_H, 3, CubemapImageTexture, CUBEMAP_RES_W * 3);
-    if (WriteStatus == 0)
-    {
-        cout << "Could not write to cubemap image with name: " << 1 << endl;
-    }
-
-    // Free memory
-    delete[] CubemapImageTexture;
+    */
 }
 
 

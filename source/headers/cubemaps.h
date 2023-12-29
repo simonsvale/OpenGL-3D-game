@@ -23,6 +23,7 @@ class Cubemap
 {
     public:
         void load_cubemap(array<string, 6> CubemapSidesPath);
+        void cubemap_to_images(void);
 
         // Sets the active opengl texture, int is the GL_TEXTUREX
         void bind_active_texture(GLuint GLTextureSpace);
@@ -124,7 +125,6 @@ class ReflectionProbe: public Cubemap
         // Should be classes for themselves
         void set_reflection_FBO(void);
         void render_reflection_framebuffer(void);
-        void cubemap_to_texture(void);
 
         GLuint ReflectionMapFBO;
         GLuint RenderBuffer;
