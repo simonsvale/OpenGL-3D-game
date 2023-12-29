@@ -23,6 +23,11 @@ class Cubemap
 {
     public:
         void load_cubemap(array<string, 6> CubemapSidesPath);
+
+        /** Takes the `GLuint` CubemapTexture and extracts the 6 textures it consists of, 
+         * and outputs 6 .png images containing the different sides of the cubemap in a folder at `/source/textures/cubemaps`.
+         * 
+        **/
         void cubemap_to_images(void);
 
         // Sets the active opengl texture, int is the GL_TEXTUREX

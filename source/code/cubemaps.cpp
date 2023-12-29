@@ -37,7 +37,7 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-// Writes a cubemap texture to 6 image textures
+
 void Cubemap::cubemap_to_images(void)
 {   
     // Allocate memory for the png data.

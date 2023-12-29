@@ -108,7 +108,6 @@ int main(int argc, char **argv)
     //Refl.set_reflection_FBO();
 
 
-
     glm::mat4 view;
     glm::mat4 projection;
     
