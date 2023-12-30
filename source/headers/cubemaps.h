@@ -22,6 +22,9 @@
 class Cubemap
 {
     public:
+        /** Given an array of 6 strings containing paths to .png images, loads the given .png images at the paths into a `GLuint` `GL_TEXTURE_CUBE_MAP` texture.
+         * @param `array<string>` CubemapSidesPath, an array containg 6 string paths to the same or multiple .png images.
+        **/
         void load_cubemap(array<string, 6> CubemapSidesPath);
 
         /** Takes the `GLuint` CubemapTexture and extracts the 6 textures it consists of, 
