@@ -15,10 +15,24 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     for (unsigned int i = 0; i < 6;)
     {   
         unsigned char* ImageData = stbi_load(CubemapSidesPath[i].c_str(), &CUBEMAP_RES_W, &CUBEMAP_RES_H, &Channels, 0);
+
         if (ImageData)
-        {
-            // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageData);
+        {   
+            // Depending on if the .png image has an alpha channel, include that channel in the load.
+            switch (Channels)
+            {
+                case 3:
+                {
+                    // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
+                    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageData);
+                    break;
+                }
+                case 4:
+                {
+                    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, ImageData);
+                    break;
+                }
+            }
         }
         else
         {
@@ -30,8 +44,8 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     }
     
     // Setup parameters
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -48,7 +62,8 @@ void Cubemap::cubemap_to_images(void)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     for(int FaceNumber = 0; FaceNumber < 6;)
-    {
+    {   
+        // Since a cubemap cannot contain an alpha channel when its extracted, only extract the RGB channels.
         glGetTexImage(GL_TEXTURE_CUBE_MAP_POSITIVE_X + FaceNumber, 0, GL_RGB, GL_UNSIGNED_BYTE, CubemapFacePixels);
 
         // Create a variable and set the different face names using sprintf, since cout did not work.
@@ -134,7 +149,7 @@ void ReflectionProbe::set_reflection_FBO(void)
     for (unsigned int i = 0; i < 6;)
     {
         // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
         i++;
     }
 

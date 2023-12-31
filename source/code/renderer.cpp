@@ -120,10 +120,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
 void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl)
 {   
-     int ShaderIndex;
-
-    // ################################################################################
-    // Need a function call that sets static geometry, since most things do not need to get rotated, scaled and get a position each frame.
+    int ShaderIndex;
 
     // Send the diffuse and specular map to the fragment shader.
     glUseProgram(ShaderObjectVector[0]->ShaderProgram);
