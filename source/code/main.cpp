@@ -113,7 +113,7 @@ int main(int argc, char **argv)
         "source/textures/debug3.png",
         "source/textures/debug3.png"
     });
-    Refl.cubemap_to_images();
+    //Refl.cubemap_to_images();
     //Refl.set_reflection_FBO();
 
 

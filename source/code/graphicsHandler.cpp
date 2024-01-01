@@ -102,12 +102,12 @@ void Graphics::SetEBO(unsigned int Indices[], int IndiSize)
 void Graphics::LoadTexture(GLuint *Texture, const char *TexturePath)
 {
     // Set textures:
-    int widthImg, heightImg, numColCh;
+    int Width, Height, Channels;
 
     // Should be placed in an init program function/method.
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* bytes = stbi_load(TexturePath, &widthImg, &heightImg, &numColCh, 0);
+    unsigned char* bytes = stbi_load(TexturePath, &Width, &Height, &Channels, 0);
 
     glGenTextures(1, Texture);
     glBindTexture(GL_TEXTURE_2D, *Texture);
@@ -115,8 +115,19 @@ void Graphics::LoadTexture(GLuint *Texture, const char *TexturePath)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-
+    switch (Channels)
+    {
+        case 3:
+        {   
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
+            break;
+        }
+        case 4:
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+            break;
+        }
+    }
     stbi_image_free(bytes);
     
     glBindTexture(GL_TEXTURE_2D, 0);

@@ -14,9 +14,9 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     // Assign a 2d texture to each side of the cubemap.
     for (unsigned int i = 0; i < 6;)
     {   
-        unsigned char* ImageData = stbi_load(CubemapSidesPath[i].c_str(), &CUBEMAP_RES_W, &CUBEMAP_RES_H, &Channels, 0);
+        unsigned char* ImageBytes = stbi_load(CubemapSidesPath[i].c_str(), &CUBEMAP_RES_W, &CUBEMAP_RES_H, &Channels, 0);
 
-        if (ImageData)
+        if (ImageBytes)
         {   
             // Depending on if the .png image has an alpha channel, include that channel in the load.
             switch (Channels)
@@ -24,12 +24,12 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
                 case 3:
                 {
                     // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-                    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageData);
+                    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, ImageBytes);
                     break;
                 }
                 case 4:
                 {
-                    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, ImageData);
+                    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, ImageBytes);
                     break;
                 }
             }
@@ -39,13 +39,13 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
             cout << "Could not load texture!" << endl;
         }
 
-        stbi_image_free(ImageData);
+        stbi_image_free(ImageBytes);
         i++;
     }
     
     // Setup parameters
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
