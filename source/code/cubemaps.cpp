@@ -55,7 +55,7 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
 void Cubemap::cubemap_to_images(void)
 {   
     // Allocate memory for the png data.
-    uint8_t *CubemapFacePixels = new uint8_t[CUBEMAP_RES_W * CUBEMAP_RES_H * 3];
+    unsigned char *CubemapFacePixels = new unsigned char[CUBEMAP_RES_W * CUBEMAP_RES_H * 3];
 
     // Bind to the cubemap's texture.
     glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);

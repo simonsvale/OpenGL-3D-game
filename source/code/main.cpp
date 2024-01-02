@@ -58,18 +58,18 @@ int main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     SDL_Window *window;
-    
     window = SDL_CreateWindow(
         "Game window", 
         SDL_WINDOWPOS_UNDEFINED, 
         SDL_WINDOWPOS_UNDEFINED, 
         WIDTH, HEIGHT, 
-        SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL);
+        SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL
+    );
 
     if (NULL == window)
     {
-        cout << "Could not create window" << SDL_GetError() << endl;
-        return 1;
+        cout << "Could not create game window, error: " << SDL_GetError() << endl;
+        return EXIT_FAILURE;
     }
 
     // OpenGL context.
@@ -81,8 +81,8 @@ int main(int argc, char **argv)
     
     if (NULL == GLContext)
     {
-        cout << "Could not create OpenGL context" << SDL_GetError() << endl;
-        return 1; 
+        cout << "Could not create OpenGL context, error:" << SDL_GetError() << endl;
+        return EXIT_FAILURE; 
     }
 
     // !!! Load map and create all vertecies and textures.
@@ -131,8 +131,7 @@ int main(int argc, char **argv)
 
     const int FrameDelay = 1000 / 60;
 
-    // Hide cursor
-    // Is needed for mouse inputs to work correctly
+    // Needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
     /*
@@ -149,14 +148,13 @@ int main(int argc, char **argv)
     cout << "Cubemap created" << endl;
     */
 
-
-
-    // Window loop
+    // Game loop
     while(Controls.Running == true)
     {   
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
         
+
         // Run controls, does keystate and everything
         Controls.RunControls();
 
@@ -169,11 +167,8 @@ int main(int argc, char **argv)
         RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
 
 
-        // Get the end time of the frame
-        FrameTimeEnd = SDL_GetTicks();
-
         // Calculate the amount of time it took to run through 1 frame.
-        FrameTimeTotal = FrameTimeEnd- FrameTimeStart;
+        FrameTimeTotal = SDL_GetTicks() - FrameTimeStart;
 
         // Set the delay accordingly
         if(FrameDelay > FrameTimeTotal)
