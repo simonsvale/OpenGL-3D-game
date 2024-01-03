@@ -89,12 +89,8 @@ class Skybox: public Cubemap
             glEnableVertexAttribArray(0);
 
             // Unbind buffers and array.
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
-            
-            // Free the memory for the skybox VBO, since it is now stored in the skybox VAO.
-            glDeleteBuffers(1, &SkyboxVBO);
         }
 };
 

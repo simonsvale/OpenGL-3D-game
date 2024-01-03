@@ -12,18 +12,18 @@ out VS_OUT {
 
 void main()
 {
-    vec4 GeomPos;
-
-    for(int face = 0; face < 6; ++face)
+    for(int face = 0; face < 6;)
     {
         gl_Layer = face; // built-in variable that specifies to which face we render.
         for(int i = 0; i < 3; ++i) // for each triangle's vertices
         {
-            GeomPos = gl_in[i].gl_Position;
+            vec4 GeomPos = gl_in[i].gl_Position;
             vs_out.FragPos = GeomPos.xyz;
             gl_Position = CubeSides[face] * GeomPos;
             EmitVertex();
         }    
         EndPrimitive();
+        
+        face++;
     }
 } 

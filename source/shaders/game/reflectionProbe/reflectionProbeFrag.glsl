@@ -1,5 +1,7 @@
 #version 410 core
 
+out vec4 FragColor;
+
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -71,7 +73,7 @@ void main()
     vec4 environment = vec4( light * texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0);   
     vec4 reflection = vec4( light * texture(skybox, R).rgb, 1.0); 
     
-    gl_FragColor = mix(environment, reflection, 0.6);
+    FragColor = mix(environment, reflection, 0.6);
 }
 
 

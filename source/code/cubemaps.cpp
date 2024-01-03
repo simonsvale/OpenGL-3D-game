@@ -101,7 +101,7 @@ void ReflectionProbe::render_reflection_framebuffer()
 {   
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    /*
+    
     vector<glm::mat4> CubeSides;
     CubeSides.reserve(6);
 
@@ -116,13 +116,13 @@ void ReflectionProbe::render_reflection_framebuffer()
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
     CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
-    */
+    
 
     // Set the viewport size the framebuffer should render to.
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
 
-    /*
+    
     glUseProgram(ReflectionShader.ShaderProgram);
 
     string ReflectionMatrix;
@@ -132,7 +132,7 @@ void ReflectionProbe::render_reflection_framebuffer()
         glUniformMatrix4fv( glGetUniformLocation(ReflectionShader.ShaderProgram, ReflectionMatrix.c_str()), 1, GL_FALSE, &CubeSides[i][0][0]);
         i++;
     }
-    */
+    
 }
 
 
@@ -175,6 +175,9 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
     glDepthFunc(GL_LEQUAL);
     glUseProgram(SkyboxShader.ShaderProgram);
 
+    // Bind to the skybox texture.
+    bind_active_texture(0);
+
     ViewMatrix = glm::mat4( glm::mat3(ViewMatrix) );
 
     // Set view matrix and projection matrix for skybox.
@@ -182,8 +185,6 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
     glUniformMatrix4fv( glGetUniformLocation(SkyboxShader.ShaderProgram, "projection"), 1, GL_FALSE, &ProjectionMatrix[0][0] );
 
     glBindVertexArray(SkyboxVAO);
-
-    bind_active_texture(0);
 
     // Draw the skybox and unbind the skybox VAO.
     glDrawArrays(GL_TRIANGLES, 0, 36);
