@@ -34,7 +34,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // How tf did i miss this...
     glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
     float far_plane  = 25.0f;
@@ -91,8 +90,8 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
         glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
 
         // Set reflection texture
-        Sky.bind_active_texture(2);
-        //Refl.bind_active_texture(2);
+        //Sky.bind_active_texture(2);
+        Refl.bind_active_texture(2);
 
         // Bind GameElement VAO.
         glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
@@ -135,28 +134,23 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     // Now create the cubemap ---------------------------------------------------------------
     Refl.render_reflection_framebuffer();
 
-    // Set texture location / the uniform sampler
-    Refl.ReflectionShader.set_shader_texture(0, "diffuseTexture");
-    Refl.ReflectionShader.set_shader_texture(1, "depthMap");
-    Refl.ReflectionShader.set_shader_texture(2, "skybox");
-
     DepthMap.bind_active_texture(1);
 
-    int viewLoc = glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "view");
+    int viewLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "view");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-    int projectionLoc = glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "projection");
+    int projectionLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "projection");
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 
     // set lighting uniforms
-    glUniform3f( glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "lightPos"), 3.7f, 7.0f, 2.0f);
+    glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "lightPos"), 3.7f, 7.0f, 2.0f);
     
-    int PlayerPosLoc = glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "viewPos");
+    int PlayerPosLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "viewPos");
     glUniform3f(PlayerPosLoc, CameraPosition.x, CameraPosition.y, CameraPosition.z);
     
     float far_plane  = 25.0f;
-    glUniform1f( glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "far_plane"), far_plane);
+    glUniform1f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "far_plane"), far_plane);
 
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
@@ -183,7 +177,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
         ));
 
         // Assign new values to vertex shader.
-        int modelLoc = glGetUniformLocation(Refl.ReflectionShader.ShaderProgram, "model");
+        int modelLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         
         glActiveTexture(GL_TEXTURE0);
@@ -209,6 +203,4 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     Refl.cubemap_to_images();
-
-    SDL_GL_SwapWindow(window);
 }

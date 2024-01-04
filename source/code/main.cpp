@@ -127,9 +127,8 @@ int main(int argc, char **argv)
     glEnable(GL_CULL_FACE);  
 
     // Setup variables for maintaining 60 fps
-    int FrameTimeTotal;
+    int FrameTime;
     Uint64 FrameTimeStart;
-    Uint64 FrameTimeEnd;
 
     const int FrameDelay = 1000 / 60;
 
@@ -170,12 +169,12 @@ int main(int argc, char **argv)
 
 
         // Calculate the amount of time it took to run through 1 frame.
-        FrameTimeTotal = SDL_GetTicks() - FrameTimeStart;
+        FrameTime = SDL_GetTicks() - FrameTimeStart;
 
         // Set the delay accordingly
-        if(FrameDelay > FrameTimeTotal)
+        if(FrameDelay > FrameTime)
         {
-            SDL_Delay(FrameDelay - FrameTimeTotal);
+            SDL_Delay(FrameDelay - FrameTime);
         }
     }
 

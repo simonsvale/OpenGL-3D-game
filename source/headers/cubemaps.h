@@ -144,5 +144,4 @@ class ReflectionProbe: public Cubemap
 };
 
 
-
 #endif

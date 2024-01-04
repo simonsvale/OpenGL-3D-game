@@ -99,9 +99,8 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 // WIP
 void ReflectionProbe::render_reflection_framebuffer()
 {   
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    
     vector<glm::mat4> CubeSides;
     CubeSides.reserve(6);
 
@@ -122,7 +121,6 @@ void ReflectionProbe::render_reflection_framebuffer()
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
 
-    
     glUseProgram(ReflectionShader.ShaderProgram);
 
     string ReflectionMatrix;
@@ -142,14 +140,13 @@ void ReflectionProbe::set_reflection_FBO(void)
 
     // Generate the framebuffer and the cubemap texture.
     glGenTextures(1, &CubemapTexture);
-
     glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
 
     // Assign a 2d texture to each side of the cubemap.
     for (unsigned int i = 0; i < 6;)
     {
         // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_COLOR_ATTACHMENT0, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_COLOR_ATTACHMENT0, GL_UNSIGNED_BYTE, NULL);
         i++;
     }
 
@@ -160,14 +157,16 @@ void ReflectionProbe::set_reflection_FBO(void)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubemapTexture, 0);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, CubemapTexture, 0);
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
     // Unbind the cubemap texture and FBO
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
-
 
 
 void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
@@ -206,8 +205,8 @@ void ShadowMap::set_depth_FBO(void)
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
         i++;
     }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -217,6 +216,8 @@ void ShadowMap::set_depth_FBO(void)
 
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
