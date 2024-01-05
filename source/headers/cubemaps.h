@@ -51,7 +51,10 @@ class Cubemap
 class Skybox: public Cubemap
 {
     public:
-        // Functions
+        /**  Renders the skybox using 36 vertices, using the view matrix and projection matrix.
+         *   @param `glm::mat4` ViewMatrix, the view matrix.
+         *   @param `glm::mat4` ProjectionMatrix, the projection matrix.
+        **/
         void render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix);
 
         // Variables
