@@ -130,6 +130,10 @@ class ReflectionProbe: public Cubemap
 {
     public:
         // Should be classes for themselves
+
+        /** Creates a framebuffer object and buffers the `CubemapTexture` as the resulting texture for it.
+         *
+        **/
         void set_reflection_FBO(void);
         void render_reflection_framebuffer(void);
 
