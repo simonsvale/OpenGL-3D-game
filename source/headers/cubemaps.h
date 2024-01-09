@@ -27,6 +27,9 @@ class Cubemap
         **/
         void load_cubemap(array<string, 6> CubemapSidesPath);
 
+        // Sets up a cubemap texture.
+        void create_cubemap_texture(void);
+
         /** Takes the `GLuint` CubemapTexture and extracts the 6 textures it consists of, 
          * and outputs 6 .png images containing the different sides of the cubemap in a folder at `/source/textures/cubemaps`.
          * 

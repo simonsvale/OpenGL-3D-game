@@ -51,6 +51,29 @@ void Cubemap::load_cubemap(array<string, 6> CubemapSidesPath)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
+void Cubemap::create_cubemap_texture(void)
+{
+    glGenTextures(1, &CubemapTexture);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
+
+    // Create all six faces of the cubemap.
+    for (unsigned int i = 0; i < 6;)
+    { 
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        i++;
+    }
+
+    // Setup parameters
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    // Unbind cubemap texture.
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
 
 void Cubemap::cubemap_to_images(void)
 {   
@@ -99,73 +122,46 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 // WIP
 void ReflectionProbe::render_reflection_framebuffer()
 {   
+    // Set viewport
+    glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    vector<glm::mat4> CubeSides;
-    CubeSides.reserve(6);
-
-    float CloseReflection = 1.0;
-    float FarReflection = 25.0;
-    glm::mat4 Cubeprojection = glm::perspective(glm::radians(90.0f), (float)CUBEMAP_RES_W / (float)CUBEMAP_RES_H, CloseReflection, FarReflection);
-
-    // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
-    CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
-    CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
-    CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)));
-    CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
-    CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
-    CubeSides.push_back(Cubeprojection * glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
-    
-
-    // Set the viewport size the framebuffer should render to.
-    glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
-    glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
-
-    glUseProgram(ReflectionShader.ShaderProgram);
-
-    string ReflectionMatrix;
-    for (unsigned int i = 0; i < 6;)
+    for(int i = 0; i < 6;)
     {
-        ReflectionMatrix = "CubeSides[" + std::to_string(i) + "]";
-        glUniformMatrix4fv( glGetUniformLocation(ReflectionShader.ShaderProgram, ReflectionMatrix.c_str()), 1, GL_FALSE, &CubeSides[i][0][0]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, CubemapTexture, 0);
+
+        // Set correct view matrix
+
+        // Render scene
+
+
         i++;
     }
-    
+
+    // Unbind framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 
 void ReflectionProbe::set_reflection_FBO(void)
 {   
     glGenFramebuffers(1, &ReflectionMapFBO);
-
-    // Generate the framebuffer and the cubemap texture.
-    glGenTextures(1, &CubemapTexture);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, CubemapTexture);
-
-    // Assign a 2d texture to each side of the cubemap.
-    for (unsigned int i = 0; i < 6;)
-    {
-        // This is possible due to GL_TEXTURE_CUBE_MAP_POSITIVE_X's hex value being 1 int from every other side.
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_COLOR_ATTACHMENT0, CUBEMAP_RES_W, CUBEMAP_RES_H, 0, GL_COLOR_ATTACHMENT0, GL_UNSIGNED_BYTE, NULL);
-        i++;
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, CubemapTexture, 0);
 
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glReadBuffer(GL_COLOR_ATTACHMENT0); // May not be necesary
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-    // Unbind the cubemap texture and FBO
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+
+    glGenRenderbuffers(1, &RenderBuffer);
+    glBindRenderbuffer(1, RenderBuffer);
+
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, CUBEMAP_RES_W, CUBEMAP_RES_H);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT, GL_RENDERBUFFER, RenderBuffer);
 }
 
 

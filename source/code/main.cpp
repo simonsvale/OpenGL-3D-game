@@ -103,19 +103,8 @@ int main(int argc, char **argv)
     });
     Sky.SkyboxShader.set_shader_texture(0, "skybox");
 
-    // Create reflection probe
+    // Create a single reflection probe
     ReflectionProbe Refl(512, 512);
-    /*
-    Refl.load_cubemap({
-        "source/textures/debug3.png",
-        "source/textures/debug3.png",
-        "source/textures/debug3.png",
-        "source/textures/debug3.png",
-        "source/textures/debug3.png",
-        "source/textures/debug3.png"
-    });
-    */
-    //Refl.cubemap_to_images();
     Refl.set_reflection_FBO();
 
 
@@ -134,20 +123,6 @@ int main(int argc, char **argv)
 
     // Needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
-
-    
-    // Run controls, does keystate and everything
-    Controls.RunControls();
-
-    // Camera movement
-    Controls.ComputeMouseInput(window);
-    projection = Controls.ProjectionMatrix;
-
-    // Render Everything.
-    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
-
-    cout << "Cubemap created" << endl;
-    
 
     // Game loop
     while(Controls.Running == true)
