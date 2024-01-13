@@ -96,7 +96,6 @@ void Controls::GetPlayerMovementInput(const Uint8 *keyArray)
     {
         position -= right * deltaTime * speed;
     }
-
 }
 
 

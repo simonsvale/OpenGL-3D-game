@@ -118,9 +118,8 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 }
 
 
-
 // WIP
-void ReflectionProbe::render_reflection_framebuffer()
+void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window, ShadowMap DepthMap, Skybox Sky)
 {   
     // Set viewport
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
@@ -128,21 +127,102 @@ void ReflectionProbe::render_reflection_framebuffer()
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for(int i = 0; i < 6;)
+    glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 100.0f);
+    vector<glm::mat4> CubemapTransforms;
+
+    // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
+    CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)));
+    CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
+    CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+    CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
+
+
+    // Send the diffuse and specular map to the fragment shader.
+    glUseProgram(ShaderObjectVector[0]->ShaderProgram);
+
+    // Set texture location / the uniform sampler
+    ShaderObjectVector[0]->set_shader_texture(0, "diffuseTexture");
+    ShaderObjectVector[0]->set_shader_texture(1, "depthMap");
+    ShaderObjectVector[0]->set_shader_texture(2, "reflectionMap");
+
+    // Bind framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
+
+    int ShaderIndex;
+
+    for(int FaceNumber = 0; FaceNumber < 6;)
     {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, CubemapTexture, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + FaceNumber, CubemapTexture, 0);
 
-        // Set correct view matrix
+        DepthMap.bind_active_texture(1);
 
-        // Render scene
+        glUniformMatrix4fv( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "view"), 1, GL_FALSE, glm::value_ptr(CubemapTransforms[FaceNumber]));
+        glUniformMatrix4fv( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "projection"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
 
+        // set lighting uniforms
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "lightPos"), 3.7f, 7.0f, 2.0f);
+        glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "viewPos"), CubePos.x, CubePos.y, CubePos.z);
+        float far_plane  = 25.0f;
+        glUniform1f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "far_plane"), far_plane);
 
-        i++;
+        for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
+        {   
+            ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
+            
+            glm::mat4 model = glm::mat4(1.0f);
+
+            model = glm::translate(model, glm::vec3(
+                GameElementVector[GameElementNumber]->WorldPosition[0], 
+                GameElementVector[GameElementNumber]->WorldPosition[1], 
+                GameElementVector[GameElementNumber]->WorldPosition[2]
+            ));
+
+            // Set GameElement model rotation around x, y, z, in degrees.
+            model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[0]), glm::vec3(1, 0, 0));
+            model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[1]), glm::vec3(0, 1, 0));
+            model = glm::rotate(model, glm::degrees(GameElementVector[GameElementNumber]->Rotation[2]), glm::vec3(0, 0, 1));
+
+            // Set GameElement model scale.
+            model = glm::scale(model, glm::vec3(
+                GameElementVector[GameElementNumber]->Scale[0], 
+                GameElementVector[GameElementNumber]->Scale[1], 
+                GameElementVector[GameElementNumber]->Scale[2]
+            ));
+
+            // Assign new values to vertex shader.
+            int modelLoc = glGetUniformLocation(ShaderObjectVector[ShaderIndex]->ShaderProgram, "model");
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
+
+            //Sky.bind_active_texture(2);
+
+            // Bind GameElement VAO.
+            glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
+
+            // Bind IBO
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GameElementVector[GameElementNumber]->IBO);
+
+            // Draw the VBO stored in the VAO, by using the IBO.
+            glDrawElements(GL_TRIANGLES, GameElementVector[GameElementNumber]->IndicesSize, GL_UNSIGNED_INT, 0);
+
+            GameElementNumber++;
+        }
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        Sky.render_skybox(CubemapTransforms[FaceNumber], ProjectionMatrix);
+
+        FaceNumber++;
     }
-
-    // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    // Set normal screen viewport ! rework later so it does not use constants.
+    glViewport(0, 0, 1080, 720);
 }
 
 
@@ -151,7 +231,6 @@ void ReflectionProbe::set_reflection_FBO(void)
     glGenFramebuffers(1, &ReflectionMapFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
 
-    glReadBuffer(GL_COLOR_ATTACHMENT0); // May not be necesary
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -184,6 +263,7 @@ void Skybox::render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix)
     // Draw the skybox and unbind the skybox VAO.
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
+    glUseProgram(0);
    
     glDepthFunc(GL_LESS);
 }

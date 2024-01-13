@@ -46,9 +46,6 @@ class Renderer
         void RenderCubemaps(
             vector<unique_ptr<GameElement> > &GameElementVector, 
             vector< unique_ptr<Shader> > &ShaderObjectVector, 
-            glm::mat4 projection, 
-            glm::mat4 view,
-            glm::vec3 CameraPosition,
             SDL_Window *window,
             ShadowMap DepthMap,
             Skybox Sky,

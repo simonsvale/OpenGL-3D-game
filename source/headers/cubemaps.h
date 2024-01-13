@@ -138,17 +138,16 @@ class ReflectionProbe: public Cubemap
          *
         **/
         void set_reflection_FBO(void);
-        void render_reflection_framebuffer(void);
+        void render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window, ShadowMap DepthMap, Skybox Sky);
 
         GLuint ReflectionMapFBO;
         GLuint RenderBuffer;
 
-        Shader ReflectionShader;
-
-        ReflectionProbe(GLuint Width = 1024, GLuint Height = 1024): ReflectionShader("source/shaders/game/reflectionProbe/reflectionProbeVert.glsl", "source/shaders/game/reflectionProbe/reflectionProbeFrag.glsl", "source/shaders/game/reflectionProbe/reflectionProbeGeom.glsl")
+        ReflectionProbe(GLuint Width = 1024, GLuint Height = 1024)
         {
             CUBEMAP_RES_W = Width;
             CUBEMAP_RES_H = Height;
+            create_cubemap_texture();
         }
 
 };

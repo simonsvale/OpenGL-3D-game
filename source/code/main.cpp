@@ -106,6 +106,8 @@ int main(int argc, char **argv)
     // Create a single reflection probe
     ReflectionProbe Refl(512, 512);
     Refl.set_reflection_FBO();
+    Refl.CubePos = {5.0, 3.0, 3.0};
+    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, window, DepthMap, Sky, Refl);
 
 
     glm::mat4 view;
