@@ -64,33 +64,6 @@ void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
     glEnableVertexAttribArray(2);
 }
 
-void Graphics::SetFBO()
-{
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-
-    glGenFramebuffers(1, &FBO);
-    // create depth cubemap texture
-
-    glGenTextures(1, &depthCubemap);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemap);
-    for (unsigned int i = 0; i < 6;)
-    {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-        i++;
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthCubemap, 0);
-
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
 
 void Graphics::SetLightVAO(int VertSize, int NormalSize)
 {   
@@ -129,12 +102,12 @@ void Graphics::SetEBO(unsigned int Indices[], int IndiSize)
 void Graphics::LoadTexture(GLuint *Texture, const char *TexturePath)
 {
     // Set textures:
-    int widthImg, heightImg, numColCh;
+    int Width, Height, Channels;
 
     // Should be placed in an init program function/method.
     stbi_set_flip_vertically_on_load(true);
 
-    unsigned char* bytes = stbi_load(TexturePath, &widthImg, &heightImg, &numColCh, 0);
+    unsigned char* bytes = stbi_load(TexturePath, &Width, &Height, &Channels, 0);
 
     glGenTextures(1, Texture);
     glBindTexture(GL_TEXTURE_2D, *Texture);
@@ -142,8 +115,19 @@ void Graphics::LoadTexture(GLuint *Texture, const char *TexturePath)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-
+    switch (Channels)
+    {
+        case 3:
+        {   
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
+            break;
+        }
+        case 4:
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Width, Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+            break;
+        }
+    }
     stbi_image_free(bytes);
     
     glBindTexture(GL_TEXTURE_2D, 0);

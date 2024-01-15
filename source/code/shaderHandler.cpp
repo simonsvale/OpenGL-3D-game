@@ -138,3 +138,11 @@ void Shader::AttachShader(GLuint *Program)
     
 }
 
+void Shader::set_shader_texture(GLuint GLTextureSpace, string Sampler)
+{
+    glUseProgram(ShaderProgram);
+
+    // Set texture space, ex. GL_TEXTURE0.
+    glUniform1i( glGetUniformLocation(ShaderProgram, Sampler.c_str()), GLTextureSpace);
+    glUseProgram(0);
+}

@@ -11,7 +11,7 @@ uniform sampler2D diffuseTexture;
 uniform samplerCube depthMap;
 
 // For reflections
-uniform samplerCube skybox;
+uniform samplerCube reflectionMap;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
@@ -70,9 +70,9 @@ void main()
     vec3 light = ambient + (1.0 - shadow) * (diffuse + specular);
 
     vec4 environment = vec4( light * texture(diffuseTexture, fs_in.TexCoords).rgb, 1.0);   
-    vec4 reflection = vec4( light * texture(skybox, R).rgb, 1.0); 
+    vec4 reflection = vec4( light * texture(reflectionMap, R).rgb, 1.0); 
     
-    FragColor = mix(environment, reflection, 0.8);
+    FragColor = mix(environment, reflection, 0.6);
 }
 
 

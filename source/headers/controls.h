@@ -57,7 +57,9 @@ class Controls
 
         // QUIT
         bool Running = true;
-        void QuitGame(const Uint8 *keyArray);
+        void QuitGame(SDL_Event windowEvent);
+
+        void PrintPlayerPosition(SDL_Event windowEvent);
 
 
 };

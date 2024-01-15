@@ -15,6 +15,20 @@ using namespace std;
 class Shader
 {
     public:
+        // Load a .GLSL file.
+        void LoadShaderFile(string GLSLFilePath, string *GLSLCode);
+
+        // Create a vertex or a fragment shader, uses the attributes GLuint VertexShader and GLuint FragmentShader.
+        void CreateVertexShader(const char *ShaderCode);
+        void CreateFragmentShader(const char *ShaderCode);
+        void CreateGeometryShader(const char *ShaderCode);
+        
+        // Attach the shaders to a shaderprogram
+        void AttachShader(GLuint *Program);
+
+        void set_shader_texture(GLuint GLTextureSpace, string Sampler);
+
+
         // Constructor
         Shader(string VertexShaderFilePath, string FragmentShaderFilePath, string GeometryShaderFilePath = "-")
         {   
@@ -54,17 +68,6 @@ class Shader
         /* It is somewhat inefficient to have a shaderprogram for each shader, 
         however re-linking a shaderprogram by reattaching new shaders to it takes more time. */
         GLuint ShaderProgram; 
-
-        // Load a .GLSL file.
-        void LoadShaderFile(string GLSLFilePath, string *GLSLCode);
-
-        // Create a vertex or a fragment shader, uses the attributes GLuint VertexShader and GLuint FragmentShader.
-        void CreateVertexShader(const char *ShaderCode);
-        void CreateFragmentShader(const char *ShaderCode);
-        void CreateGeometryShader(const char *ShaderCode);
-        
-        // Attach the shaders to a shaderprogram
-        void AttachShader(GLuint *Program);
 };
 
 

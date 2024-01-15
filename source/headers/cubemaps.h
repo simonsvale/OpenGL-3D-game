@@ -11,29 +11,42 @@
 #include <vector>
 #include <string>
 #include <array>
+#include <memory> 
+
+#include <STB/stb_image_write.h>
 
 #include "shaderHandler.h"
+#include "gameElementHandler.h"
 
+// Cubemap super class
 class Cubemap
 {
     public:
-        GLuint CubemapTexture;
-        GLuint FBO;
+        /** Given an array of 6 strings containing paths to .png images, loads the given .png images at the paths into a `GLuint` `GL_TEXTURE_CUBE_MAP` texture.
+         * @param `array<string>` CubemapSidesPath, an array containg 6 string paths to the same or multiple .png images.
+        **/
+        void load_cubemap(array<string, 6> CubemapSidesPath);
 
-        array<string, 6> CubemapPath;
+        // Sets up a cubemap texture.
+        void create_cubemap_texture(void);
+
+        /** Takes the `GLuint` CubemapTexture and extracts the 6 textures it consists of, 
+         * and outputs 6 .png images containing the different sides of the cubemap in a folder at `/source/textures/cubemaps`.
+         * 
+        **/
+        void cubemap_to_images(void);
+
+        // Sets the active opengl texture, int is the GL_TEXTUREX
+        void bind_active_texture(GLuint GLTextureSpace);
+
+        GLuint CubemapTexture;
         
         // Texture size of each face.
-        GLuint CUBEMAP_RES_W = 1024;
-        GLuint CUBEMAP_RES_H = 1024;
+        int CUBEMAP_RES_W = -1;
+        int CUBEMAP_RES_H = -1;
         
         // Position of the cubemap.
         glm::vec3 CubePos;
-
-        // Should be classes for themselves
-        void create_reflection_cubemap(void);
-        void render_reflection_framebuffer(Shader ReflectionShader);
-
-        void load_cubemap(void);
 };
 
 
@@ -41,7 +54,10 @@ class Cubemap
 class Skybox: public Cubemap
 {
     public:
-        // Functions
+        /**  Renders the skybox using 36 vertices, using the view matrix and projection matrix.
+         *   @param `glm::mat4` ViewMatrix, the view matrix.
+         *   @param `glm::mat4` ProjectionMatrix, the projection matrix.
+        **/
         void render_skybox(glm::mat4 ViewMatrix, glm::mat4 ProjectionMatrix);
 
         // Variables
@@ -79,16 +95,60 @@ class Skybox: public Cubemap
             glEnableVertexAttribArray(0);
 
             // Unbind buffers and array.
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
-            
-            // Free the memory for the skybox VBO, since it is now stored in the skybox VAO.
-            glDeleteBuffers(1, &SkyboxVBO);
         }
 };
 
 
+class ShadowMap: public Cubemap
+{
+    public:
+        /** Renders a depth map, using scene geometry, currently only from a single light source.
+         *  Sets a framebuffer containing the depth map to a variable `GLuint DepthMapFBO` by refrence.
+         * @param std::vector<std::unique_ptr<GameElement>> &GameElementVector, Models in the scene.
+         *  
+        **/
+        void render_depthmap(vector<unique_ptr<GameElement> > &GameElementVector);
+
+        /** Create a framebuffer and a texture, and set the framebuffer to the 
+         *  variable `GLuint DepthMapFBO` and the texture to the variable `GLuint CubemapTexture`, by reference. 
+        **/
+        void set_depth_FBO(void);
+
+        Shader DepthMapShader;
+        GLuint DepthMapFBO;
+
+        ShadowMap(GLuint Width = 1024, GLuint Height = 1024): DepthMapShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl")
+        {
+            CUBEMAP_RES_W = Width;
+            CUBEMAP_RES_H = Height;
+            set_depth_FBO();
+        }
+
+};
+
+
+class ReflectionProbe: public Cubemap
+{
+    public:
+        /** Creates a framebuffer object and buffers the `CubemapTexture` as the resulting texture for it.
+         *
+        **/
+        void set_reflection_FBO(void);
+        void render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky);
+
+        GLuint ReflectionMapFBO;
+        GLuint RenderBuffer;
+
+        ReflectionProbe(GLuint Width = 1024, GLuint Height = 1024)
+        {
+            CUBEMAP_RES_W = Width;
+            CUBEMAP_RES_H = Height;
+            create_cubemap_texture();
+        }
+
+};
 
 
 #endif

@@ -58,18 +58,18 @@ int main(int argc, char **argv)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
     SDL_Window *window;
-    
     window = SDL_CreateWindow(
         "Game window", 
         SDL_WINDOWPOS_UNDEFINED, 
         SDL_WINDOWPOS_UNDEFINED, 
         WIDTH, HEIGHT, 
-        SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL);
+        SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_OPENGL
+    );
 
     if (NULL == window)
     {
-        cout << "Could not create window" << SDL_GetError() << endl;
-        return 1;
+        cout << "Could not create game window, error: " << SDL_GetError() << endl;
+        return EXIT_FAILURE;
     }
 
     // OpenGL context.
@@ -81,63 +81,61 @@ int main(int argc, char **argv)
     
     if (NULL == GLContext)
     {
-        cout << "Could not create OpenGL context" << SDL_GetError() << endl;
-        return 1; 
+        cout << "Could not create OpenGL context, error:" << SDL_GetError() << endl;
+        return EXIT_FAILURE; 
     }
 
     // !!! Load map and create all vertecies and textures.
     Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
 
-    // Load depth test shader, NEEDS GEOMETRY SHADER!!!!
-    Shader DepthShader("source/shaders/simpleDepthVert.glsl", "source/shaders/simpleDepthFrag.glsl", "source/shaders/simpleDepthGeom.glsl");
-
-    GameElement DepthFBO;
-    DepthFBO.SetFBO();
-
+    // Create shadowmap to render shadows.
+    ShadowMap DepthMap;
 
     // Create skybox:
     Skybox Sky;
-    Sky.CubemapPath = {
+    Sky.load_cubemap({
         "source/textures/skybox/treatmentLF.png", 
         "source/textures/skybox/treatmentRT.png", 
         "source/textures/skybox/treatmentUP.png", 
         "source/textures/skybox/treatmentDN.png", 
         "source/textures/skybox/treatmentFT.png", 
         "source/textures/skybox/treatmentBK.png"
-    };
-    Sky.load_cubemap();
+    });
+    Sky.SkyboxShader.set_shader_texture(0, "skybox");
 
-    glUseProgram(Sky.SkyboxShader.ShaderProgram);
-    glUniform1i( glGetUniformLocation(Sky.SkyboxShader.ShaderProgram, "skybox"), 0);
-    glUseProgram(0);
-    
 
     // Enable depth test and backface culling.
     glEnable(GL_DEPTH_TEST);  
     glEnable(GL_CULL_FACE);  
 
+    // Create a single reflection probe
+    ReflectionProbe Refl(1024, 1024);
+    Refl.set_reflection_FBO();
+    Refl.CubePos = {6.06258, 4.58507, -0.548955};
+    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, Refl, true);
+
+
+    glm::mat4 view;
+    glm::mat4 projection;
+
     // Setup variables for maintaining 60 fps
-    int FrameTimeTotal;
+    int FrameTime;
     Uint64 FrameTimeStart;
-    Uint64 FrameTimeEnd;
 
     const int FrameDelay = 1000 / 60;
 
-    // Hide cursor
-    // Is needed for mouse inputs to work correctly
+    // Needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
 
-    // Window loop
+    // Game loop
     while(Controls.Running == true)
     {   
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
         
-        // Run controls, does keystate and everthing
-        Controls.RunControls();
 
-        glm::mat4 view = glm::mat4(1.0f);
-        glm::mat4 projection;
+        // Run controls, does keystate and everything
+        Controls.RunControls();
 
         // Camera movement
         Controls.ComputeMouseInput(window);
@@ -145,19 +143,16 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthFBO, DepthShader, Sky);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
 
-
-        // Get the end time of the frame
-        FrameTimeEnd = SDL_GetTicks();
 
         // Calculate the amount of time it took to run through 1 frame.
-        FrameTimeTotal = FrameTimeEnd- FrameTimeStart;
+        FrameTime = SDL_GetTicks() - FrameTimeStart;
 
         // Set the delay accordingly
-        if(FrameDelay > FrameTimeTotal)
+        if(FrameDelay > FrameTime)
         {
-            SDL_Delay(FrameDelay - FrameTimeTotal);
+            SDL_Delay(FrameDelay - FrameTime);
         }
     }
 

@@ -38,13 +38,19 @@ class Renderer
             glm::mat4 view,
             glm::vec3 CameraPosition,
             SDL_Window *window,
-            GameElement &FBODummy,
-            Shader &CubemapShader,
-            Skybox Sky
+            ShadowMap DepthMap,
+            Skybox Sky,
+            ReflectionProbe Refl
         );
 
-        // Method for rendering cubemaps for shadow mapping.
-        void RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, Shader &CubemapShader, GameElement &FBODummy);
+        void RenderCubemaps(
+            vector<unique_ptr<GameElement> > &GameElementVector, 
+            vector< unique_ptr<Shader> > &ShaderObjectVector, 
+            ShadowMap DepthMap,
+            Skybox Sky,
+            ReflectionProbe Refl,
+            bool SaveCubemap
+        );
         
 };
 
