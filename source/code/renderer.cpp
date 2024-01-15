@@ -113,7 +113,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
 
 
-void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl, bool SaveCubemap = false)
+void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl, bool SaveCubemap = false)
 {   
     glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
@@ -128,7 +128,7 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     DepthMap.render_depthmap(GameElementVector);
 
     // Create cubemap
-    Refl.render_reflection_map(GameElementVector, ShaderObjectVector, DepthMap, Sky, window);
+    Refl.render_reflection_map(GameElementVector, ShaderObjectVector, DepthMap, Sky);
 
     // Save cubemap
     if(SaveCubemap == true)

@@ -132,13 +132,11 @@ class ShadowMap: public Cubemap
 class ReflectionProbe: public Cubemap
 {
     public:
-        // Should be classes for themselves
-
         /** Creates a framebuffer object and buffers the `CubemapTexture` as the resulting texture for it.
          *
         **/
         void set_reflection_FBO(void);
-        void render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, SDL_Window *window);
+        void render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky);
 
         GLuint ReflectionMapFBO;
         GLuint RenderBuffer;

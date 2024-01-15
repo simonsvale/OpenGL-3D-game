@@ -119,7 +119,7 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 
 
 // WIP
-void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, SDL_Window *window)
+void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky)
 {   
     // Set viewport
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
@@ -138,12 +138,12 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
     CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)));
     CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
     CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
-
+    
     // Bind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
 
     for(int FaceNumber = 0; FaceNumber < 6;)
-    {       
+    {   
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + FaceNumber, CubemapTexture, 0);
 
         // Render skybox
@@ -162,6 +162,7 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
         glUniform3f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "viewPos"), CubePos.x, CubePos.y, CubePos.z);
         float far_plane  = 25.0f;
         glUniform1f( glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "far_plane"), far_plane);
+
 
         for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
         {   
@@ -208,14 +209,15 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        SDL_GL_SwapWindow(window);
+        // Render skybox (Should be called here)
+        //Sky.render_skybox(CubemapTransforms[FaceNumber], ProjectionMatrix);
 
         FaceNumber++;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     // Set normal screen viewport ! rework later so it does not use constants.
-    glViewport(0, 0, 1080, 720);
+    //glViewport(0, 0, 1080, 720);
 }
 
 
@@ -223,18 +225,13 @@ void ReflectionProbe::set_reflection_FBO(void)
 {   
     glGenFramebuffers(1, &ReflectionMapFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubemapTexture, 0);
 
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    glReadBuffer(GL_NONE);
 
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-    glGenRenderbuffers(1, &RenderBuffer);
-    glBindRenderbuffer(1, RenderBuffer);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, CUBEMAP_RES_W, CUBEMAP_RES_H);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT, GL_RENDERBUFFER, ReflectionMapFBO);
 }
 
 
