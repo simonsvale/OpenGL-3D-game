@@ -138,7 +138,7 @@ class ReflectionProbe: public Cubemap
          *
         **/
         void set_reflection_FBO(void);
-        void render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky);
+        void render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, SDL_Window *window);
 
         GLuint ReflectionMapFBO;
         GLuint RenderBuffer;

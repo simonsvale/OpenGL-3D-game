@@ -119,7 +119,7 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 
 
 // WIP
-void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky)
+void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, SDL_Window *window)
 {   
     // Set viewport
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
@@ -127,7 +127,8 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 100.0f);
+    
+    glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(90.0f), (float)CUBEMAP_RES_W / (float)CUBEMAP_RES_H, 1.0f, 25.0f);
     vector<glm::mat4> CubemapTransforms;
 
     // Look at all four cardinal directions, and up, down. Basically just the sides of the cube the cubemap consists of.
@@ -207,6 +208,8 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
+        SDL_GL_SwapWindow(window);
+
         FaceNumber++;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -228,9 +231,10 @@ void ReflectionProbe::set_reflection_FBO(void)
 
     glGenRenderbuffers(1, &RenderBuffer);
     glBindRenderbuffer(1, RenderBuffer);
-
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, CUBEMAP_RES_W, CUBEMAP_RES_H);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT, GL_RENDERBUFFER, RenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT, GL_RENDERBUFFER, ReflectionMapFBO);
 }
 
 

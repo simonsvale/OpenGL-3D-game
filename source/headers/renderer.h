@@ -46,6 +46,7 @@ class Renderer
         void RenderCubemaps(
             vector<unique_ptr<GameElement> > &GameElementVector, 
             vector< unique_ptr<Shader> > &ShaderObjectVector, 
+            SDL_Window *window,
             ShadowMap DepthMap,
             Skybox Sky,
             ReflectionProbe Refl,

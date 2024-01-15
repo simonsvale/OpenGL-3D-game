@@ -6,7 +6,7 @@ SPAWNPOINT = {100.0f, 23.0f, 21.0f};
 
 MAP_GEOMETRY = 
 {   
-    // lit mars sand
+   // lit mars sand
    {TYPE = 0,
     DIFFUSE_TEXTURE_PATH = "source/textures/mars_sand.png",
     SPECULAR_TEXTURE_PATH = "source/textures/mars_sand_spec3.png",
