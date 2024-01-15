@@ -119,7 +119,7 @@ void Cubemap::bind_active_texture(GLuint GLTextureSpace)
 
 
 // WIP
-void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window, ShadowMap DepthMap, Skybox Sky)
+void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky)
 {   
     // Set viewport
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
@@ -138,23 +138,18 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
     CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
     CubemapTransforms.push_back(glm::lookAt(CubePos, CubePos + glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f)));
 
-
-    // Send the diffuse and specular map to the fragment shader.
-    glUseProgram(ShaderObjectVector[0]->ShaderProgram);
-
-    // Set texture location / the uniform sampler
-    ShaderObjectVector[0]->set_shader_texture(0, "diffuseTexture");
-    ShaderObjectVector[0]->set_shader_texture(1, "depthMap");
-    ShaderObjectVector[0]->set_shader_texture(2, "reflectionMap");
-
     // Bind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
 
-    int ShaderIndex;
-
     for(int FaceNumber = 0; FaceNumber < 6;)
-    {
+    {       
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + FaceNumber, CubemapTexture, 0);
+
+        // Render skybox
+        Sky.render_skybox(CubemapTransforms[FaceNumber], ProjectionMatrix);
+
+        // Send the diffuse and specular map to the fragment shader.
+        glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
         DepthMap.bind_active_texture(1);
 
@@ -169,7 +164,7 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
 
         for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
         {   
-            ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
+            int ShaderIndex = GameElementVector[GameElementNumber]->ShaderProgramIndex;
             
             glm::mat4 model = glm::mat4(1.0f);
 
@@ -198,8 +193,6 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, GameElementVector[GameElementNumber]->DiffuseTexture);
 
-            //Sky.bind_active_texture(2);
-
             // Bind GameElement VAO.
             glBindVertexArray(GameElementVector[GameElementNumber]->VAO);
 
@@ -211,11 +204,8 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
 
             GameElementNumber++;
         }
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-
-        Sky.render_skybox(CubemapTransforms[FaceNumber], ProjectionMatrix);
 
         FaceNumber++;
     }

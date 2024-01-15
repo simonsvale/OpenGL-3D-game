@@ -104,10 +104,10 @@ int main(int argc, char **argv)
     Sky.SkyboxShader.set_shader_texture(0, "skybox");
 
     // Create a single reflection probe
-    ReflectionProbe Refl(512, 512);
+    ReflectionProbe Refl(1024, 1024);
     Refl.set_reflection_FBO();
-    Refl.CubePos = {5.0, 3.0, 3.0};
-    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, window, DepthMap, Sky, Refl);
+    Refl.CubePos = {6.06258, 4.58507, -0.548955};
+    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, Refl, false);
 
 
     glm::mat4 view;

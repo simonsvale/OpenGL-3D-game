@@ -98,10 +98,10 @@ void Controls::GetPlayerMovementInput(const Uint8 *keyArray)
     }
 }
 
-
+// Uses key: r, for rendermode.
 void Controls::ToggleRenderMode(SDL_Event windowEvent)
 {
-    if((windowEvent.key.keysym.sym == SDLK_p) && (SDL_KEYUP == windowEvent.type))
+    if((windowEvent.key.keysym.sym == SDLK_r) && (SDL_KEYUP == windowEvent.type))
     {
         switch(RenderMode)
         {
@@ -128,14 +128,23 @@ void Controls::ToggleRenderMode(SDL_Event windowEvent)
 }
 
 
-void Controls::QuitGame(const Uint8 *keyArray)
+void Controls::QuitGame(SDL_Event windowEvent)
 {
     // QUIT if escape
-    if(keyArray[SDL_SCANCODE_ESCAPE])
+    if((windowEvent.key.keysym.sym == SDLK_ESCAPE) && (SDL_KEYUP == windowEvent.type))
     {
         Running = false;
     }
 }
+
+void Controls::PrintPlayerPosition(SDL_Event windowEvent)
+{
+    if((windowEvent.key.keysym.sym == SDLK_p) && (SDL_KEYUP == windowEvent.type))
+    {
+        cout << "<Position> (" << position.x << ", " << position.y << ", " << position.z << ")" << endl;
+    }
+}
+
 
 // Main control loop
 void Controls::RunControls()
@@ -149,14 +158,14 @@ void Controls::RunControls()
 	// Do controls
 	GetPlayerMovementInput(keyArray);
 
-	QuitGame(keyArray);
-
-
     // To handle one keypress, SDL_PollEvent is used.
     while(SDL_PollEvent(&windowEvent) != 0)
     {   
-        // All methods dependent on key up press.
-        ToggleRenderMode(windowEvent);  
+        // All methods dependent on key up press.  
+        QuitGame(windowEvent);
+
+        ToggleRenderMode(windowEvent);
+
+        PrintPlayerPosition(windowEvent);
     }
- 
 }

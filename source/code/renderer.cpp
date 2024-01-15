@@ -114,14 +114,24 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
 
 
-void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, SDL_Window *window, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl)
-{       
+void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl, bool SaveCubemap = false)
+{   
+    glUseProgram(ShaderObjectVector[0]->ShaderProgram);
+
+    // Set texture location / the uniform sampler
+    ShaderObjectVector[0]->set_shader_texture(0, "diffuseTexture");
+    ShaderObjectVector[0]->set_shader_texture(1, "depthMap");
+    ShaderObjectVector[0]->set_shader_texture(2, "reflectionMap");
+
     // Create depthmap
     DepthMap.render_depthmap(GameElementVector);
 
     // Create cubemap
-    Refl.render_reflection_map(GameElementVector, ShaderObjectVector, window, DepthMap, Sky);
+    Refl.render_reflection_map(GameElementVector, ShaderObjectVector, DepthMap, Sky);
 
     // Save cubemap
-    Refl.cubemap_to_images();
+    if(SaveCubemap == true)
+    {
+        Refl.cubemap_to_images();
+    }
 }
