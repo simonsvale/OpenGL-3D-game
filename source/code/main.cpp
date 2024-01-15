@@ -112,7 +112,7 @@ int main(int argc, char **argv)
     ReflectionProbe Refl(1024, 1024);
     Refl.set_reflection_FBO();
     Refl.CubePos = {6.06258, 4.58507, -0.548955};
-    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, Refl, false);
+    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, Refl, true);
 
 
     glm::mat4 view;

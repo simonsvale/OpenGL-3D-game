@@ -124,10 +124,6 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
     // Set viewport
     glViewport(0, 0, CUBEMAP_RES_W, CUBEMAP_RES_H);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    
     glm::mat4 ProjectionMatrix = glm::perspective(glm::radians(90.0f), (float)CUBEMAP_RES_W / (float)CUBEMAP_RES_H, 1.0f, 25.0f);
     vector<glm::mat4> CubemapTransforms;
 
@@ -141,13 +137,14 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
     
     // Bind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     for(int FaceNumber = 0; FaceNumber < 6;)
     {   
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + FaceNumber, CubemapTexture, 0);
+        // Clear depth buffer, to not mess the cubemap up.
+        glClear(GL_DEPTH_BUFFER_BIT);
 
-        // Render skybox
-        Sky.render_skybox(CubemapTransforms[FaceNumber], ProjectionMatrix);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + FaceNumber, CubemapTexture, 0);
 
         // Send the diffuse and specular map to the fragment shader.
         glUseProgram(ShaderObjectVector[0]->ShaderProgram);
@@ -210,14 +207,11 @@ void ReflectionProbe::render_reflection_map(vector<unique_ptr<GameElement> > &Ga
         glBindVertexArray(0);
 
         // Render skybox (Should be called here)
-        //Sky.render_skybox(CubemapTransforms[FaceNumber], ProjectionMatrix);
+        Sky.render_skybox(CubemapTransforms[FaceNumber], ProjectionMatrix);
 
         FaceNumber++;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    // Set normal screen viewport ! rework later so it does not use constants.
-    //glViewport(0, 0, 1080, 720);
 }
 
 
@@ -225,10 +219,19 @@ void ReflectionProbe::set_reflection_FBO(void)
 {   
     glGenFramebuffers(1, &ReflectionMapFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, ReflectionMapFBO);
+
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, CubemapTexture, 0);
 
-    glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    glReadBuffer(GL_NONE);
+    glGenRenderbuffers(1, &RenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, RenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, CUBEMAP_RES_W, CUBEMAP_RES_H);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RenderBuffer);
+
+    GLuint ColorRenderBuffer;
+    glGenRenderbuffers(1, &ColorRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, ColorRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGB, CUBEMAP_RES_W, CUBEMAP_RES_H);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, ColorRenderBuffer);
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
