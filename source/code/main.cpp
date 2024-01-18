@@ -48,6 +48,8 @@ int main(int argc, char **argv)
     // Vector containing Shaders. Used to save memory on reused shaders.
     vector< unique_ptr<Shader> > ShaderObjectVector;
 
+    vector< unique_ptr<ReflectionProbe> > ReflectionVector;
+
     SDL_Init(SDL_INIT_EVERYTHING);
 
     // Set OpenGL window
@@ -108,11 +110,15 @@ int main(int argc, char **argv)
     glEnable(GL_DEPTH_TEST);  
     glEnable(GL_CULL_FACE);  
 
-    // Create a single reflection probe
-    ReflectionProbe Refl(1024, 1024);
-    Refl.set_reflection_FBO();
-    Refl.CubePos = {6.06258, 4.58507, -0.548955};
-    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, Refl, true);
+    // !!!
+    // Allocate memory for new cubemap.
+    ReflectionVector.push_back(make_unique<ReflectionProbe>(512, 512));
+
+    // Create the allocated cubemap cubemap
+    ReflectionVector[0]->set_reflection_FBO();
+    ReflectionVector[0]->CubePos = {6.06258, 4.58507, -0.548955};
+
+    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, ReflectionVector, false);
 
 
     glm::mat4 view;
@@ -143,7 +149,7 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // Render Everything.
-        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, Refl);
+        RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, ReflectionVector);
 
 
         // Calculate the amount of time it took to run through 1 frame.

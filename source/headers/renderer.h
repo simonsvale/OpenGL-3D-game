@@ -40,7 +40,7 @@ class Renderer
             SDL_Window *window,
             ShadowMap DepthMap,
             Skybox Sky,
-            ReflectionProbe Refl
+            vector<unique_ptr<ReflectionProbe> > &ReflectionProbeVector
         );
 
         void RenderCubemaps(
@@ -48,7 +48,7 @@ class Renderer
             vector< unique_ptr<Shader> > &ShaderObjectVector, 
             ShadowMap DepthMap,
             Skybox Sky,
-            ReflectionProbe Refl,
+            vector<unique_ptr<ReflectionProbe> > &ReflectionProbeVector,
             bool SaveCubemap
         );
         

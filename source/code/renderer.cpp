@@ -12,7 +12,7 @@
 using namespace std;
 
 
-void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl)
+void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, glm::mat4 projection, glm::mat4 view, glm::vec3 CameraPosition, SDL_Window *window, ShadowMap DepthMap, Skybox Sky, vector<unique_ptr<ReflectionProbe> > &ReflectionProbeVector)
 {   
     int ShaderIndex;
 
@@ -40,7 +40,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
     // Set shadowmap and reflectionmap textures
     DepthMap.bind_active_texture(1);
-    Refl.bind_active_texture(2);
+    ReflectionProbeVector[0]->bind_active_texture(2);
 
     int viewLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "view");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -113,7 +113,7 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
 
 
-void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, ReflectionProbe Refl, bool SaveCubemap = false)
+void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVector, vector< unique_ptr<Shader> > &ShaderObjectVector, ShadowMap DepthMap, Skybox Sky, vector<unique_ptr<ReflectionProbe> > &ReflectionProbeVector, bool SaveCubemap = false)
 {   
     glUseProgram(ShaderObjectVector[0]->ShaderProgram);
 
@@ -128,11 +128,11 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     DepthMap.render_depthmap(GameElementVector);
 
     // Create cubemap
-    Refl.render_reflection_map(GameElementVector, ShaderObjectVector, DepthMap, Sky);
+    ReflectionProbeVector[0]->render_reflection_map(GameElementVector, ShaderObjectVector, DepthMap, Sky);
 
     // Save cubemap
     if(SaveCubemap == true)
     {
-        Refl.cubemap_to_images();
+        ReflectionProbeVector[0]->cubemap_to_images();
     }
 }
