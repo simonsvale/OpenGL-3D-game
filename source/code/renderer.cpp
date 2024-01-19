@@ -40,7 +40,37 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
     // Set shadowmap and reflectionmap textures
     DepthMap.bind_active_texture(1);
-    ReflectionProbeVector[0]->bind_active_texture(2);
+
+
+    // 1. Check distance to nearest reflection probe.
+    // 2. Assign reflection probe to texture 2.
+
+    // !!! TEST
+    // Calc dist
+    double dist_1 = sqrt( 
+        pow(CameraPosition.x - ReflectionProbeVector[0]->CubePos.x, 2) +
+        pow(CameraPosition.y - ReflectionProbeVector[0]->CubePos.y, 2) +
+        pow(CameraPosition.z - ReflectionProbeVector[0]->CubePos.z, 2)
+    );
+
+    double dist_2 = sqrt( 
+        pow(CameraPosition.x - ReflectionProbeVector[1]->CubePos.x, 2) +
+        pow(CameraPosition.y - ReflectionProbeVector[1]->CubePos.y, 2) +
+        pow(CameraPosition.z - ReflectionProbeVector[1]->CubePos.z, 2)
+    );
+
+    cout << "Distance 1: " << dist_1 << "\nDistance 2:" << dist_2 << endl;
+
+    if(dist_1 < dist_2)
+    {
+        ReflectionProbeVector[0]->bind_active_texture(2);
+    }
+    else
+    {
+        ReflectionProbeVector[1]->bind_active_texture(2);
+    }
+    // !!! TEST END.
+
 
     int viewLoc = glGetUniformLocation(ShaderObjectVector[0]->ShaderProgram, "view");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -128,7 +158,11 @@ void Renderer::RenderCubemaps(vector<unique_ptr<GameElement> > &GameElementVecto
     DepthMap.render_depthmap(GameElementVector);
 
     // Create cubemap
-    ReflectionProbeVector[0]->render_reflection_map(GameElementVector, ShaderObjectVector, DepthMap, Sky);
+    for(int i = 0; i < ReflectionProbeVector.size();)
+    {
+        ReflectionProbeVector[i]->render_reflection_map(GameElementVector, ShaderObjectVector, DepthMap, Sky);
+        i++;
+    }
 
     // Save cubemap
     if(SaveCubemap == true)

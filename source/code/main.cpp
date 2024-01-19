@@ -36,7 +36,7 @@ const int WIDTH = 1080, HEIGHT = 720;
 
 int main(int argc, char **argv) 
 {   
-    
+    // NEEDS AN INIT FUNCTION, i.e. game_init()
     // Create Class objects
     Controls Controls;
     ArrayLevelMap Arraymap;
@@ -113,13 +113,17 @@ int main(int argc, char **argv)
     // !!!
     // Allocate memory for new cubemap.
     ReflectionVector.push_back(make_unique<ReflectionProbe>(512, 512));
+    ReflectionVector.push_back(make_unique<ReflectionProbe>(512, 512));
 
     // Create the allocated cubemap cubemap
     ReflectionVector[0]->set_reflection_FBO();
     ReflectionVector[0]->CubePos = {6.06258, 4.58507, -0.548955};
 
-    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, ReflectionVector, false);
+    ReflectionVector[1]->set_reflection_FBO();
+    ReflectionVector[1]->CubePos = {4.0, 6.0, 3.0};
 
+    RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, ReflectionVector, false);
+    
 
     glm::mat4 view;
     glm::mat4 projection;
@@ -164,6 +168,14 @@ int main(int argc, char **argv)
 
     // Free memory by unloading the .arrmap file.
     Arraymap.UnloadArrmapFile(&ShaderObjectVector, &GameElementVector);
+
+    // !!! This is temporary, but needed, as not clearing the reflection probe unique pointers causes the camera to invert, somehow...
+    for(int Index = 0; Index < ReflectionVector.size();)
+    {
+        ReflectionVector[Index].reset();
+        Index++;
+    }
+    
 
     SDL_DestroyWindow(window);
     SDL_Quit();
