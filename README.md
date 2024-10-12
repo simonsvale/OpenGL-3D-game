@@ -34,7 +34,5 @@ Testing reflection mapping of the skybox for all models in the scene.
 Development of reflection probes.
 ![image](https://github.com/user-attachments/assets/7ba39e21-6e7f-4759-90e0-fe0bf56eb0c1)
 
-Short gif:
-
 
 
