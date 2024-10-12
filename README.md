@@ -1,5 +1,5 @@
 # Introduction
-This is was my first attempt at a C++ 3D game engine, partly based on code from the site, Learn OpenGL(https://learnopengl.com/). 
+This is was my first attempt at a C++ 3D game engine, partly based on code from the site, LearnOpenGL.com (https://learnopengl.com/). 
 I worked on it from the start of fall to the end of december 2023, but ultimately stopped developing it due to bad design which was caused by my inexperience in OpenGL when i started the project.
 I have chosen to release the project as i hope people may find some of the things i have created insipiring or maybe even useful.
 
