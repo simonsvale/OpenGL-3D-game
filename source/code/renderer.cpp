@@ -61,7 +61,6 @@ void Renderer::RenderEverything(vector<unique_ptr<GameElement> > &GameElementVec
 
     for(int GameElementNumber = 0; GameElementNumber < GameElementVector.size();)
     {   
-        
         glm::mat4 model = glm::mat4(1.0f);
 
         // Get GameElement's shaderprogram index.

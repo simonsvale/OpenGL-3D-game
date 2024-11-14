@@ -97,12 +97,12 @@ int main(int argc, char **argv)
     // Create skybox:
     Skybox Sky;
     Sky.load_cubemap({
-        "source/textures/skybox/treatmentLF.png", 
-        "source/textures/skybox/treatmentRT.png", 
-        "source/textures/skybox/treatmentUP.png", 
-        "source/textures/skybox/treatmentDN.png", 
-        "source/textures/skybox/treatmentFT.png", 
-        "source/textures/skybox/treatmentBK.png"
+        "source/textures/space-sky/stars.png", 
+        "source/textures/space-sky/stars.png", 
+        "source/textures/space-sky/stars.png", 
+        "source/textures/space-sky/stars.png", 
+        "source/textures/space-sky/stars.png", 
+        "source/textures/space-sky/stars.png"
     });
     Sky.SkyboxShader.set_shader_texture(0, "skybox");
 

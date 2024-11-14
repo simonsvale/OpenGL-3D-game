@@ -90,13 +90,105 @@ void ArrayLevelMap::LoadArrmapFile(string ArrmapFilePath, vector< unique_ptr<Sha
 
     int PositionArrSize = 3;
 
+    int SatAmount = 7000;
+    int satYPosIndex = 0;
+    int satXPosIndex = 0;
+
     // !!!
     vector<array<string, 2> > VertexFragmentVector;
     vector<GLuint> ProgramVector;
 
     // Go through each vector index, and extract information.
     for(int Index = 0; Index < GeometryVector.size();)      
-    {                                                 
+    {    
+        if (Index == 1) {    
+            SplitByDelimiterAndBraces(GeometryVector[Index].substr(1, GeometryVector[Index].size()-1), &SingleGeometryVector, ',', '{', '}');  
+
+            // Get values contained in the .arrmap file.
+            GetKeyValue_str("DIFFUSE_TEXTURE_PATH", SingleGeometryVector, &TexturePath, ArrmapFilePath);
+            GetKeyValue_str("VERTEX_SHADER_PATH", SingleGeometryVector, &VertexShaderPath, ArrmapFilePath);
+            GetKeyValue_str("FRAGMENT_SHADER_PATH", SingleGeometryVector, &FragmentShaderPath, ArrmapFilePath);
+
+            // The geometry information.
+            GetKeyValue_floatvector("VERTICES", SingleGeometryVector, &VertexVec, ArrmapFilePath);
+            GetKeyValue_floatvector("NORMALS", SingleGeometryVector, &NormalsVec, ArrmapFilePath);
+            GetKeyValue_floatvector("TEXTURE_COORDS", SingleGeometryVector, &TexVec, ArrmapFilePath);
+            GetKeyValue_uintvector("INDICES", SingleGeometryVector, &IndicesVec, ArrmapFilePath);
+                 
+            for (int satCount = Index; satCount < SatAmount; ++satCount) {
+                // Add object to vector
+                GameElementVector->push_back(make_unique<GameElement>());      
+
+                GetKeyValue_int32("TYPE", SingleGeometryVector, &GameElementVector[0][satCount]->GameElementType, ArrmapFilePath); 
+
+                GetKeyValue_floatarray("WORLD_POSITION", SingleGeometryVector, GameElementVector[0][satCount]->WorldPosition, &PositionArrSize, ArrmapFilePath);
+                GetKeyValue_floatarray("ROTATION", SingleGeometryVector, GameElementVector[0][satCount]->Rotation, &PositionArrSize, ArrmapFilePath);
+                GetKeyValue_floatarray("SCALE", SingleGeometryVector, GameElementVector[0][satCount]->Scale, &PositionArrSize, ArrmapFilePath);
+
+                // Set DEBUG starting world position:
+                GameElementVector[0][satCount]->WorldPosition[0] = 0.03f*satXPosIndex;
+                GameElementVector[0][satCount]->WorldPosition[1] = 0.03f*satYPosIndex;
+                satXPosIndex++;
+
+                if ((satCount % 100) == 0) {
+                    satYPosIndex++;
+                    satXPosIndex = 0;
+                }
+
+                // Load vertecies into VBO and set VAO.
+                GameElementVector[0][satCount]->SetVBOSubData(
+                    &VertexVec[0], VertexVec.size(), 
+                    &NormalsVec[0], NormalsVec.size(), 
+                    &TexVec[0], TexVec.size(),
+                    &IndicesVec[0], IndicesVec.size()
+                );
+
+                if(GameElementVector[0][satCount]->GameElementType >= 1)
+                {
+                    // Materials.
+                    GetKeyValue_float("SHINE_VALUE", SingleGeometryVector, &GameElementVector[0][satCount]->Material.ShineValue, ArrmapFilePath);
+
+                    GameElementVector[0][satCount]->SetLightVAO(VertexVec.size(), NormalsVec.size());
+                }
+                else
+                {
+                    GameElementVector[0][satCount]->SetVAO(VertexVec.size(), NormalsVec.size(), TexVec.size());
+                }
+
+                // Set Indices array size!
+                GameElementVector[0][satCount]->IndicesSize = IndicesVec.size();
+
+                array<string, 2> VertFragPair = {VertexShaderPath, FragmentShaderPath};
+
+                // Compile shaders
+                GameElementVector[0][satCount]->ShaderProgramIndex = CompileRequiredShaders(ShaderObjectVector, VertexFragmentVector, VertFragPair);
+
+                // Take the texture path extracted from the .arrmap file and load the texture into the gameElement Class
+                GameElementVector[0][satCount]->LoadTexture(
+                    &GameElementVector[0][satCount]->DiffuseTexture, 
+                    TexturePath.c_str()
+                );
+
+                // Load specular map if set.
+                if(GameElementVector[0][satCount]->GameElementType == 2)
+                {
+                    GetKeyValue_str("SPECULAR_TEXTURE_PATH", SingleGeometryVector, &SpecularPath, ArrmapFilePath);
+
+                    GameElementVector[0][satCount]->LoadTexture(
+                        &GameElementVector[0][satCount]->SpecularTexture,  
+                        SpecularPath.c_str()
+                    );
+                }
+            }
+
+            VertexVec.clear();
+            NormalsVec.clear();
+            TexVec.clear();
+            IndicesVec.clear();
+            SingleGeometryVector.clear();
+
+            return;
+        }
         // Add object to vector
         GameElementVector->push_back(make_unique<GameElement>());       
 
