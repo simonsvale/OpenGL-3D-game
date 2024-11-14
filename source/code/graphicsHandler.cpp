@@ -44,7 +44,6 @@ void Graphics::SetVBOSubData(float Vertices[], int VertSize, float Normals[], in
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, IndiSize*sizeof(unsigned int), Indices, GL_STATIC_DRAW);
 }
 
-
 void Graphics::SetVAO(int VertSize, int NormalSize, int TextCoSize)
 {
     // Initialize VAO (Vertex Array Object)

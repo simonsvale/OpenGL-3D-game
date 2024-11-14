@@ -29,6 +29,7 @@
 
 #include "controls.h"
 
+
 using namespace std;
 
 // Window width and height
@@ -88,7 +89,7 @@ int main(int argc, char **argv)
     }
 
     // !!! Load map and create all vertecies and textures.
-    Arraymap.LoadArrmapFile("source/maps/myFirstMap.arrmap", &ShaderObjectVector, &GameElementVector);
+    Arraymap.LoadArrmapFile("source/maps/satMapTest.arrmap", &ShaderObjectVector, &GameElementVector);
 
     // Create shadowmap to render shadows.
     ShadowMap DepthMap;
@@ -123,16 +124,20 @@ int main(int argc, char **argv)
     ReflectionVector[1]->CubePos = {4.0, 6.0, 3.0};
 
     RenderObj.RenderCubemaps(GameElementVector, ShaderObjectVector, DepthMap, Sky, ReflectionVector, false);
-    
 
     glm::mat4 view;
     glm::mat4 projection;
 
     // Setup variables for maintaining 60 fps
-    int FrameTime;
+    Uint64 FrameTime;
     Uint64 FrameTimeStart;
 
     const int FrameDelay = 1000 / 60;
+
+
+    float lastTime = 0.0;
+    int nbFrames = 0;
+
 
     // Needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -142,8 +147,8 @@ int main(int argc, char **argv)
     {   
         // Set frame start
         FrameTimeStart = SDL_GetTicks64();
-        
 
+        
         // Run controls, does keystate and everything
         Controls.RunControls();
 
@@ -155,15 +160,26 @@ int main(int argc, char **argv)
         // Render Everything.
         RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, ReflectionVector);
 
-
         // Calculate the amount of time it took to run through 1 frame.
-        FrameTime = SDL_GetTicks() - FrameTimeStart;
+        FrameTime = SDL_GetTicks64() - FrameTimeStart;
 
+        
+        ++nbFrames;
+        if ( (float)SDL_GetTicks64() - lastTime >= 1000.0 ){ // If last prinf() was more than 1 sec ago
+            // printf and reset timer
+            printf("%f ms/frame\n", 1000.0/double(nbFrames));
+            nbFrames = 0;
+            lastTime += 1000.0;
+        } 
+        
+        
         // Set the delay accordingly
         if(FrameDelay > FrameTime)
         {
             SDL_Delay(FrameDelay - FrameTime);
         }
+        
+        
     }
 
     // Free memory by unloading the .arrmap file.

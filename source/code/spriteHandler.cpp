@@ -17,7 +17,7 @@ using namespace std;
 
 // Function for reading .atris files.
 void Sprite::LoadSpriteFile(string FilePath)
-{
+{   
     // Setup Variables
     string AtrisFileLine;
     string NoSpacesInfo;
