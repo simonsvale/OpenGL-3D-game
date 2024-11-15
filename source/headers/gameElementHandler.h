@@ -2,7 +2,6 @@
 #define GAME_ELEMENT_HANDLER_H
 
 #include <string>
-
 #include <graphicsHandler.h>
 
 
