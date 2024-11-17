@@ -140,7 +140,9 @@ int main(int argc, char **argv)
     float lastTime = 0.0;
     int nbFrames = 0;
 
+    // Setup satellite code.
     SatelliteSimulator sim(GameElementVector);
+    double timeStamp = 0.0;
 
     // Needed for mouse inputs to work correctly
     SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -161,7 +163,10 @@ int main(int argc, char **argv)
         view = Controls.ViewMatrix;
 
         // Render Everything.
-        sim.UpdatePositions(GameElementVector);
+        sim.UpdatePositions(GameElementVector, timeStamp);
+        sim.UpdateLinks(GameElementVector, timeStamp);
+        timeStamp += 0.01;
+
         RenderObj.RenderEverything(GameElementVector, ShaderObjectVector, projection, view, Controls.position, window, DepthMap, Sky, ReflectionVector);
 
         // Calculate the amount of time it took to run through 1 frame.

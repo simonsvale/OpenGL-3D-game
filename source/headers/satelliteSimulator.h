@@ -16,7 +16,9 @@ class SatelliteSimulator  {
             // Set initial sat positions.
         }
 
-        void UpdatePositions(vector< unique_ptr<GameElement> > &GameElementVector);
+        void UpdatePositions(vector< unique_ptr<GameElement> > &GameElementVector, double timeStamp); // [1..n[
+        void UpdateLinks(vector< unique_ptr<GameElement> > &GameElementVector, double timeStamp); // [n..m[
+
 };
 
 #endif

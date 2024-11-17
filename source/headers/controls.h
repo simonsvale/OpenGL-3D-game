@@ -20,7 +20,7 @@ class Controls
 
     // Camera Controls
         // position
-        glm::vec3 position = glm::vec3(0, 5, 0);
+        glm::vec3 position = glm::vec3(0, 0, -3);
 
         float deltaTime;
 

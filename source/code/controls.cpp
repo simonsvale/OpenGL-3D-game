@@ -51,7 +51,7 @@ void Controls::ComputeMouseInput(SDL_Window *window)
 	glm::vec3 up = glm::cross(right, direction);
 
 	// Projection matrix : 45° Field of View,              Aspect ratio, "render distance" like, where 0.1 is close and 100.0 is far.
-	ProjectionMatrix = glm::perspective(glm::radians(FoV), 1080.0f / 720.0f, 0.1f, 100.0f);
+	ProjectionMatrix = glm::perspective(glm::radians(FoV), 1080.0f / 720.0f, 0.01f, 100.0f);
 	// Camera matrix
 	ViewMatrix = glm::lookAt(
 								position,           // Camera is here
@@ -69,12 +69,12 @@ void Controls::GetPlayerMovementInput(const Uint8 *keyArray)
     if(keyArray[SDL_SCANCODE_LSHIFT])
     {
         // Triple speed
-        speed = 15.0f;
+        speed = 1.5f;
     }
     else
     {
         // default speed
-        speed = 3.0f;
+        speed = 0.5f;
     }
 
     if(keyArray[SDL_SCANCODE_W])
